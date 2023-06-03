@@ -11,7 +11,7 @@
 #define WIFI_SSID "K_CNNN"
 #define WIFI_PASSWORD "congnghenn"
 
-#define MQTT_PASSW "libe"
+#define MQTT_PASSW "702E3"
 #define MQTT_USERNAME "1111111"
 
 #define MQTT_SERVER "192.168.1.13"
