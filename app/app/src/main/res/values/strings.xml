@@ -1,0 +1,11 @@
+<resources>
+    <string name="app_name">IntrovertGarden</string>
+    <string name="action_settings">Settings</string>
+    <!-- Strings used for fragments for navigation -->
+
+    <string name="homepage_fragment_label"> </string>
+    <string name="fieldlist_fragment_label">Danh sách cánh đồng</string>
+    <string name="next">Next</string>
+
+    <string name="project_name">Introverts\' Garden</string>
+</resources>
