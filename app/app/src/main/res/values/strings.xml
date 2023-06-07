@@ -3,10 +3,11 @@
     <string name="action_settings">Settings</string>
     <!-- Strings used for fragments for navigation -->
 
-    <string name="homepage_fragment_label"> </string>
+    <string name="homepage_fragment_label">Trang chủ</string>
     <string name="fieldlist_fragment_label">Danh sách cánh đồng</string>
     <string name="next">Next</string>
 
     <string name="project_name">Introverts\' Garden</string>
     <string name="introduction">Introvert\' Garden is a smart agriculture systems project developed by The Introverts, a group of 5 students from VNU - UET participated in the IoT Challenge contest organized by FPT Software.</string>
+    <string name="homeButton">Next</string>
 </resources>
