@@ -1,4 +1,4 @@
-package ie.app;
+package ie.app.main;
 
 import android.os.Bundle;
 
@@ -14,6 +14,7 @@ import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 
+import ie.app.R;
 import ie.app.databinding.ActivityMainBinding;
 
 import android.view.Menu;

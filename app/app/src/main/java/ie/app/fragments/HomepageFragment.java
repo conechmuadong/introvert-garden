@@ -1,4 +1,4 @@
-package ie.app;
+package ie.app.fragments;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -9,6 +9,7 @@ import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.fragment.NavHostFragment;
 
+import ie.app.R;
 import ie.app.databinding.FragmentHomepageBinding;
 
 public class HomepageFragment extends Fragment {

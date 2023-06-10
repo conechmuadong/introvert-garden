@@ -1,4 +1,4 @@
-package ie.app;
+package ie.app.fragments;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -7,7 +7,9 @@ import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
+import androidx.navigation.fragment.NavHostFragment;
 
+import ie.app.R;
 import ie.app.databinding.FragmentFieldlistBinding;
 
 public class FieldlistFragment extends Fragment {
@@ -27,14 +29,14 @@ public class FieldlistFragment extends Fragment {
 
     public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-/*
-        binding.buttonSecond.setOnClickListener(new View.OnClickListener() {
+
+        binding.tempButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                NavHostFragment.findNavController(SecondFragment.this)
-                        .navigate(R.id.action_SecondFragment_to_FirstFragment);
+                NavHostFragment.findNavController(FieldlistFragment.this)
+                        .navigate(R.id.action_FieldlistFragment_to_MeasuredDataFragment);
             }
-        }); */
+        });
     }
 
     @Override

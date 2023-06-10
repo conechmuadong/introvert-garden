@@ -7,7 +7,7 @@
 
     <fragment
         android:id="@+id/HomepageFragment"
-        android:name="ie.app.HomepageFragment"
+        android:name="ie.app.fragments.HomepageFragment"
         android:label="@string/homepage_fragment_label"
         tools:layout="@layout/fragment_homepage">
 
@@ -15,14 +15,32 @@
             android:id="@+id/action_HomepageFragment_to_FieldlistFragment"
             app:destination="@id/FieldlistFragment" />
     </fragment>
+
     <fragment
         android:id="@+id/FieldlistFragment"
-        android:name="ie.app.FieldlistFragment"
+        android:name="ie.app.fragments.FieldlistFragment"
         android:label="@string/fieldlist_fragment_label"
         tools:layout="@layout/fragment_fieldlist">
 
         <action
-            android:id="@+id/action_SecondFragment_to_FirstFragment"
+            android:id="@+id/action_FieldlistFragment_to_HomepageFragment"
             app:destination="@id/HomepageFragment" />
+
+        <action
+            android:id="@+id/action_FieldlistFragment_to_MeasuredDataFragment"
+            app:destination="@id/MeasuredDataFragment" />
+
     </fragment>
+
+    <fragment
+        android:id="@+id/MeasuredDataFragment"
+        android:name="ie.app.fragments.MeasuredDataFragment"
+        android:label="@string/measureddata_fragment_label"
+        tools:layout="@layout/fragment_measureddata">
+
+        <action
+            android:id="@+id/action_MeasuredDataFragment_to_FieldlistFragment"
+            app:destination="@id/FieldlistFragment" />
+    </fragment>
+
 </navigation>
