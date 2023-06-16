@@ -8,18 +8,19 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
+import androidx.navigation.fragment.NavHostFragment;
 
 import ie.app.R;
-import ie.app.databinding.FragmentMeasureddataBinding;
+import ie.app.databinding.FragmentMeasuredDataBinding;
 import ie.app.models.Field;
 
 public class MeasuredDataFragment extends Fragment {
-    private FragmentMeasureddataBinding binding;
+    private FragmentMeasuredDataBinding binding;
     private Field field = new Field();
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        binding = FragmentMeasureddataBinding.inflate(inflater, container, false);
+        binding = FragmentMeasuredDataBinding.inflate(inflater, container, false);
         View view = binding.getRoot();
 
         String fieldname = "Cánh đồng";
@@ -57,14 +58,14 @@ public class MeasuredDataFragment extends Fragment {
 
     public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-/*
-        binding.buttonSecond.setOnClickListener(new View.OnClickListener() {
+
+        binding.waterButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                NavHostFragment.findNavController(SecondFragment.this)
-                        .navigate(R.id.action_SecondFragment_to_FirstFragment);
+                NavHostFragment.findNavController(MeasuredDataFragment.this)
+                        .navigate(R.id.action_MeasuredDataFragment_to_IrrigationFragment);
             }
-        }); */
+        });
     }
 
     @Override

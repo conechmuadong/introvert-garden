@@ -20,7 +20,7 @@
         android:id="@+id/FieldlistFragment"
         android:name="ie.app.fragments.FieldlistFragment"
         android:label="@string/fieldlist_fragment_label"
-        tools:layout="@layout/fragment_fieldlist">
+        tools:layout="@layout/fragment_list_field">
 
         <action
             android:id="@+id/action_FieldlistFragment_to_HomepageFragment"
@@ -36,11 +36,23 @@
         android:id="@+id/MeasuredDataFragment"
         android:name="ie.app.fragments.MeasuredDataFragment"
         android:label="@string/measureddata_fragment_label"
-        tools:layout="@layout/fragment_measureddata">
+        tools:layout="@layout/fragment_measured_data">
 
         <action
             android:id="@+id/action_MeasuredDataFragment_to_FieldlistFragment"
             app:destination="@id/FieldlistFragment" />
+
+        <action
+            android:id="@+id/action_MeasuredDataFragment_to_IrrigationFragment"
+            app:destination="@id/IrrigationSettingFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/IrrigationSettingFragment"
+        android:name="ie.app.fragments.IrrigationSettingFragment"
+        android:label="@string/irrigation_fragment_label"
+        tools:layout="@layout/fragment_irrigation_setting">
+
     </fragment>
 
 </navigation>

@@ -10,11 +10,11 @@ import androidx.fragment.app.Fragment;
 import androidx.navigation.fragment.NavHostFragment;
 
 import ie.app.R;
-import ie.app.databinding.FragmentFieldlistBinding;
+import ie.app.databinding.FragmentListFieldBinding;
 
 public class FieldlistFragment extends Fragment {
 
-    private FragmentFieldlistBinding binding;
+    private FragmentListFieldBinding binding;
 
     @Override
     public View onCreateView(
@@ -22,7 +22,7 @@ public class FieldlistFragment extends Fragment {
             Bundle savedInstanceState
     ) {
 
-        binding = FragmentFieldlistBinding.inflate(inflater, container, false);
+        binding = FragmentListFieldBinding.inflate(inflater, container, false);
         return binding.getRoot();
 
     }

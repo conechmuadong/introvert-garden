@@ -6,11 +6,18 @@
     <string name="homepage_fragment_label">Trang chủ</string>
     <string name="fieldlist_fragment_label">Danh sách cánh đồng</string>
     <string name="measureddata_fragment_label">Tình trạng</string>
+    <string name="irrigation_fragment_label">Cài đặt tưới</string>
 
     <string name="next">Next</string>
     <string name="project_name">Introverts\' Garden</string>
     <string name="introduction">Introvert\' Garden is a smart agriculture systems project developed by The Introverts, a group of 5 students from VNU - UET participated in the IoT Challenge contest organized by FPT Software.</string>
-    <string name="homeButton">Next</string>
+    <string name="start_time">Thời gian bắt đầu tưới</string>
+    <string name="end_time">Thời gian kết thúc tưới</string>
+    <string name="amount_water">Lượng nước tưới</string>
+    <string name="water_unit">l/m²</string>
 
+    <string name="homeButton">Next</string>
     <string name="waterButton">Tưới cây!</string>
+    <string name="manualButton">Manual</string>
+    <string name="autoButton">Auto</string>
 </resources>
