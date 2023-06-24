@@ -34,7 +34,7 @@ public class FieldlistFragment extends Fragment {
             @Override
             public void onClick(View view) {
                 NavHostFragment.findNavController(FieldlistFragment.this)
-                        .navigate(R.id.action_FieldlistFragment_to_MeasuredDataFragment);
+                        .navigate(R.id.action_FieldlistFragment_to_CustomizedFragment);
             }
         });
     }

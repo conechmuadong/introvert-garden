@@ -7,6 +7,7 @@
     <string name="fieldlist_fragment_label">Danh sách cánh đồng</string>
     <string name="measureddata_fragment_label">Tình trạng</string>
     <string name="irrigation_fragment_label">Cài đặt tưới</string>
+    <string name="customized_fragment_label">Điều chỉnh</string>
 
     <string name="next">Next</string>
     <string name="project_name">Introverts\' Garden</string>
@@ -20,4 +21,10 @@
     <string name="waterButton">Tưới cây!</string>
     <string name="manualButton">Manual</string>
     <string name="autoButton">Auto</string>
+
+    <string name="area">Diện tích</string>
+    <string name="area_unit">m²</string>
+    <string name="number_holes">Tổng số lỗ tưới</string>
+    <string name="number_holes_unit">lỗ</string>
+    <string name="humidity">Phần trăm độ ẩm </string>
 </resources>

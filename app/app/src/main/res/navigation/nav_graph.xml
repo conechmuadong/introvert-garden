@@ -30,7 +30,17 @@
             android:id="@+id/action_FieldlistFragment_to_MeasuredDataFragment"
             app:destination="@id/MeasuredDataFragment" />
 
+        <action
+            android:id="@+id/action_FieldlistFragment_to_CustomizedFragment"
+            app:destination="@id/CustomizedFragment" />
+
     </fragment>
+
+    <fragment
+        android:id="@+id/CustomizedFragment"
+        android:name="ie.app.fragments.CustomizedFragment"
+        android:label="@string/customized_fragment_label"
+        tools:layout="@layout/fragment_customized"/>
 
     <fragment
         android:id="@+id/MeasuredDataFragment"
