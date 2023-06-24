@@ -10,6 +10,8 @@
 #ifndef PCF8591_H_
 #define PCF8591_H_
 
+#include "stdint.h"
+
 #define PCF8591_ADDRESS 0x48
 #define CONTROL_BYTE_CH0 0x40
 

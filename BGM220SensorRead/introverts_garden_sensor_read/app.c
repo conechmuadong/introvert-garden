@@ -36,6 +36,8 @@
 #include "sl_simple_button_instances.h"
 #include "sl_simple_led_instances.h"
 #include "sl_i2cspm.h"
+#include "bh1750.h"
+#include "pcf8591.h"
 
 // The advertising set handle allocated from Bluetooth stack.
 static uint8_t advertising_set_handle = 0xff;
@@ -148,11 +150,11 @@ void sl_bt_on_event(sl_bt_msg_t *evt)
 
       // Check the report button state, then update the characteristic and
       // send notification.
-      sc = update_report_button_characteristic();
+      sc = update_sensor_data();
       app_log_status_error(sc);
 
       if (sc == SL_STATUS_OK) {
-        sc = send_report_button_notification();
+        sc = send_sensor_data_notification();
         app_log_status_error(sc);
       }
       break;
@@ -184,12 +186,12 @@ void sl_bt_on_event(sl_bt_msg_t *evt)
     // database was changed by a remote GATT client.
     case sl_bt_evt_gatt_server_attribute_value_id:
       // The value of the gattdb_led_control characteristic was changed.
-      if (gattdb_led_control == evt->data.evt_gatt_server_characteristic_status.characteristic) {
+      if (gattdb_sensor_control == evt->data.evt_gatt_server_characteristic_status.characteristic) {
         uint8_t data_recv;
         size_t data_recv_len;
 
         // Read characteristic value.
-        sc = sl_bt_gatt_server_read_attribute_value(gattdb_led_control,
+        sc = sl_bt_gatt_server_read_attribute_value(gattdb_sensor_control,
                                                     0,
                                                     sizeof(data_recv),
                                                     &data_recv_len,
@@ -201,7 +203,7 @@ void sl_bt_on_event(sl_bt_msg_t *evt)
           break;
         }
 
-        // Toggle LED.
+        // Toggle sensor control flag
         if (data_recv == 0x01) {
             report_sensor_data = true;
         } else {
@@ -214,7 +216,7 @@ void sl_bt_on_event(sl_bt_msg_t *evt)
     // This event occurs when the remote device enabled or disabled the
     // notification.
     case sl_bt_evt_gatt_server_characteristic_status_id:
-      if (gattdb_report_button == evt->data.evt_gatt_server_characteristic_status.characteristic) {
+      if (gattdb_light_ambient == evt->data.evt_gatt_server_characteristic_status.characteristic) {
         // A local Client Characteristic Configuration descriptor was changed in
         // the gattdb_report_button characteristic.
         if (evt->data.evt_gatt_server_characteristic_status.client_config_flags
@@ -249,27 +251,12 @@ void sl_bt_on_event(sl_bt_msg_t *evt)
 static sl_status_t update_sensor_data(void)
 {
   sl_status_t sc;
-  uint8_t data_send;
-
-  switch (sl_button_get_state(SL_SIMPLE_BUTTON_INSTANCE(0))) {
-    case SL_SIMPLE_BUTTON_PRESSED:
-      data_send = (uint8_t)SL_SIMPLE_BUTTON_PRESSED;
-      break;
-
-    case SL_SIMPLE_BUTTON_RELEASED:
-      data_send = (uint8_t)SL_SIMPLE_BUTTON_RELEASED;
-      break;
-
-    default:
-      // Invalid button state
-      return SL_STATUS_FAIL; // Invalid button state
-  }
-
+  uint16_t data_send = measure_high_resolution2_once();
   // Write attribute in the local GATT database.
-  sc = sl_bt_gatt_server_write_attribute_value(gattdb_report_button,
+  sc = sl_bt_gatt_server_write_attribute_value(gattdb_light_ambient,
                                                0,
                                                sizeof(data_send),
-                                               &data_send);
+                                               (uint8_t*)&data_send);
   if (sc == SL_STATUS_OK) {
     app_log_info("Attribute written: 0x%02x", (int)data_send);
   }
@@ -278,7 +265,7 @@ static sl_status_t update_sensor_data(void)
 }
 
 /***************************************************************************//**
- * Sends notification of the Report Button characteristic.
+ * Sends notification of the light ambient sensor characteristic.
  *
  * Reads the current button state from the local GATT database and sends it as a
  * notification.
@@ -290,7 +277,7 @@ static sl_status_t send_sensor_data_notification(void)
   size_t data_len;
 
   // Read report button characteristic stored in local GATT database.
-  sc = sl_bt_gatt_server_read_attribute_value(gattdb_report_button,
+  sc = sl_bt_gatt_server_read_attribute_value(gattdb_light_ambient,
                                               0,
                                               sizeof(data_send),
                                               &data_len,
@@ -300,7 +287,7 @@ static sl_status_t send_sensor_data_notification(void)
   }
 
   // Send characteristic notification.
-  sc = sl_bt_gatt_server_notify_all(gattdb_report_button,
+  sc = sl_bt_gatt_server_notify_all(gattdb_light_ambient,
                                     sizeof(data_send),
                                     &data_send);
   if (sc == SL_STATUS_OK) {
