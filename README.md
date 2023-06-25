@@ -10,4 +10,3 @@ We are:
 3. Nguyễn Thu Hiền, Computer Engineering Student, Class of 2025
 4. Trần Thị Thu Huệ, Information Technology Student, Class of 2025
 5. Nguyễn Ngọc Minh, Computer Science Student, Class of 2025.
-
