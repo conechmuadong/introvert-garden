@@ -85,16 +85,10 @@ app.o: ../app.c \
  E:\Lab\ 702\ -\ E3\introvert-garden\BGM220SensorRead\introverts_garden_sensor_read\autogen/gatt_db.h \
  c:\users\bannh\simplicitystudio\sdks\gecko_sdk\protocol\bluetooth\inc\sli_bt_gattdb_def.h \
  ../app.h \
- E:\Lab\ 702\ -\ E3\introvert-garden\BGM220SensorRead\introverts_garden_sensor_read\autogen/sl_simple_button_instances.h \
- c:\users\bannh\simplicitystudio\sdks\gecko_sdk\platform\driver\button\inc\sl_simple_button.h \
- c:\users\bannh\simplicitystudio\sdks\gecko_sdk\platform\driver\button\inc\sl_button.h \
- c:\users\bannh\simplicitystudio\sdks\gecko_sdk\platform\emlib\inc\em_gpio.h \
- E:\Lab\ 702\ -\ E3\introvert-garden\BGM220SensorRead\introverts_garden_sensor_read\autogen/sl_simple_led_instances.h \
- c:\users\bannh\simplicitystudio\sdks\gecko_sdk\platform\driver\leddrv\inc\sl_simple_led.h \
- c:\users\bannh\simplicitystudio\sdks\gecko_sdk\platform\driver\leddrv\inc\sl_led.h \
  c:\users\bannh\simplicitystudio\sdks\gecko_sdk\platform\driver\i2cspm\inc\sl_i2cspm.h \
+ c:\users\bannh\simplicitystudio\sdks\gecko_sdk\platform\emlib\inc\em_gpio.h \
  c:\users\bannh\simplicitystudio\sdks\gecko_sdk\platform\emlib\inc\em_i2c.h \
- ../bh1750.h ../pcf8591.h
+ ../ble_utilis.h
 c:\users\bannh\simplicitystudio\sdks\gecko_sdk\platform\common\toolchain\inc\sl_gcc_preinclude.h:
 c:\users\bannh\simplicitystudio\sdks\gecko_sdk\platform\emlib\inc\em_common.h:
 c:\users\bannh\simplicitystudio\sdks\gecko_sdk\platform\device\siliconlabs\bgm22\include\em_device.h:
@@ -181,14 +175,7 @@ c:\users\bannh\simplicitystudio\sdks\gecko_sdk\protocol\bluetooth\inc\sl_bt_api_
 E:\Lab\ 702\ -\ E3\introvert-garden\BGM220SensorRead\introverts_garden_sensor_read\autogen/gatt_db.h:
 c:\users\bannh\simplicitystudio\sdks\gecko_sdk\protocol\bluetooth\inc\sli_bt_gattdb_def.h:
 ../app.h:
-E:\Lab\ 702\ -\ E3\introvert-garden\BGM220SensorRead\introverts_garden_sensor_read\autogen/sl_simple_button_instances.h:
-c:\users\bannh\simplicitystudio\sdks\gecko_sdk\platform\driver\button\inc\sl_simple_button.h:
-c:\users\bannh\simplicitystudio\sdks\gecko_sdk\platform\driver\button\inc\sl_button.h:
-c:\users\bannh\simplicitystudio\sdks\gecko_sdk\platform\emlib\inc\em_gpio.h:
-E:\Lab\ 702\ -\ E3\introvert-garden\BGM220SensorRead\introverts_garden_sensor_read\autogen/sl_simple_led_instances.h:
-c:\users\bannh\simplicitystudio\sdks\gecko_sdk\platform\driver\leddrv\inc\sl_simple_led.h:
-c:\users\bannh\simplicitystudio\sdks\gecko_sdk\platform\driver\leddrv\inc\sl_led.h:
 c:\users\bannh\simplicitystudio\sdks\gecko_sdk\platform\driver\i2cspm\inc\sl_i2cspm.h:
+c:\users\bannh\simplicitystudio\sdks\gecko_sdk\platform\emlib\inc\em_gpio.h:
 c:\users\bannh\simplicitystudio\sdks\gecko_sdk\platform\emlib\inc\em_i2c.h:
-../bh1750.h:
-../pcf8591.h:
+../ble_utilis.h:

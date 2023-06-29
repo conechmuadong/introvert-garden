@@ -82,5 +82,25 @@
         <notify authenticated="false" bonded="false" encrypted="false"/>
       </properties>
     </characteristic>
+    
+    <!--Report Temperature -->
+    <characteristic const="false" id="temperature" name="Report Temperature " sourceId="" uuid="e975b265-56bb-4ebb-b732-4bd809afa7a7">
+      <informativeText/>
+      <value length="2" type="hex" variable_length="false">0000</value>
+      <properties>
+        <read authenticated="false" bonded="false" encrypted="false"/>
+        <notify authenticated="false" bonded="false" encrypted="false"/>
+      </properties>
+    </characteristic>
+    
+    <!--Report Relative Humidity-->
+    <characteristic const="false" id="relative_humidity" name="Report Relative Humidity" sourceId="" uuid="b0a0ce9f-53c7-4696-b6ce-52ddc6e679cd">
+      <informativeText/>
+      <value length="2" type="hex" variable_length="false">0000</value>
+      <properties>
+        <read authenticated="false" bonded="false" encrypted="false"/>
+        <notify authenticated="false" bonded="false" encrypted="false"/>
+      </properties>
+    </characteristic>
   </service>
 </gatt>

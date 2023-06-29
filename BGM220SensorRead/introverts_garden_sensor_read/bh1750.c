@@ -3,6 +3,8 @@
  *
  *  Created on: Jun 25, 2023
  *      Author: Duy Hung Nguyen
+ *
+ *  BH1750's I2C communication sources file
  */
 
 #include "bh1750.h"

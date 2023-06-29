@@ -20,6 +20,8 @@ extern const sli_bt_gattdb_t gattdb;
 #define gattdb_sensor_control                 21
 #define gattdb_light_ambient                  23
 #define gattdb_soil_humidity                  26
+#define gattdb_temperature                    29
+#define gattdb_relative_humidity              32
 
 
 #endif // __GATT_DB_H
