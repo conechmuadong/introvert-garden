@@ -16,6 +16,7 @@ import androidx.navigation.fragment.NavHostFragment;
 import java.util.ArrayList;
 
 import ie.app.R;
+import ie.app.adapter.StageAdapter;
 import ie.app.databinding.FragmentCustomizedBinding;
 import ie.app.models.Stage;
 
@@ -23,7 +24,7 @@ public class CustomizedFragment extends Fragment {
 
     private FragmentCustomizedBinding binding;
     private ArrayList<Stage> stageList;
-    private ArrayAdapter<Stage> adapter;
+    private StageAdapter adapter;
 
 
     @Override
@@ -43,14 +44,14 @@ public class CustomizedFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
 
         stageList = new ArrayList<>();
-        adapter = new ArrayAdapter<>(getActivity(), R.layout.stage, R.id.listStage, stageList);
+        adapter = new StageAdapter();
 
         binding.addStageButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Stage newStage = new Stage();
                 stageList.add(newStage);
-                adapter.notifyDataSetChanged();
+                //adapter.notifyDataSetChanged();
             }
         });
     }

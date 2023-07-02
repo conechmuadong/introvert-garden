@@ -9,6 +9,7 @@
     <string name="irrigation_fragment_label">Cài đặt tưới</string>
     <string name="customized_fragment_label">Điều chỉnh</string>
 
+    <string name="add">Add</string>
     <string name="next">Next</string>
     <string name="project_name">Introverts\' Garden</string>
     <string name="introduction">Introvert\' Garden is a smart agriculture systems project developed by The Introverts, a group of 5 students from VNU - UET participated in the IoT Challenge contest organized by FPT Software.</string>
@@ -17,7 +18,6 @@
     <string name="amount_water">Lượng nước tưới</string>
     <string name="water_unit">l/m²</string>
 
-    <string name="homeButton">Next</string>
     <string name="waterButton">Tưới cây!</string>
     <string name="manualButton">Manual</string>
     <string name="autoButton">Auto</string>
