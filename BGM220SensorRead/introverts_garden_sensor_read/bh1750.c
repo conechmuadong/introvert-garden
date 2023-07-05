@@ -9,6 +9,7 @@
 
 #include "bh1750.h"
 #include "sl_i2cspm.h"
+#include "app_log.h"
 
 I2C_TransferSeq_TypeDef ls_seq;
 uint8_t readBuffer[2];
@@ -23,13 +24,14 @@ uint16_t measure_high_resolution2_once(){
   ls_seq.buf[0].len = 1;
   ls_ret = I2CSPM_Transfer(I2C0, &ls_seq);
 
-  sl_udelay_wait(120000);
+//  sl_udelay_wait(120000);
 
   ls_seq.flags = I2C_FLAG_READ;
   ls_seq.buf[0].data = &readBuffer[0];
   ls_seq.buf[0].len = 2;
   ls_ret = I2CSPM_Transfer(I2C0, &ls_seq);
   ls_ret = I2CSPM_Transfer(I2C0, &ls_seq);
+  app_log("Results: %d %d \n", readBuffer[0], readBuffer[1]);
   return ((uint16_t)readBuffer[0])<<8|(uint16_t)readBuffer[1];
 }
 

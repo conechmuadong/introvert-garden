@@ -16,7 +16,7 @@ extern uint8_t command;
 uint16_t measure_relative_humidity(){
   seq.addr = SI7021_ADDRESS << 1;
   seq.flags = I2C_FLAG_WRITE;
-  command = SI7021_MEASURE_HUMD_NHM;
+  command = SI7021_MEASURE_HUMD_HM;
   seq.buf[0].data = &command;
   seq.buf[0].len = 1;
   ret = I2CSPM_Transfer(I2C0, &seq);
@@ -38,7 +38,7 @@ uint16_t measure_relative_humidity(){
 uint16_t measure_temperature(){
   seq.addr = SI7021_ADDRESS << 1;
   seq.flags = I2C_FLAG_WRITE;
-  command = SI7021_MEASURE_TEMP_NHM;
+  command = SI7021_MEASURE_TEMP_HM;
   seq.buf[0].data = &command;
   seq.buf[0].len = 1;
   ret = I2CSPM_Transfer(I2C0, &seq);

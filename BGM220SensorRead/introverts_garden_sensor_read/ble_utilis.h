@@ -9,13 +9,7 @@
 #define BLE_UTILIS_H_
 
 // Updates the sensor data characteristic.
-sl_status_t update_light_ambient_data(void);
-
-sl_status_t update_soil_humidity_data(void);
-
-sl_status_t update_temperature_data(void);
-
-sl_status_t update_relative_humidity_data(void);
+sl_status_t update_sensor_data(void);
 
 sl_status_t send_sensor_data_notification(void);
 

@@ -61,7 +61,7 @@ SL_WEAK void app_process_action(void)
 
     report_sensor_data = false; // Reset flag
 
-    sc = update_light_ambient_data();
+    sc = update_sensor_data();
     app_log_status_error(sc);
 
     if (sc == SL_STATUS_OK) {
@@ -140,7 +140,7 @@ void sl_bt_on_event(sl_bt_msg_t *evt)
 
       // Check the report button state, then update the characteristic and
       // send notification.
-      sc = update_light_ambient_data();
+      sc = update_sensor_data();
       app_log_status_error(sc);
 
       if (sc == SL_STATUS_OK) {
