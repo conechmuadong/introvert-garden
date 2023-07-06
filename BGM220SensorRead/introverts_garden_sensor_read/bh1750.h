@@ -12,7 +12,7 @@
 
 #include "stdint.h"
 
-#define BH1750_ADDRESS 0x23<<1
+#define BH1750_ADDRESS 0x23
 
 #define COMMAND_POWER_ON 0x01
 #define COMMAND_POWER_OFF 0x00

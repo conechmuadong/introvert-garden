@@ -25,7 +25,7 @@ sl_status_t update_light_ambient_data(void)
                                                sizeof(data_send),
                                                (uint8_t*)&data_send);
   if (sc == SL_STATUS_OK) {
-    app_log_info("Light ambient attribute written: 0x%02x", (int)data_send);
+    app_log_info("Light ambient attribute written: 0x%04x\n", (int)data_send);
   }
 
   return sc;
@@ -41,7 +41,7 @@ sl_status_t update_soil_humidity_data(void)
                                                sizeof(data_send),
                                                (uint8_t*)&data_send);
   if (sc == SL_STATUS_OK) {
-    app_log_info("Soil Humidity attribute written: 0x%02x", (int)data_send);
+    app_log_info("Soil Humidity attribute written: 0x%02x\n", (int)data_send);
   }
 
   return sc;
@@ -57,7 +57,7 @@ sl_status_t update_relative_humidity_data(void)
                                                sizeof(data_send),
                                                (uint8_t*)&data_send);
   if (sc == SL_STATUS_OK) {
-    app_log_info("Soil Humidity attribute written: 0x%02x", (int)data_send);
+    app_log_info("Relative Humidity attribute written: 0x%04x\n", (int)data_send);
   }
 
   return sc;
@@ -66,14 +66,14 @@ sl_status_t update_relative_humidity_data(void)
 sl_status_t update_temperature_data(void)
 {
   sl_status_t sc;
-  uint16_t data_send = measure_relative_humidity();
+  uint16_t data_send = measure_temperature();
   // Write attribute in the local GATT database.
   sc = sl_bt_gatt_server_write_attribute_value(gattdb_temperature,
                                                0,
                                                sizeof(data_send),
                                                (uint8_t*)&data_send);
   if (sc == SL_STATUS_OK) {
-    app_log_info("Soil Humidity attribute written: 0x%02x", (int)data_send);
+    app_log_info("Temperature attribute written: 0x%04x \n", (int)data_send);
   }
 
   return sc;
@@ -106,7 +106,7 @@ sl_status_t send_light_ambient_notification(void)
                                     sizeof(data_send),
                                     (uint8_t*)data_send);
   if (sc == SL_STATUS_OK) {
-    app_log_append("Light ambient data sent: 0x%04x\n", (int)data_send);
+    app_log_append("Light ambient data sent: 0x%04x\n", (int)*data_send);
   }
   return sc;
 }
@@ -132,7 +132,7 @@ sl_status_t send_relative_humidity_notification(void)
                                     sizeof(data_send),
                                     (uint8_t*)data_send);
   if (sc == SL_STATUS_OK) {
-    app_log_append("Relative humidity data sent: 0x%04x\n", (int)data_send);
+    app_log_append("Relative humidity data sent: 0x%04x\n", (int)*data_send);
   }
   return sc;
 }
@@ -158,7 +158,7 @@ sl_status_t send_temperature_notification(void)
                                     sizeof(data_send),
                                     (uint8_t*)data_send);
   if (sc == SL_STATUS_OK) {
-    app_log_append("Temperature data sent: 0x%04x\n", (int)data_send);
+    app_log_append("Temperature data sent: 0x%04x\n", (int)*data_send);
   }
   return sc;
 }
@@ -184,7 +184,7 @@ sl_status_t send_soil_humidity_notification(void)
                                     sizeof(data_send),
                                     &data_send);
   if (sc == SL_STATUS_OK) {
-    app_log_append("Temperature data sent: 0x%04x\n", (int)data_send);
+    app_log_append("Soil humidity data sent: 0x%02x\n", (int)data_send);
   }
   return sc;
 }
