@@ -26,13 +26,16 @@ import ie.app.api.FirebaseAPI;
 import ie.app.databinding.FragmentListFieldBinding;
 import ie.app.main.MainActivity;
 import ie.app.models.Field;
+import ie.app.models.OnFieldSelectedListener;
 import ie.app.models.User;
 
-public class FieldlistFragment extends BaseFragment implements AdapterView.OnItemClickListener {
+public class FieldlistFragment extends BaseFragment implements AdapterView.OnItemClickListener, OnFieldSelectedListener {
 
     ListView listView;
     private FragmentListFieldBinding binding;
     private FieldlistAdapter adapter;
+    private OnFieldSelectedListener listener;
+
 
     @Override
     public View onCreateView(
@@ -50,13 +53,16 @@ public class FieldlistFragment extends BaseFragment implements AdapterView.OnIte
     public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        binding.addButton.setOnClickListener(new View.OnClickListener() {
+        listener = new OnFieldSelectedListener() {
             @Override
-            public void onClick(View view) {
+            public void onFieldSelected(Field field) {
+                Log.v("onFieldSelected", field.getName() + " onViewCreated");
+                Bundle bundle = new Bundle();
+                bundle.putString("selectedFieldName", field.getName());
                 NavHostFragment.findNavController(FieldlistFragment.this)
-                        .navigate(R.id.action_FieldlistFragment_to_CustomizedFragment);
+                        .navigate(R.id.action_FieldlistFragment_to_MeasuredDataFragment, bundle);
             }
-        });
+        };
     }
 
     @Override
@@ -68,6 +74,16 @@ public class FieldlistFragment extends BaseFragment implements AdapterView.OnIte
     @Override
     public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
         Field field = (Field) adapterView.getItemAtPosition(i);
+    }
+
+
+    @Override
+    public void onFieldSelected(Field field) {
+        Bundle bundle = new Bundle();
+        bundle.putString("selectedField", field.getName());
+        Log.v("onFieldSelected", field.getName() + " in fieldlist Fragment");
+        NavHostFragment.findNavController(FieldlistFragment.this)
+                .navigate(R.id.action_FieldlistFragment_to_MeasuredDataFragment, bundle);
     }
 
     //---------------------------ACT CLASS---------------------------
@@ -103,9 +119,11 @@ public class FieldlistFragment extends BaseFragment implements AdapterView.OnIte
         @Override
         protected void onPostExecute(List<Field> result) {
             super.onPostExecute(result);
-            adapter = new FieldlistAdapter(context, user.getFields());
+            adapter = new FieldlistAdapter(context, user.getFields(), FieldlistFragment.this);
             listView.setAdapter(adapter);
             listView.setOnItemClickListener(FieldlistFragment.this);
+            // Đăng ký OnFieldSelectedListener cho adapter
+            adapter.setOnFieldSelectedListener(listener);
             if (dialog.isShowing())
                 dialog.dismiss();
         }

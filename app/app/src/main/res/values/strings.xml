@@ -27,4 +27,8 @@
     <string name="number_holes">Tổng số lỗ tưới</string>
     <string name="number_holes_unit">lỗ</string>
     <string name="humidity">Phần trăm độ ẩm </string>
+
+    <string name="delete">Xóa</string>
+    <string name="adjust">Điều chỉnh</string>
+    <string name="status">Tình trạng</string>
 </resources>
