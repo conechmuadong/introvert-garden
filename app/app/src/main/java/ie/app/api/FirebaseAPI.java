@@ -7,16 +7,22 @@ import androidx.annotation.NonNull;
 import com.google.android.gms.tasks.Task;
 import com.google.android.gms.tasks.TaskCompletionSource;
 import com.google.android.gms.tasks.Tasks;
+import com.google.android.material.timepicker.TimeFormat;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.sql.Time;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.SimpleTimeZone;
 import java.util.concurrent.ExecutionException;
 
+import ie.app.fragments.MeasuredDataFragment;
 import ie.app.models.Field;
 import ie.app.models.MeasuredData;
 import ie.app.models.User;
@@ -53,45 +59,101 @@ public class FirebaseAPI {
         return taskCompletionSource.getTask();
     }
 
-    public static Field getField(String call, String userId, String fieldID) {
-        DatabaseReference ref = FirebaseDatabase.getInstance(instance).getReference(call).child(userId).child(fieldID);
+    public static Task<Field> getField(String userID, String fieldID) {
+        DatabaseReference ref = FirebaseDatabase.getInstance().getReference().child(userID).child(fieldID);
 
-        DataSnapshot dataSnapshot = null;
-        try {
-            dataSnapshot = Tasks.await(ref.get());
-        } catch (ExecutionException | InterruptedException e) {
-            e.printStackTrace();
-        }
+        TaskCompletionSource<Field> taskCompletionSource = new TaskCompletionSource<>();
 
-        if (dataSnapshot == null || !dataSnapshot.exists()) {
-            // Không tìm thấy đối tượng Field với ID tương ứng
-            return null;
-        } else {
-            // Lấy thông tin của đối tượng field
-            Field field = dataSnapshot.getValue(Field.class);
-            return field;
-        }
+        ref.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                Field field = new Field();
+
+                taskCompletionSource.setResult(field);
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                taskCompletionSource.setException(databaseError.toException());
+            }
+        });
+
+        return taskCompletionSource.getTask();
     }
 
-    public static MeasuredData getMeasuredData(String call, String userId, String fieldID) {
-        DatabaseReference ref = FirebaseDatabase.getInstance(instance).getReference(call)
-                .child(userId).child(fieldID).child("measured_data");
+    public static Task<MeasuredData> getMeasuredData(String userID, String fieldID) {
+        DatabaseReference ref = FirebaseDatabase.getInstance().getReference()
+                .child(userID).child(fieldID).child("measured_data");
 
-        DataSnapshot dataSnapshot = null;
-        try {
-            dataSnapshot = Tasks.await(ref.get());
-        } catch (ExecutionException | InterruptedException e) {
-            e.printStackTrace();
-        }
+        Log.v("MeasuredDataFragment", userID + " " + fieldID);
 
-        if (dataSnapshot == null || !dataSnapshot.exists()) {
-            // Không tìm thấy đối tượng data với ID tương ứng
-            return null;
-        } else {
-            // Lấy thông tin của đối tượng data
-            MeasuredData measuredData = dataSnapshot.getValue(MeasuredData.class);
-            return measuredData;
-        }
+        TaskCompletionSource<MeasuredData> taskCompletionSource = new TaskCompletionSource<>();
+
+        ref.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                // Tìm ngày gần nhất có dữ liệu
+                Date lastDate = new Date(0, 0, 0);
+                String lastDateString = "00-00-00";
+                for (DataSnapshot childSnapshot : snapshot.getChildren()) {
+                    String dateString = childSnapshot.getKey();
+                    DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+                    Date date = null;
+                    try {
+                        date = dateFormat.parse(dateString);
+                    } catch (ParseException e) {
+                        e.printStackTrace();
+                    }
+                    if(date.after(lastDate)) {
+                        lastDate = date;
+                        lastDateString = dateString;
+                    }
+                }
+                Log.v("MeasuredData API", lastDateString);
+                // Tìm giờ gần nhất có dữ liệu
+                DatabaseReference ref1 = FirebaseDatabase.getInstance().getReference()
+                        .child(userID).child(fieldID).child("measured_data").child(lastDateString);
+                ref1.addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot snapshot) {
+                        Time lastTime = new Time(0, 0, 0);
+                        String lastTimeString = "00:00:00";
+                        MeasuredData data = new MeasuredData();
+                        for (DataSnapshot childSnapshot : snapshot.getChildren()) {
+                            String timeString = childSnapshot.getKey();
+                            DateFormat dateFormat = new SimpleDateFormat("HH:mm:ss");
+                            Date date = null;
+                            try {
+                                date = dateFormat.parse(timeString);
+                            } catch (ParseException e) {
+                                e.printStackTrace();
+                            }
+                            Time time = new Time(date.getTime());
+                            if(time.after(lastTime)) {
+                                lastTime = time;
+                                lastTimeString = timeString;
+                                Log.v("MeasuredData API", lastTimeString);
+                                data = childSnapshot.getValue(MeasuredData.class);
+                                Log.v("MeasuredData API", data.toString());
+                            }
+                        }
+                        taskCompletionSource.setResult(data);
+                    }
+
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+                        System.out.println("Error: " + databaseError.getMessage());
+                    }
+                });
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                taskCompletionSource.setException(databaseError.toException());
+            }
+        });
+
+        return taskCompletionSource.getTask();
     }
 
     /*
