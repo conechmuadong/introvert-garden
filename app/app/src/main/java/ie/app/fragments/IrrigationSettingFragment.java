@@ -1,8 +1,12 @@
 package ie.app.fragments;
 
 import android.app.DatePickerDialog;
+import android.app.ProgressDialog;
 import android.app.TimePickerDialog;
+import android.content.Context;
+import android.os.AsyncTask;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,14 +18,17 @@ import androidx.fragment.app.Fragment;
 
 import java.util.Calendar;
 
+import ie.app.R;
+import ie.app.api.FirebaseAPI;
 import ie.app.databinding.FragmentIrrigationSettingBinding;
 import ie.app.main.MainActivity;
+import ie.app.models.IrrigationInformation;
 
 enum Mode {
     MANUAL,
     AUTO
 }
-public class IrrigationSettingFragment extends Fragment {
+public class IrrigationSettingFragment extends BaseFragment {
 
     private FragmentIrrigationSettingBinding binding;
     private Mode mode = Mode.AUTO;
@@ -32,7 +39,23 @@ public class IrrigationSettingFragment extends Fragment {
             Bundle savedInstanceState
     ) {
 
+        Log.v("Irrigation Setting", field.irrigationInformation.toString());
         binding = FragmentIrrigationSettingBinding.inflate(inflater, container, false);
+        mode = field.irrigationInformation.isIrrigationCheck() == true ? Mode.AUTO : Mode.MANUAL;
+        Log.v("Irrigation Setting", mode.toString());
+
+        if(mode == Mode.AUTO) {
+            binding.manualButton.setBackgroundColor(binding.manualButton.getContext().
+                    getResources().getColor(R.color.disable));
+            binding.autoButton.setBackgroundColor(binding.autoButton.getContext().
+                    getResources().getColor(R.color.colorPrimary));
+        } else {
+            binding.manualButton.setBackgroundColor(binding.manualButton.getContext().
+                    getResources().getColor(R.color.colorPrimary));
+            binding.autoButton.setBackgroundColor(binding.autoButton.getContext().
+                    getResources().getColor(R.color.disable));
+        }
+
         return binding.getRoot();
 
     }
@@ -45,6 +68,10 @@ public class IrrigationSettingFragment extends Fragment {
             public void onClick(View view) {
                 mode = Mode.MANUAL;
                 // set background
+                binding.manualButton.setBackgroundColor(binding.manualButton.getContext().
+                        getResources().getColor(R.color.colorPrimary));
+                binding.autoButton.setBackgroundColor(binding.autoButton.getContext().
+                        getResources().getColor(R.color.disable));
             }
         });
 
@@ -53,6 +80,10 @@ public class IrrigationSettingFragment extends Fragment {
             public void onClick(View view) {
                 mode = Mode.AUTO;
                 // set background
+                binding.manualButton.setBackgroundColor(binding.manualButton.getContext().
+                        getResources().getColor(R.color.disable));
+                binding.autoButton.setBackgroundColor(binding.autoButton.getContext().
+                        getResources().getColor(R.color.colorPrimary));
             }
         });
 
@@ -103,5 +134,6 @@ public class IrrigationSettingFragment extends Fragment {
         super.onDestroyView();
         binding = null;
     }
+
 
 }

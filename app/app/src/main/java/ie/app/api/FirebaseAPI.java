@@ -24,6 +24,7 @@ import java.util.concurrent.ExecutionException;
 
 import ie.app.fragments.MeasuredDataFragment;
 import ie.app.models.Field;
+import ie.app.models.IrrigationInformation;
 import ie.app.models.MeasuredData;
 import ie.app.models.User;
 
@@ -155,6 +156,32 @@ public class FirebaseAPI {
 
         return taskCompletionSource.getTask();
     }
+
+    public static Task<IrrigationInformation> getIrrigationInformation(String userID, String fieldID) {
+        DatabaseReference ref = FirebaseDatabase.getInstance().getReference()
+                .child(userID).child(fieldID).child("irrigation_information");
+
+        Log.v("API", userID + " " + fieldID);
+
+        TaskCompletionSource<IrrigationInformation> taskCompletionSource = new TaskCompletionSource<>();
+        ref.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                IrrigationInformation data = new IrrigationInformation();
+                data = snapshot.getValue(IrrigationInformation.class);
+                Log.v("API", data.toString());
+                taskCompletionSource.setResult(data);
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                taskCompletionSource.setException(databaseError.toException());
+            }
+        });
+
+        return taskCompletionSource.getTask();
+    }
+
 
     /*
     public static  String insert(String call, Donation donation) {

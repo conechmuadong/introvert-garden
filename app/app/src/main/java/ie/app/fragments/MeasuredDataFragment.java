@@ -24,6 +24,7 @@ import ie.app.R;
 import ie.app.api.FirebaseAPI;
 import ie.app.databinding.FragmentMeasuredDataBinding;
 import ie.app.models.Field;
+import ie.app.models.IrrigationInformation;
 import ie.app.models.MeasuredData;
 
 public class MeasuredDataFragment extends BaseFragment {
@@ -137,7 +138,7 @@ public class MeasuredDataFragment extends BaseFragment {
         protected void onPreExecute() {
             super.onPreExecute();
             this.dialog = new ProgressDialog(context, 1);
-            this.dialog.setMessage("Retrieving Measured Data");
+            this.dialog.setMessage("Retrieving Data");
             this.dialog.show();
         }
 
@@ -146,7 +147,10 @@ public class MeasuredDataFragment extends BaseFragment {
             try {
                 Task<MeasuredData> task = FirebaseAPI.getMeasuredData((String) params[0], (String) params[1]);
                 field.measuredData = Tasks.await(task);
-                Log.v("MeasuredDataFragment", "Got data: " + field.measuredData.toString());
+                Task<IrrigationInformation> task1 = FirebaseAPI.getIrrigationInformation((String) params[0], (String) params[1]);
+                field.irrigationInformation = Tasks.await(task1);
+                Log.v("MeasuredDataFragment", "Got data: " + field.measuredData.toString()
+                        + field.irrigationInformation.toString());
                 return field.measuredData;
             } catch (Exception e) {
                 Log.v("ASYNC", "ERROR : " + e);
