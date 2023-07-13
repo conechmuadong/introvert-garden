@@ -182,6 +182,14 @@ public class FirebaseAPI {
         return taskCompletionSource.getTask();
     }
 
+    public static  String insert(String userID, String fieldID, String startTime) {
+        DatabaseReference ref = FirebaseDatabase.getInstance().getReference()
+                .child(userID).child(fieldID).child("irrigation_information");
+
+        String donationKey = "startTime";
+        ref.child(donationKey).setValue(startTime);
+        return "added to clould";
+    }
 
     /*
     public static  String insert(String call, Donation donation) {
