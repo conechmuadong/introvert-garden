@@ -88,7 +88,7 @@ sl_status_t update_temperature_data(void)
 sl_status_t send_light_ambient_notification(void)
 {
   sl_status_t sc;
-  uint16_t *data_send;
+  uint16_t data_send = (uint16_t*)calloc(1,sizeof(uint16_t));
   size_t data_len;
 
   // Read report button characteristic stored in local GATT database.
@@ -96,7 +96,7 @@ sl_status_t send_light_ambient_notification(void)
                                               0,
                                               sizeof(data_send),
                                               &data_len,
-                                              (uint8_t*)data_send);
+                                              (uint8_t*)&data_send);
   if (sc != SL_STATUS_OK) {
     return sc;
   }
@@ -106,7 +106,7 @@ sl_status_t send_light_ambient_notification(void)
                                     sizeof(data_send),
                                     (uint8_t*)data_send);
   if (sc == SL_STATUS_OK) {
-    app_log_append("Light ambient data sent: 0x%04x\n", (int)*data_send);
+    app_log_append("Light ambient data sent: 0x%04x\n", (int)data_send);
   }
   return sc;
 }
@@ -114,7 +114,7 @@ sl_status_t send_light_ambient_notification(void)
 sl_status_t send_relative_humidity_notification(void)
 {
   sl_status_t sc;
-  uint16_t *data_send;
+  uint16_t data_send;
   size_t data_len;
 
   // Read report button characteristic stored in local GATT database.
@@ -122,7 +122,7 @@ sl_status_t send_relative_humidity_notification(void)
                                               0,
                                               sizeof(data_send),
                                               &data_len,
-                                              (uint8_t*)data_send);
+                                              (uint8_t*)&data_send);
   if (sc != SL_STATUS_OK) {
     return sc;
   }
@@ -130,9 +130,9 @@ sl_status_t send_relative_humidity_notification(void)
   // Send characteristic notification.
   sc = sl_bt_gatt_server_notify_all(gattdb_relative_humidity,
                                     sizeof(data_send),
-                                    (uint8_t*)data_send);
+                                    (uint8_t*)&data_send);
   if (sc == SL_STATUS_OK) {
-    app_log_append("Relative humidity data sent: 0x%04x\n", (int)*data_send);
+    app_log_append("Relative humidity data sent: 0x%04x\n", (int)data_send);
   }
   return sc;
 }
@@ -140,7 +140,7 @@ sl_status_t send_relative_humidity_notification(void)
 sl_status_t send_temperature_notification(void)
 {
   sl_status_t sc;
-  uint16_t *data_send;
+  uint16_t data_send;
   size_t data_len;
 
   // Read report button characteristic stored in local GATT database.
@@ -148,7 +148,7 @@ sl_status_t send_temperature_notification(void)
                                               0,
                                               sizeof(data_send),
                                               &data_len,
-                                              (uint8_t*)data_send);
+                                              (uint8_t*)&data_send);
   if (sc != SL_STATUS_OK) {
     return sc;
   }
@@ -156,9 +156,9 @@ sl_status_t send_temperature_notification(void)
   // Send characteristic notification.
   sc = sl_bt_gatt_server_notify_all(gattdb_temperature,
                                     sizeof(data_send),
-                                    (uint8_t*)data_send);
+                                    (uint8_t*)&data_send);
   if (sc == SL_STATUS_OK) {
-    app_log_append("Temperature data sent: 0x%04x\n", (int)*data_send);
+    app_log_append("Temperature data sent: 0x%04x\n", (int)data_send);
   }
   return sc;
 }

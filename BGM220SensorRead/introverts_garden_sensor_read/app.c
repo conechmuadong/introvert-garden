@@ -36,6 +36,7 @@
 #include "sl_i2cspm.h"
 #include "ble_utilis.h"
 
+
 // The advertising set handle allocated from Bluetooth stack.
 static uint8_t advertising_set_handle = 0xff;
 
@@ -48,6 +49,9 @@ static bool report_sensor_data = false;
 SL_WEAK void app_init(void)
 {
   sl_i2cspm_init_instances();
+//  GPIO_PinModeSet(gpioPortC, 2, gpioModeInput, 0);
+//  GPIO_PinModeSet(gpioPortB, 1, gpioModeInput, 0);
+  sl_power_manager_init();
 }
 
 /**************************************************************************//**
