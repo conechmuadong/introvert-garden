@@ -77,6 +77,7 @@ public class FieldlistFragment extends BaseFragment implements AdapterView.OnIte
     }
 
 
+
     @Override
     public void onFieldSelected(Field field) {
         Bundle bundle = new Bundle();
@@ -138,3 +139,10 @@ public class FieldlistFragment extends BaseFragment implements AdapterView.OnIte
     }
 
 }
+
+/*TODO
+* Thêm xử lý cho nút add - Thêm một cánh đồng -> ghi lại cho database -> Get data mới được ghi
+* Xử lý menu điều chỉnh
+* Xử lý khi nhấn delete - Xóa một cánh đồng -> ghi lại cho database -> Get data mới được ghi
+* Đổi màu nền các field khi một field được nhấn vào tùy chọn
+*/

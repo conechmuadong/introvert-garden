@@ -88,3 +88,10 @@ public class IrrigationInformation {
         FirebaseAPI.insert("user", field, startTime);
     }
 }
+
+/* TODO
+- Lấy lượng nước tưới được nhập
+- Tính toán lại thời gian kết thúc tưới
+- Cài đặt chế độ Auto không cho phép chỉnh sửa
+- Cập nhật chế độ manual - auto lên database
+*/

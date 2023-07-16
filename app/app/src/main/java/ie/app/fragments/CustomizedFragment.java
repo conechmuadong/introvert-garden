@@ -55,3 +55,6 @@ public class CustomizedFragment extends Fragment {
     }
 
 }
+// Adapter cho danh sách giai đoạn
+// Lấy thông tin người dùng nhập và update database
+// Sử dụng thông tin để tính toán cho mô hình

@@ -191,54 +191,6 @@ public class FirebaseAPI {
         return "added to clould";
     }
 
-    /*
-    public static  String insert(String call, Donation donation) {
-        DatabaseReference donationsRef = FirebaseDatabase.getInstance(instance).getReference(call);
-        String donationKey = donation._id;
-        Log.v("Firebase", "donationKey:" + donationKey );
-        donationsRef.child(donationKey).setValue(donation);
-        return "added to clould";
-    }
-
-    public static String delete(String call, String donationId) {
-        DatabaseReference ref = FirebaseDatabase.getInstance(instance).getReference(call).child(donationId);
-        final String[] result = new String[1];
-        ref.removeValue(new DatabaseReference.CompletionListener() {
-            @Override
-            public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
-                if (databaseError == null) {
-                    // Xóa đối tượng Donation thành công
-                    result[0] = "Delete successful";
-                    Log.d("TAG", "Donation deleted successfully");
-                } else {
-                    // Xóa đối tượng Donation thất bại
-                    result[0] = "Delete failed";
-                    Log.w("TAG", "Failed to delete donation", databaseError.toException());
-                }
-            }
-        });
-        return result[0];
-    }
-
-    public static String deleteAll(String call) {
-        DatabaseReference ref = FirebaseDatabase.getInstance(instance).getReference(call);
-        final String[] result = new String[1];
-
-        ref.removeValue(new DatabaseReference.CompletionListener() {
-            @Override
-            public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
-                if (databaseError == null) {
-                    // Xóa toàn bộ cơ sở dữ liệu thành công
-                    result[0] = "Delete successful";
-                    Log.d("TAG", "All data deleted successfully");
-                } else {
-                    result[0] = "Delete failed";
-                    // Xóa toàn bộ cơ sở dữ liệu thất bại
-                    Log.w("TAG", "Failed to delete all data", databaseError.toException());
-                }
-            }
-        });
-
-        return result[0];
-    } */
+    // API xóa một cánh đồng
+    // API thêm cánh đồng
 }
