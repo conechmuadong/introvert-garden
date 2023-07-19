@@ -55,12 +55,17 @@ public class FieldlistFragment extends BaseFragment implements AdapterView.OnIte
 
         listener = new OnFieldSelectedListener() {
             @Override
-            public void onFieldSelected(Field field) {
+            public void onFieldSelected(Field field, String type) {
                 Log.v("onFieldSelected", field.getName() + " onViewCreated");
                 Bundle bundle = new Bundle();
                 bundle.putString("selectedFieldName", field.getName());
-                NavHostFragment.findNavController(FieldlistFragment.this)
-                        .navigate(R.id.action_FieldlistFragment_to_MeasuredDataFragment, bundle);
+                if(type == "status") {
+                    NavHostFragment.findNavController(FieldlistFragment.this)
+                            .navigate(R.id.action_FieldlistFragment_to_MeasuredDataFragment, bundle);
+                } else if(type == "adjust") {
+                    NavHostFragment.findNavController(FieldlistFragment.this)
+                            .navigate(R.id.action_FieldlistFragment_to_CustomizedFragment, bundle);
+                }
             }
         };
     }
@@ -79,12 +84,17 @@ public class FieldlistFragment extends BaseFragment implements AdapterView.OnIte
 
 
     @Override
-    public void onFieldSelected(Field field) {
+    public void onFieldSelected(Field field, String type) {
         Bundle bundle = new Bundle();
         bundle.putString("selectedField", field.getName());
         Log.v("onFieldSelected", field.getName() + " in fieldlist Fragment");
-        NavHostFragment.findNavController(FieldlistFragment.this)
-                .navigate(R.id.action_FieldlistFragment_to_MeasuredDataFragment, bundle);
+        if(type == "status") {
+            NavHostFragment.findNavController(FieldlistFragment.this)
+                    .navigate(R.id.action_FieldlistFragment_to_MeasuredDataFragment, bundle);
+        } else if(type == "adjust") {
+            NavHostFragment.findNavController(FieldlistFragment.this)
+                    .navigate(R.id.action_FieldlistFragment_to_CustomizedFragment, bundle);
+        }
     }
 
     //---------------------------ACT CLASS---------------------------

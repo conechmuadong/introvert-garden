@@ -18,14 +18,19 @@ import java.sql.Time;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
+import java.util.Map;
 import java.util.SimpleTimeZone;
 import java.util.concurrent.ExecutionException;
 
 import ie.app.fragments.MeasuredDataFragment;
+import ie.app.models.CustomizedParameter;
 import ie.app.models.Field;
 import ie.app.models.IrrigationInformation;
 import ie.app.models.MeasuredData;
+import ie.app.models.Phase;
 import ie.app.models.User;
 
 
@@ -157,6 +162,7 @@ public class FirebaseAPI {
         return taskCompletionSource.getTask();
     }
 
+    // successfull
     public static Task<IrrigationInformation> getIrrigationInformation(String userID, String fieldID) {
         DatabaseReference ref = FirebaseDatabase.getInstance().getReference()
                 .child(userID).child(fieldID).child("irrigation_information");
@@ -164,13 +170,53 @@ public class FirebaseAPI {
         Log.v("API", userID + " " + fieldID);
 
         TaskCompletionSource<IrrigationInformation> taskCompletionSource = new TaskCompletionSource<>();
-        ref.addListenerForSingleValueEvent(new ValueEventListener() {
+        ref.addListenerForSingleValueEvent (new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 IrrigationInformation data = new IrrigationInformation();
                 data = snapshot.getValue(IrrigationInformation.class);
                 Log.v("API", data.toString());
                 taskCompletionSource.setResult(data);
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                taskCompletionSource.setException(databaseError.toException());
+            }
+        });
+
+        return taskCompletionSource.getTask();
+    }
+
+    // unsuccessfull
+    public static Task<CustomizedParameter> getCustomizedParameter(String userID, String fieldID) {
+        DatabaseReference ref = FirebaseDatabase.getInstance().getReference()
+                .child(userID).child(fieldID).child("customized_parameter");
+
+        Log.v("API", userID + " " + fieldID);
+
+        TaskCompletionSource<CustomizedParameter> taskCompletionSource = new TaskCompletionSource<>();
+        ref.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                CustomizedParameter customizedParameter = new CustomizedParameter();
+                customizedParameter.acreage = dataSnapshot.child("acreage").getValue(Float.class);
+                customizedParameter.autoIrrigation = dataSnapshot.child("autoIrrigation").getValue(Boolean.class);
+                customizedParameter.distanceBetweenHole = dataSnapshot.child("distanceBetweenHole").getValue(Float.class);
+                customizedParameter.distanceBetweenRow = dataSnapshot.child("distanceBetweenRow").getValue(Float.class);
+                customizedParameter.dripRate = dataSnapshot.child("dripRate").getValue(Float.class);
+                customizedParameter.fertilizationLevel = dataSnapshot.child("fertilizationLevel").getValue(Float.class);
+                customizedParameter.numberOfHoles = dataSnapshot.child("numberOfHoles").getValue(Integer.class);
+                customizedParameter.scaleRain = dataSnapshot.child("scaleRain").getValue(Float.class);
+
+                for (DataSnapshot phaseSnapshot : dataSnapshot.child("fieldCapacity").getChildren()) {
+                    Phase phase = phaseSnapshot.getValue(Phase.class);
+                    phase.setName(phaseSnapshot.getKey());
+                    customizedParameter.fieldCapacity.add(phase);
+                }
+
+                Log.v("API", customizedParameter.toString());
+                taskCompletionSource.setResult(customizedParameter);
             }
 
             @Override

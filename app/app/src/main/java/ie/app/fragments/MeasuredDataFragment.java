@@ -23,6 +23,7 @@ import java.util.concurrent.ExecutionException;
 import ie.app.R;
 import ie.app.api.FirebaseAPI;
 import ie.app.databinding.FragmentMeasuredDataBinding;
+import ie.app.models.CustomizedParameter;
 import ie.app.models.Field;
 import ie.app.models.IrrigationInformation;
 import ie.app.models.MeasuredData;

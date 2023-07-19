@@ -47,12 +47,17 @@ public class FieldlistAdapter extends ArrayAdapter<Field> {
             @Override
             public boolean onMenuItemClick(MenuItem item) {
                 if (item.getItemId() == R.id.adjust) {
-                    // xử lý tùy chọn 1 cho selectedField
+                    // Gửi thông tin về cánh đồng được chọn tới Fragment chỉnh sửa thông tin (CustomizedFragment)
+                    Log.v("onFieldSelected", "clicked adjust item");
+                    if (listener != null) {
+                        listener.onFieldSelected(field, "adjust");
+                        Log.v("onFieldSelected", field.getName());
+                    }
                 } else if (item.getItemId() == R.id.status) {
                     // Gửi thông tin về cánh đồng được chọn tới Fragment chứa thông tin chi tiết về cánh đồng (MeasuredDataFragment)
                     Log.v("onFieldSelected", "clicked status item");
                     if (listener != null) {
-                        listener.onFieldSelected(field);
+                        listener.onFieldSelected(field, "status");
                         Log.v("onFieldSelected", field.getName());
                     }
                     return true;
