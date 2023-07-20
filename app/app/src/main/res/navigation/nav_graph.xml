@@ -34,7 +34,17 @@
             android:id="@+id/action_FieldlistFragment_to_CustomizedFragment"
             app:destination="@id/CustomizedFragment" />
 
+        <action
+            android:id="@id/action_FieldlistFragment_to_AddNewFieldFragment"
+            app:destination="@+id/AddNewFieldFragment"/>
+
     </fragment>
+
+    <fragment
+        android:id="@+id/AddNewFieldFragment"
+        android:name="ie.app.fragments.AddNewFieldFragment"
+        android:label="Thêm cánh đồng"
+        tools:layout="@layout/fragment_add_new_field"/>
 
     <fragment
         android:id="@+id/CustomizedFragment"

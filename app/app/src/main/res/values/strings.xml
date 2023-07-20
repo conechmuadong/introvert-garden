@@ -31,4 +31,9 @@
     <string name="delete">Xóa</string>
     <string name="adjust">Điều chỉnh</string>
     <string name="status">Tình trạng</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="hint_name">Tên</string>
+    <string name="insert_new_name">Nhập tên cánh đồng:</string>
+    <string name="done">Xong</string>
 </resources>

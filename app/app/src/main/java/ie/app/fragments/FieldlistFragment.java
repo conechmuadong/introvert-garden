@@ -9,6 +9,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.Button;
 import android.widget.ListView;
 import android.widget.Toast;
 
@@ -36,6 +37,7 @@ public class FieldlistFragment extends BaseFragment implements AdapterView.OnIte
     private FieldlistAdapter adapter;
     private OnFieldSelectedListener listener;
 
+    private Button addBtn;
 
     @Override
     public View onCreateView(
@@ -46,6 +48,8 @@ public class FieldlistFragment extends BaseFragment implements AdapterView.OnIte
 
         listView = (ListView) binding.listField;
         new GetAllTask(getContext()).execute("/user");
+
+        addBtn = binding.addButton;
 
         return binding.getRoot();
     }
@@ -68,6 +72,14 @@ public class FieldlistFragment extends BaseFragment implements AdapterView.OnIte
                 }
             }
         };
+
+        addBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                NavHostFragment.findNavController(FieldlistFragment.this)
+                        .navigate(R.id.action_FieldlistFragment_to_AddNewFieldFragment);
+            }
+        });
     }
 
     @Override
