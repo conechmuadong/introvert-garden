@@ -1,6 +1,7 @@
 package ie.app.api;
 
 import android.util.Log;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 
@@ -18,6 +19,7 @@ import java.sql.Time;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -25,6 +27,7 @@ import java.util.Map;
 import java.util.SimpleTimeZone;
 import java.util.concurrent.ExecutionException;
 
+import ie.app.fragments.AddNewFieldFragment;
 import ie.app.fragments.MeasuredDataFragment;
 import ie.app.models.CustomizedParameter;
 import ie.app.models.Field;
@@ -237,6 +240,31 @@ public class FirebaseAPI {
         return "added to clould";
     }
 
+    public static String addField(String userID, String name) {
+        DatabaseReference ref = FirebaseDatabase.getInstance().getReference()
+                .child(userID).child(name);
+
+        DatabaseReference cus = ref.child("customized_parameter");
+        cus.child("acreage").setValue(0);
+        cus.child("autoIrrigation").setValue(true);
+        cus.child("distanceBetweenHole").setValue(0);
+        cus.child("distanceBetweenRow").setValue(0);
+        cus.child("dripRate").setValue(0);
+        cus.child("fertilizationLevel").setValue(0);
+        cus.child("numberOfHoles").setValue(0);
+        cus.child("scaleRain").setValue(0);
+
+//        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+//            DatabaseReference mea = ref.child("measured_data").child(LocalDate.now().toString()).child("00:00:00");
+//            mea.child("air_humidity").setValue(30);
+//            mea.child("radiation").setValue(30);
+//            mea.child("soil_humidity_30").setValue(30);
+//            mea.child("soil_humidity_60").setValue(30);
+//            mea.child("temperature").setValue(30);
+//        }
+
+        return "added to cloud";
+    }
+
     // API xóa một cánh đồng
-    // API thêm cánh đồng
 }

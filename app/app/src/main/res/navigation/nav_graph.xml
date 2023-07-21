@@ -44,7 +44,8 @@
         android:id="@+id/AddNewFieldFragment"
         android:name="ie.app.fragments.AddNewFieldFragment"
         android:label="Thêm cánh đồng"
-        tools:layout="@layout/fragment_add_new_field"/>
+        tools:layout="@layout/fragment_add_new_field">
+    </fragment>
 
     <fragment
         android:id="@+id/CustomizedFragment"
