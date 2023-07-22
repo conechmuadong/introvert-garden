@@ -228,12 +228,26 @@ public class FirebaseAPI {
         return taskCompletionSource.getTask();
     }
 
-    public static  String insert(String userID, String fieldID, String startTime) {
+    public static  String changeIrrigationTime(String userID, String fieldID, String startTime) {
         DatabaseReference ref = FirebaseDatabase.getInstance().getReference()
                 .child(userID).child(fieldID).child("irrigation_information");
 
         String donationKey = "startTime";
         ref.child(donationKey).setValue(startTime);
+        return "added to clould";
+    }
+
+    public static  String changeCustomizedParameter(String userID, String fieldID, CustomizedParameter parameter) {
+        DatabaseReference ref = FirebaseDatabase.getInstance().getReference()
+                .child(userID).child(fieldID).child("customized_parameter");
+
+        ref.child("acreage").setValue(parameter.acreage);
+        ref.child("distanceBetweenHole").setValue(parameter.distanceBetweenHole);
+        ref.child("distanceBetweenRow").setValue(parameter.distanceBetweenRow);
+        ref.child("dripRate").setValue(parameter.dripRate);
+        ref.child("fertilizationLevel").setValue(parameter.fertilizationLevel);
+        ref.child("numberOfHoles").setValue(parameter.numberOfHoles);
+        ref.child("scaleRain").setValue(parameter.scaleRain);
         return "added to clould";
     }
 

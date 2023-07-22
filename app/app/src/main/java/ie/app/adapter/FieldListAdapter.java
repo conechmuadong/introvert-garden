@@ -20,23 +20,19 @@ import ie.app.models.Field;
 import ie.app.models.OnFieldSelectedListener;
 
 
-public class FieldlistAdapter extends ArrayAdapter<Field> {
+public class FieldListAdapter extends ArrayAdapter<Field> {
     private Context context;
     public List<Field> fields;
     private OnFieldSelectedListener listener;
     public void setOnFieldSelectedListener(OnFieldSelectedListener listener) {
         this.listener = listener;
     }
-    public FieldlistAdapter(Context context, List<Field> fields, OnFieldSelectedListener listener) {
+    public FieldListAdapter(Context context, List<Field> fields, OnFieldSelectedListener listener) {
         super(context, R.layout.fragment_list_field, fields);
         Log.v("Adapter", "Constructor: " + fields.size());
         this.context = context;
         this.fields = fields;
         this.listener = listener;
-    }
-
-    public FieldlistAdapter(@NonNull Context context, int resource) {
-        super(context, resource);
     }
 
     private void showPopupMenu(View view, final Field field) {

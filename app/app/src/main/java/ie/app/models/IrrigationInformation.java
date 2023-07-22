@@ -79,13 +79,13 @@ public class IrrigationInformation {
     public void setNewStartDate(String newStartDate, String field) {
         this._startDate = newStartDate;
         this.startTime = newStartDate + " " + _startTime;
-        FirebaseAPI.insert("user", field, startTime);
+        FirebaseAPI.changeIrrigationTime("user", field, startTime);
     }
 
     public void setNewStartTime(String newStartTime, String field) {
         this._startTime = newStartTime;
         this.startTime = _startDate + " " + newStartTime;
-        FirebaseAPI.insert("user", field, startTime);
+        FirebaseAPI.changeIrrigationTime("user", field, startTime);
     }
 }
 

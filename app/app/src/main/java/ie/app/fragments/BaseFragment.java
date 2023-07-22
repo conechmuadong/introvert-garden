@@ -6,6 +6,6 @@ import ie.app.models.Field;
 import ie.app.models.User;
 
 public class BaseFragment extends Fragment {
-    static User user;
-    static Field field = new Field();
+    public static User user;
+    public static Field field = new Field();
 }

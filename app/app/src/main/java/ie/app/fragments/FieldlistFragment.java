@@ -21,10 +21,9 @@ import com.google.android.gms.tasks.Tasks;
 import java.util.List;
 
 import ie.app.R;
-import ie.app.adapter.FieldlistAdapter;
+import ie.app.adapter.FieldListAdapter;
 import ie.app.api.FirebaseAPI;
 import ie.app.databinding.FragmentListFieldBinding;
-import ie.app.main.MainActivity;
 import ie.app.models.Field;
 import ie.app.models.OnFieldSelectedListener;
 import ie.app.models.User;
@@ -33,7 +32,7 @@ public class FieldlistFragment extends BaseFragment implements AdapterView.OnIte
 
     ListView listView;
     private FragmentListFieldBinding binding;
-    private FieldlistAdapter adapter;
+    private FieldListAdapter adapter;
     private OnFieldSelectedListener listener;
 
 
@@ -130,7 +129,7 @@ public class FieldlistFragment extends BaseFragment implements AdapterView.OnIte
         @Override
         protected void onPostExecute(List<Field> result) {
             super.onPostExecute(result);
-            adapter = new FieldlistAdapter(context, user.getFields(), FieldlistFragment.this);
+            adapter = new FieldListAdapter(context, user.getFields(), FieldlistFragment.this);
             listView.setAdapter(adapter);
             listView.setOnItemClickListener(FieldlistFragment.this);
             // Đăng ký OnFieldSelectedListener cho adapter

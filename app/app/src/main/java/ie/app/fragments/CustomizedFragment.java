@@ -1,13 +1,20 @@
 package ie.app.fragments;
 
+import static androidx.core.content.ContextCompat.getSystemService;
+
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.EditorInfo;
+import android.view.inputmethod.InputMethodManager;
+import android.widget.AdapterView;
+import android.widget.ListView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -15,18 +22,29 @@ import androidx.annotation.NonNull;
 import com.google.android.gms.tasks.Task;
 import com.google.android.gms.tasks.Tasks;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.ExecutionException;
 
+import ie.app.adapter.FieldListAdapter;
+import ie.app.adapter.PhaseListAdapter;
 import ie.app.api.FirebaseAPI;
 import ie.app.databinding.FragmentCustomizedBinding;
 import ie.app.models.CustomizedParameter;
+import ie.app.models.Field;
 import ie.app.models.IrrigationInformation;
 import ie.app.models.MeasuredData;
+import ie.app.models.OnFieldSelectedListener;
 import ie.app.models.Phase;
 
-public class CustomizedFragment extends BaseFragment {
+public class CustomizedFragment extends BaseFragment implements AdapterView.OnItemClickListener{
 
     private FragmentCustomizedBinding binding;
+    private OnFieldSelectedListener listener;
+    ListView listView;
+
+    private PhaseListAdapter adapter;
+    private List<Phase> phases = field.customizedParameter.fieldCapacity;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -42,6 +60,8 @@ public class CustomizedFragment extends BaseFragment {
             getFieldByName(selectedFieldName);
         }
 
+        listView = (ListView) binding.listPhase;
+
         updateUI();
 
         return view;
@@ -54,8 +74,24 @@ public class CustomizedFragment extends BaseFragment {
             @Override
             public void onClick(View view) {
                 Phase phase = new Phase();
-                //field.customizedParameter.fieldCapacity.add(phase);
+                // Lấy thông tin phase
+                phases.add(phase);
                 //adapter.notifyDataSetChanged();
+            }
+        });
+
+        binding.updateButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                field.customizedParameter.acreage = Float.parseFloat(binding.areaEditText.getText().toString());
+                field.customizedParameter.numberOfHoles = Integer.parseInt(binding.numberHolesEditText.getText().toString());
+                field.customizedParameter.distanceBetweenHole = Float.parseFloat(binding.distanceHoleEditText.getText().toString());
+                field.customizedParameter.distanceBetweenRow = Float.parseFloat(binding.distanceRowEditText.getText().toString());
+                field.customizedParameter.dripRate = Float.parseFloat(binding.dripRateEditText.getText().toString());
+                field.customizedParameter.scaleRain = Float.parseFloat(binding.scaleRainEditText.getText().toString());
+                field.customizedParameter.fertilizationLevel = Float.parseFloat(binding.ferLevelEditText.getText().toString());
+                field.customizedParameter.fieldCapacity = phases;
+                FirebaseAPI.changeCustomizedParameter("user", field.name, field.customizedParameter);
             }
         });
     }
@@ -91,8 +127,54 @@ public class CustomizedFragment extends BaseFragment {
     }
 
     private void updateUI() {
+        if(field == null) return;
+        String fieldname = field.name;
+        Log.v("MeasuredDataFragment", fieldname);
+        TextView fieldnameView = binding.fieldName;
+        fieldnameView.setText(fieldname);
+        fieldnameView.setLineSpacing(10f, 1f);
 
+        String areaText = "" + field.customizedParameter.acreage;
+        TextView areaView = binding.areaEditText;
+        areaView.setText(areaText);
+        areaView.setLineSpacing(10f, 1f);
+
+        String numberHoleText = "" + field.customizedParameter.numberOfHoles;
+        TextView numberHoleView = binding.numberHolesEditText;
+        numberHoleView.setText(numberHoleText);
+        numberHoleView.setLineSpacing(10f, 1f);
+
+        String distanceHoleText = "" + field.customizedParameter.distanceBetweenHole;
+        TextView distanceHoleView = binding.distanceHoleEditText;
+        distanceHoleView.setText(distanceHoleText);
+        distanceHoleView.setLineSpacing(10f, 1f);
+
+        String distanceRowText = "" + field.customizedParameter.distanceBetweenRow;
+        TextView distanceRowView = binding.distanceRowEditText;
+        distanceRowView.setText(distanceRowText);
+        distanceRowView.setLineSpacing(10f, 1f);
+
+        String dripRateText = "" + field.customizedParameter.dripRate;
+        TextView dripRateView = binding.dripRateEditText;
+        dripRateView.setText(dripRateText);
+        dripRateView.setLineSpacing(10f, 1f);
+
+        String scaleRainText = "" + field.customizedParameter.scaleRain;
+        TextView scaleRainView = binding.scaleRainEditText;
+        scaleRainView.setText(scaleRainText);
+        scaleRainView.setLineSpacing(10f, 1f);
+
+        String ferLevelText = "" + field.customizedParameter.fertilizationLevel;
+        TextView ferLevelView = binding.ferLevelEditText;
+        ferLevelView.setText(ferLevelText);
+        ferLevelView.setLineSpacing(10f, 1f);
     }
+
+    @Override
+    public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+        Phase phase = (Phase) adapterView.getItemAtPosition(i);
+    }
+
 
     //---------------------------ACT CLASS---------------------------
 
@@ -128,6 +210,10 @@ public class CustomizedFragment extends BaseFragment {
         @Override
         protected void onPostExecute(CustomizedParameter result) {
             super.onPostExecute(result);
+            adapter = new PhaseListAdapter(context, field.customizedParameter.fieldCapacity);
+            listView.setAdapter(adapter);
+            listView.setOnItemClickListener(CustomizedFragment.this);
+            // Đăng ký OnFieldSelectedListener cho adapter
             field.customizedParameter = result;
             if (dialog.isShowing())
                 dialog.dismiss();
