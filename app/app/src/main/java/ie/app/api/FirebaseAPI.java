@@ -254,14 +254,20 @@ public class FirebaseAPI {
         cus.child("numberOfHoles").setValue(0);
         cus.child("scaleRain").setValue(0);
 
-//        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
-//            DatabaseReference mea = ref.child("measured_data").child(LocalDate.now().toString()).child("00:00:00");
-//            mea.child("air_humidity").setValue(30);
-//            mea.child("radiation").setValue(30);
-//            mea.child("soil_humidity_30").setValue(30);
-//            mea.child("soil_humidity_60").setValue(30);
-//            mea.child("temperature").setValue(30);
-//        }
+        DatabaseReference irr = ref.child("irrigation_information");
+        irr.child("duration").setValue("0");
+        irr.child("endTime").setValue("0");
+        irr.child("irrigationCheck").setValue(false);
+        irr.child("startTime").setValue("0");
+
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+            DatabaseReference mea = ref.child("measured_data").child(LocalDate.now().toString()).child("00:00:00");
+            mea.child("air_humidity").setValue(30);
+            mea.child("radiation").setValue(30);
+            mea.child("soil_humidity_30").setValue(30);
+            mea.child("soil_humidity_60").setValue(30);
+            mea.child("temperature").setValue(30);
+        }
 
         return "added to cloud";
     }

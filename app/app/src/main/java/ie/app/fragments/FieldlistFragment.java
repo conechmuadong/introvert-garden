@@ -118,18 +118,18 @@ public class FieldlistFragment extends BaseFragment implements AdapterView.OnIte
 
     private void confirmAlert(Field field) {
         builder = new AlertDialog.Builder(this.getContext());
-        builder.setTitle("Xác nhận?");
-        builder.setMessage("Bạn có chắc muốn xoá" + field.getName() + "không?");
+        builder.setTitle("XÁC NHẬN?");
+        builder.setMessage("Bạn có chắc muốn xoá " + field.getName().toUpperCase() + " không?");
 
         // Set Cancelable false for when the user clicks on the outside the Dialog Box then it will remain show
         builder.setCancelable(false);
 
-        builder.setNegativeButton("No", (DialogInterface.OnClickListener) (dialog, which) -> {
+        builder.setNegativeButton("Không", (DialogInterface.OnClickListener) (dialog, which) -> {
             // If user click no then dialog box is canceled.
             dialog.cancel();
         });
 
-        builder.setPositiveButton("Yes", (DialogInterface.OnClickListener) (dialog, which) -> {
+        builder.setPositiveButton("Có", (DialogInterface.OnClickListener) (dialog, which) -> {
             FirebaseAPI.deleteField("user", field.getName());
             new GetAllTask(getContext()).execute("/user");
         });
