@@ -6,12 +6,22 @@
     android:layout_height="match_parent"
     tools:context=".fragments.HomepageFragment" >
 
+    <pl.droidsonroids.gif.GifImageView
+        android:layout_width="300dp"
+        android:layout_height="300dp"
+        android:src="@drawable/plant"
+        android:layout_above="@+id/layout"
+        android:layout_centerHorizontal="true"/>
+
     <LinearLayout
+        android:id="@+id/layout"
         android:orientation="vertical"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_centerInParent="true"
-        android:layout_margin="30dp" >
+        android:layout_centerHorizontal="true"
+        android:layout_marginHorizontal="30dp"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="200dp">
 
         <TextView
             android:id="@+id/project_name"
@@ -19,9 +29,10 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:text="@string/project_name"
+            android:textStyle="bold"
             android:textAppearance="@style/TextAppearance.AppCompat.Large"
-            android:textSize="30sp"
-            android:paddingBottom="50dp" />
+            android:textSize="40sp"
+            android:paddingBottom="28dp" />
 
         <TextView
             android:id="@+id/introduction"
@@ -29,7 +40,7 @@
             android:layout_height="wrap_content"
             android:text="@string/introduction"
             android:textAppearance="@style/TextAppearance.AppCompat.Medium"
-            android:textSize="18sp"/>
+            android:textSize="18sp" />
 
     </LinearLayout>
 

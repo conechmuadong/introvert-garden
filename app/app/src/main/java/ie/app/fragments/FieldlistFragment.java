@@ -195,6 +195,5 @@ public class FieldlistFragment extends BaseFragment implements AdapterView.OnIte
 
 /*TODO
 * Xử lý menu điều chỉnh
-* Xử lý khi nhấn delete - Xóa một cánh đồng -> ghi lại cho database -> Get data mới được ghi
 * Đổi màu nền các field khi một field được nhấn vào tùy chọn
 */

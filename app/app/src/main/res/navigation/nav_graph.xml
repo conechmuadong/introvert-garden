@@ -13,7 +13,11 @@
 
         <action
             android:id="@+id/action_HomepageFragment_to_FieldlistFragment"
-            app:destination="@id/FieldlistFragment" />
+            app:destination="@id/FieldlistFragment"
+            app:enterAnim="@anim/to_right_in"
+            app:exitAnim="@anim/to_right_out"
+            app:popEnterAnim="@anim/to_left_in"
+            app:popExitAnim="@anim/to_left_out" />
     </fragment>
 
     <fragment
@@ -23,20 +27,28 @@
         tools:layout="@layout/fragment_list_field">
 
         <action
-            android:id="@+id/action_FieldlistFragment_to_HomepageFragment"
-            app:destination="@id/HomepageFragment" />
-
-        <action
             android:id="@+id/action_FieldlistFragment_to_MeasuredDataFragment"
-            app:destination="@id/MeasuredDataFragment" />
+            app:destination="@id/MeasuredDataFragment"
+            app:enterAnim="@anim/to_right_in"
+            app:exitAnim="@anim/to_right_out"
+            app:popEnterAnim="@anim/to_left_in"
+            app:popExitAnim="@anim/to_left_out" />
 
         <action
             android:id="@+id/action_FieldlistFragment_to_CustomizedFragment"
-            app:destination="@id/CustomizedFragment" />
+            app:destination="@id/CustomizedFragment"
+            app:enterAnim="@anim/to_right_in"
+            app:exitAnim="@anim/to_right_out"
+            app:popEnterAnim="@anim/to_left_in"
+            app:popExitAnim="@anim/to_left_out" />
 
         <action
             android:id="@id/action_FieldlistFragment_to_AddNewFieldFragment"
-            app:destination="@+id/AddNewFieldFragment"/>
+            app:destination="@+id/AddNewFieldFragment"
+            app:enterAnim="@anim/to_right_in"
+            app:exitAnim="@anim/to_right_out"
+            app:popEnterAnim="@anim/to_left_in"
+            app:popExitAnim="@anim/to_left_out" />
 
     </fragment>
 
@@ -59,13 +71,14 @@
         android:label="@string/measureddata_fragment_label"
         tools:layout="@layout/fragment_measured_data">
 
-        <action
-            android:id="@+id/action_MeasuredDataFragment_to_FieldlistFragment"
-            app:destination="@id/FieldlistFragment" />
 
         <action
             android:id="@+id/action_MeasuredDataFragment_to_IrrigationFragment"
-            app:destination="@id/IrrigationSettingFragment" />
+            app:destination="@id/IrrigationSettingFragment"
+            app:enterAnim="@anim/to_right_in"
+            app:exitAnim="@anim/to_right_out"
+            app:popEnterAnim="@anim/to_left_in"
+            app:popExitAnim="@anim/to_left_out" />
     </fragment>
 
     <fragment
