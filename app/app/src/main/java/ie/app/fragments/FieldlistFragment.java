@@ -1,7 +1,9 @@
 package ie.app.fragments;
 
+import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
@@ -9,6 +11,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.Button;
 import android.widget.ListView;
 import android.widget.Toast;
 
@@ -34,7 +37,9 @@ public class FieldlistFragment extends BaseFragment implements AdapterView.OnIte
     private FragmentListFieldBinding binding;
     private FieldListAdapter adapter;
     private OnFieldSelectedListener listener;
-
+    private Button addBtn;
+    private AlertDialog.Builder builder;
+    private AlertDialog alertDialog;
 
     @Override
     public View onCreateView(
@@ -45,6 +50,8 @@ public class FieldlistFragment extends BaseFragment implements AdapterView.OnIte
 
         listView = (ListView) binding.listField;
         new GetAllTask(getContext()).execute("/user");
+
+        addBtn = binding.addButton;
 
         return binding.getRoot();
     }
@@ -64,9 +71,19 @@ public class FieldlistFragment extends BaseFragment implements AdapterView.OnIte
                 } else if(type == "adjust") {
                     NavHostFragment.findNavController(FieldlistFragment.this)
                             .navigate(R.id.action_FieldlistFragment_to_CustomizedFragment, bundle);
+                } else if (type == "delete") {
+                    confirmAlert(field);
                 }
             }
         };
+
+        addBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                NavHostFragment.findNavController(FieldlistFragment.this)
+                        .navigate(R.id.action_FieldlistFragment_to_AddNewFieldFragment);
+            }
+        });
     }
 
     @Override
@@ -93,7 +110,33 @@ public class FieldlistFragment extends BaseFragment implements AdapterView.OnIte
         } else if(type == "adjust") {
             NavHostFragment.findNavController(FieldlistFragment.this)
                     .navigate(R.id.action_FieldlistFragment_to_CustomizedFragment, bundle);
+        } else if (type == "delete") {
+            confirmAlert(field);
         }
+    }
+
+    private void confirmAlert(Field field) {
+        builder = new AlertDialog.Builder(this.getContext());
+        builder.setTitle("XÁC NHẬN?");
+        builder.setMessage("Bạn có chắc muốn xoá " + field.getName().toUpperCase() + " không?");
+
+        // Set Cancelable false for when the user clicks on the outside the Dialog Box then it will remain show
+        builder.setCancelable(false);
+
+        builder.setNegativeButton("Không", (DialogInterface.OnClickListener) (dialog, which) -> {
+            // If user click no then dialog box is canceled.
+            dialog.cancel();
+        });
+
+        builder.setPositiveButton("Có", (DialogInterface.OnClickListener) (dialog, which) -> {
+            FirebaseAPI.deleteField("user", field.getName());
+            new GetAllTask(getContext()).execute("/user");
+        });
+
+        // Create the Alert dialog
+        alertDialog = builder.create();
+        // Show the Alert Dialog box
+        alertDialog.show();
     }
 
     //---------------------------ACT CLASS---------------------------
@@ -150,8 +193,6 @@ public class FieldlistFragment extends BaseFragment implements AdapterView.OnIte
 }
 
 /*TODO
-* Thêm xử lý cho nút add - Thêm một cánh đồng -> ghi lại cho database -> Get data mới được ghi
 * Xử lý menu điều chỉnh
-* Xử lý khi nhấn delete - Xóa một cánh đồng -> ghi lại cho database -> Get data mới được ghi
 * Đổi màu nền các field khi một field được nhấn vào tùy chọn
 */

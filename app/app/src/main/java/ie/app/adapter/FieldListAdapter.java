@@ -56,9 +56,13 @@ public class FieldListAdapter extends ArrayAdapter<Field> {
                         listener.onFieldSelected(field, "status");
                         Log.v("onFieldSelected", field.getName());
                     }
-                    return true;
                 } else if (item.getItemId() == R.id.delete) {
                     // xử lý tùy chọn 3 cho selectedField
+                    Log.v("onFieldSelected", "clicked delete item");
+                    if (listener != null) {
+                        listener.onFieldSelected(field, "delete");
+                        Log.v("onFieldSelected", field.getName());
+                    }
                 }
 
                 // Trả về true để cho biết sự kiện đã được xử lý
