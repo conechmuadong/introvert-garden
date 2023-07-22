@@ -266,5 +266,12 @@ public class FirebaseAPI {
         return "added to cloud";
     }
 
+    public static String deleteField(String userID, String name) {
+        DatabaseReference ref = FirebaseDatabase.getInstance().getReference()
+                .child(userID).child(name);
+        ref.removeValue();
+        return "delete from cloud";
+    }
+
     // API xóa một cánh đồng
 }

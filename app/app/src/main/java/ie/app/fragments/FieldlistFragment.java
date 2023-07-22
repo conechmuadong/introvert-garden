@@ -1,7 +1,9 @@
 package ie.app.fragments;
 
+import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
@@ -36,8 +38,9 @@ public class FieldlistFragment extends BaseFragment implements AdapterView.OnIte
     private FragmentListFieldBinding binding;
     private FieldlistAdapter adapter;
     private OnFieldSelectedListener listener;
-
     private Button addBtn;
+    private AlertDialog.Builder builder;
+    private AlertDialog alertDialog;
 
     @Override
     public View onCreateView(
@@ -69,6 +72,8 @@ public class FieldlistFragment extends BaseFragment implements AdapterView.OnIte
                 } else if(type == "adjust") {
                     NavHostFragment.findNavController(FieldlistFragment.this)
                             .navigate(R.id.action_FieldlistFragment_to_CustomizedFragment, bundle);
+                } else if (type == "delete") {
+                    confirmAlert(field);
                 }
             }
         };
@@ -106,7 +111,33 @@ public class FieldlistFragment extends BaseFragment implements AdapterView.OnIte
         } else if(type == "adjust") {
             NavHostFragment.findNavController(FieldlistFragment.this)
                     .navigate(R.id.action_FieldlistFragment_to_CustomizedFragment, bundle);
+        } else if (type == "delete") {
+            confirmAlert(field);
         }
+    }
+
+    private void confirmAlert(Field field) {
+        builder = new AlertDialog.Builder(this.getContext());
+        builder.setTitle("Xác nhận?");
+        builder.setMessage("Bạn có chắc muốn xoá" + field.getName() + "không?");
+
+        // Set Cancelable false for when the user clicks on the outside the Dialog Box then it will remain show
+        builder.setCancelable(false);
+
+        builder.setNegativeButton("No", (DialogInterface.OnClickListener) (dialog, which) -> {
+            // If user click no then dialog box is canceled.
+            dialog.cancel();
+        });
+
+        builder.setPositiveButton("Yes", (DialogInterface.OnClickListener) (dialog, which) -> {
+            FirebaseAPI.deleteField("user", field.getName());
+            new GetAllTask(getContext()).execute("/user");
+        });
+
+        // Create the Alert dialog
+        alertDialog = builder.create();
+        // Show the Alert Dialog box
+        alertDialog.show();
     }
 
     //---------------------------ACT CLASS---------------------------

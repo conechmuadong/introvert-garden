@@ -36,4 +36,5 @@
     <string name="hint_name">Tên</string>
     <string name="insert_new_name">Nhập tên cánh đồng:</string>
     <string name="done">Xong</string>
+    <string name="cant_blank">Không được để trống</string>
 </resources>
