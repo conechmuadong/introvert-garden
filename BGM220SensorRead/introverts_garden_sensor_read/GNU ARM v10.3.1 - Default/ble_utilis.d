@@ -1,5 +1,6 @@
 ble_utilis.o: ../ble_utilis.c \
  c:\users\bannh\simplicitystudio\sdks\gecko_sdk\platform\common\toolchain\inc\sl_gcc_preinclude.h \
+ ../irrometter200SS.h \
  c:\users\bannh\simplicitystudio\sdks\gecko_sdk\platform\emlib\inc\em_common.h \
  c:\users\bannh\simplicitystudio\sdks\gecko_sdk\platform\device\siliconlabs\bgm22\include\em_device.h \
  c:\users\bannh\simplicitystudio\sdks\gecko_sdk\platform\device\siliconlabs\bgm22\include\bgm220pc22hna.h \
@@ -84,8 +85,10 @@ ble_utilis.o: ../ble_utilis.c \
  c:\users\bannh\simplicitystudio\sdks\gecko_sdk\protocol\bluetooth\inc\sl_bt_api_compatibility.h \
  E:\Lab\ 702\ -\ E3\introvert-garden\BGM220SensorRead\introverts_garden_sensor_read\autogen/gatt_db.h \
  c:\users\bannh\simplicitystudio\sdks\gecko_sdk\protocol\bluetooth\inc\sli_bt_gattdb_def.h \
- ../ble_utilis.h ../bh1750.h ../pcf8591.h ../si7021.h
+ ../ble_utilis.h ../bh1750.h ../si7021.h \
+ c:\users\bannh\simplicitystudio\sdks\gecko_sdk\platform\emlib\inc\em_timer.h
 c:\users\bannh\simplicitystudio\sdks\gecko_sdk\platform\common\toolchain\inc\sl_gcc_preinclude.h:
+../irrometter200SS.h:
 c:\users\bannh\simplicitystudio\sdks\gecko_sdk\platform\emlib\inc\em_common.h:
 c:\users\bannh\simplicitystudio\sdks\gecko_sdk\platform\device\siliconlabs\bgm22\include\em_device.h:
 c:\users\bannh\simplicitystudio\sdks\gecko_sdk\platform\device\siliconlabs\bgm22\include\bgm220pc22hna.h:
@@ -172,5 +175,5 @@ E:\Lab\ 702\ -\ E3\introvert-garden\BGM220SensorRead\introverts_garden_sensor_re
 c:\users\bannh\simplicitystudio\sdks\gecko_sdk\protocol\bluetooth\inc\sli_bt_gattdb_def.h:
 ../ble_utilis.h:
 ../bh1750.h:
-../pcf8591.h:
 ../si7021.h:
+c:\users\bannh\simplicitystudio\sdks\gecko_sdk\platform\emlib\inc\em_timer.h:

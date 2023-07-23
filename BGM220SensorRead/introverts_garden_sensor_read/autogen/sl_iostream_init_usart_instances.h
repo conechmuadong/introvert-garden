@@ -12,14 +12,13 @@
 extern "C" {
 #endif
 
-
 extern sl_iostream_t *sl_iostream_vcom_handle;
 extern sl_iostream_uart_t *sl_iostream_uart_vcom_handle;
 extern sl_iostream_instance_info_t sl_iostream_instance_vcom_info;
 
-
 // Initialize only iostream usart instance(s)
-void sl_iostream_usart_init_instances(void);
+void
+sl_iostream_usart_init_instances (void);
 
 #if defined(SL_CATALOG_POWER_MANAGER_PRESENT)
 

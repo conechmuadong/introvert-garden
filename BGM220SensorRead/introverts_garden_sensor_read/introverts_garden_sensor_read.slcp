@@ -30,8 +30,8 @@ component:
 - instance: [btn0]
   id: simple_button
 - {id: bluetooth_feature_gatt_server}
-- {id: mpu}
 - {id: bluetooth_feature_legacy_advertiser}
+- {id: mpu}
 - {id: gatt_configuration}
 - instance: [led0]
   id: simple_led
@@ -48,6 +48,7 @@ component:
   id: i2cspm
 - {id: component_catalog}
 - {id: app_assert}
+- {id: emlib_timer}
 other_file:
 - {path: create_bl_files.bat}
 - {path: create_bl_files.sh}

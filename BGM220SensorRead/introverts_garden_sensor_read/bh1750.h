@@ -1,10 +1,9 @@
-/*
- * bh1750.h
- *
- *  Created on: Jun 25, 2023
- *      Author: Duy Hung Nguyen
- *
- *  BH1750 light ambient sensor header file, provides peripheral address and command macros.
+/**
+ * @file bh1750.h
+ * @brief BH1750 light ambient sensor header file, provides peripheral address and command macros.
+ * 
+ * @author Duy Hung Nguyen
+ * @date June 25th 2023 
  */
 
 #ifndef BH1750_H_
@@ -24,7 +23,9 @@
 #define COMMAND_ONCE_HRESO2 0x21
 #define COMMAND_ONCE_LRESO2 0x23
 
-/*
+/**
+ * @brief Light ambient measurement function
+ * 
  * Perform once light ambient measurement in high resolution 2 mode. The resolution is 0.5 lx
  * Light ambient = Results * Resolution / 1.2 (lx)
  *

@@ -88,7 +88,7 @@ app.o: ../app.c \
  c:\users\bannh\simplicitystudio\sdks\gecko_sdk\platform\driver\i2cspm\inc\sl_i2cspm.h \
  c:\users\bannh\simplicitystudio\sdks\gecko_sdk\platform\emlib\inc\em_gpio.h \
  c:\users\bannh\simplicitystudio\sdks\gecko_sdk\platform\emlib\inc\em_i2c.h \
- ../ble_utilis.h
+ ../ble_utilis.h ../irrometter200SS.h
 c:\users\bannh\simplicitystudio\sdks\gecko_sdk\platform\common\toolchain\inc\sl_gcc_preinclude.h:
 c:\users\bannh\simplicitystudio\sdks\gecko_sdk\platform\emlib\inc\em_common.h:
 c:\users\bannh\simplicitystudio\sdks\gecko_sdk\platform\device\siliconlabs\bgm22\include\em_device.h:
@@ -179,3 +179,4 @@ c:\users\bannh\simplicitystudio\sdks\gecko_sdk\platform\driver\i2cspm\inc\sl_i2c
 c:\users\bannh\simplicitystudio\sdks\gecko_sdk\platform\emlib\inc\em_gpio.h:
 c:\users\bannh\simplicitystudio\sdks\gecko_sdk\platform\emlib\inc\em_i2c.h:
 ../ble_utilis.h:
+../irrometter200SS.h:
