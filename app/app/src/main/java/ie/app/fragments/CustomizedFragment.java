@@ -14,7 +14,6 @@ import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
-import android.widget.ListView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -23,11 +22,11 @@ import com.google.android.gms.tasks.Task;
 import com.google.android.gms.tasks.Tasks;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
 import ie.app.adapter.FieldListAdapter;
-import ie.app.adapter.PhaseListAdapter;
 import ie.app.api.FirebaseAPI;
 import ie.app.databinding.FragmentCustomizedBinding;
 import ie.app.models.CustomizedParameter;
@@ -37,13 +36,11 @@ import ie.app.models.MeasuredData;
 import ie.app.models.OnFieldSelectedListener;
 import ie.app.models.Phase;
 
-public class CustomizedFragment extends BaseFragment implements AdapterView.OnItemClickListener{
+public class CustomizedFragment extends BaseFragment implements AdapterView.OnItemClickListener {
 
     private FragmentCustomizedBinding binding;
     private OnFieldSelectedListener listener;
-    ListView listView;
 
-    private PhaseListAdapter adapter;
     private List<Phase> phases = field.customizedParameter.fieldCapacity;
 
     @Override
@@ -60,8 +57,6 @@ public class CustomizedFragment extends BaseFragment implements AdapterView.OnIt
             getFieldByName(selectedFieldName);
         }
 
-        listView = (ListView) binding.listPhase;
-
         updateUI();
 
         return view;
@@ -70,13 +65,10 @@ public class CustomizedFragment extends BaseFragment implements AdapterView.OnIt
     public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        binding.addStageButton.setOnClickListener(new View.OnClickListener() {
+        binding.humidityView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Phase phase = new Phase();
-                // Lấy thông tin phase
-                phases.add(phase);
-                //adapter.notifyDataSetChanged();
+                //Nav to phases view
             }
         });
 
@@ -127,7 +119,7 @@ public class CustomizedFragment extends BaseFragment implements AdapterView.OnIt
     }
 
     private void updateUI() {
-        if(field == null) return;
+        if (field == null) return;
         String fieldname = field.name;
         Log.v("MeasuredDataFragment", fieldname);
         TextView fieldnameView = binding.fieldName;
@@ -168,6 +160,18 @@ public class CustomizedFragment extends BaseFragment implements AdapterView.OnIt
         TextView ferLevelView = binding.ferLevelEditText;
         ferLevelView.setText(ferLevelText);
         ferLevelView.setLineSpacing(10f, 1f);
+
+        String humidityText = "";
+        Date currentDate = new Date();
+        for(Phase phase : field.customizedParameter.fieldCapacity) {
+            if(phase.getStartTime().compareTo(currentDate) <= 0 && currentDate.compareTo(phase.getEndTime()) <= 0) {
+                humidityText += phase.getThreshHold();
+                break;
+            }
+        }
+        TextView humidityView = binding.humidityValue;
+        humidityView.setText(humidityText);
+        humidityView.setLineSpacing(10f, 1f);
     }
 
     @Override
@@ -181,6 +185,7 @@ public class CustomizedFragment extends BaseFragment implements AdapterView.OnIt
     private class GetTask extends AsyncTask<String, Void, CustomizedParameter> {
         protected ProgressDialog dialog;
         protected Context context;
+
         public GetTask(Context context) {
             this.context = context;
         }
@@ -210,9 +215,6 @@ public class CustomizedFragment extends BaseFragment implements AdapterView.OnIt
         @Override
         protected void onPostExecute(CustomizedParameter result) {
             super.onPostExecute(result);
-            adapter = new PhaseListAdapter(context, field.customizedParameter.fieldCapacity);
-            listView.setAdapter(adapter);
-            listView.setOnItemClickListener(CustomizedFragment.this);
             // Đăng ký OnFieldSelectedListener cho adapter
             field.customizedParameter = result;
             if (dialog.isShowing())
@@ -222,6 +224,3 @@ public class CustomizedFragment extends BaseFragment implements AdapterView.OnIt
 
 
 }
-// Adapter cho danh sách giai đoạn
-// Lấy thông tin người dùng nhập và update database
-// Sử dụng thông tin để tính toán cho mô hình

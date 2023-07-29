@@ -27,6 +27,7 @@
     <string name="drip_unit">ml/s</string>
     <string name="rain_unit">ml</string>
     <string name="distance_unit">m</string>
+    <string name="percent_unit">%</string>
     <string name="number_holes">Tổng số lỗ tưới:</string>
     <string name="distance_holes">Khoảng cách giữa hai lỗ:</string>
     <string name="distance_row">Khoảng cách giữa hai hàng:</string>
