@@ -73,10 +73,30 @@
       </properties>
     </characteristic>
     
-    <!--Report Soil Humidity Voltage Value-->
-    <characteristic const="false" id="soil_humidity" name="Report Soil Humidity Voltage Value" sourceId="" uuid="02a2923c-911c-47c1-9544-8a2f2b21c68e">
+    <!--Report Soil Humidity Period-->
+    <characteristic const="false" id="soil_humidity" name="Report Soil Humidity Period" sourceId="" uuid="02a2923c-911c-47c1-9544-8a2f2b21c68e">
       <informativeText/>
-      <value length="0" type="hex" variable_length="false">00</value>
+      <value length="4" type="hex" variable_length="true">00000000</value>
+      <properties>
+        <read authenticated="false" bonded="false" encrypted="false"/>
+        <notify authenticated="false" bonded="false" encrypted="false"/>
+      </properties>
+    </characteristic>
+    
+    <!--Report Temperature -->
+    <characteristic const="false" id="temperature" name="Report Temperature " sourceId="" uuid="e975b265-56bb-4ebb-b732-4bd809afa7a7">
+      <informativeText/>
+      <value length="2" type="hex" variable_length="false">0000</value>
+      <properties>
+        <read authenticated="false" bonded="false" encrypted="false"/>
+        <notify authenticated="false" bonded="false" encrypted="false"/>
+      </properties>
+    </characteristic>
+    
+    <!--Report Relative Humidity-->
+    <characteristic const="false" id="relative_humidity" name="Report Relative Humidity" sourceId="" uuid="b0a0ce9f-53c7-4696-b6ce-52ddc6e679cd">
+      <informativeText/>
+      <value length="2" type="hex" variable_length="false">0000</value>
       <properties>
         <read authenticated="false" bonded="false" encrypted="false"/>
         <notify authenticated="false" bonded="false" encrypted="false"/>

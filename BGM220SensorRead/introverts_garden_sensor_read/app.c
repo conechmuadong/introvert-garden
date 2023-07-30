@@ -33,49 +33,48 @@
 #include "sl_bluetooth.h"
 #include "gatt_db.h"
 #include "app.h"
-#include "sl_simple_button_instances.h"
-#include "sl_simple_led_instances.h"
 #include "sl_i2cspm.h"
-#include "bh1750.h"
-#include "pcf8591.h"
+#include "ble_utilis.h"
+#include "irrometter200SS.h"
 
 // The advertising set handle allocated from Bluetooth stack.
 static uint8_t advertising_set_handle = 0xff;
 
 static bool report_sensor_data = false;
 
-// Updates the sensor data characteristic.
-static sl_status_t update_sensor_data(void);
-// Sends notification to the client.
-static sl_status_t send_sensor_data_notification(void);
-
 /**************************************************************************//**
  * Application Init.
  *****************************************************************************/
-SL_WEAK void app_init(void)
+SL_WEAK void app_init (void)
 {
-  sl_i2cspm_init_instances();
+  sl_i2cspm_init_instances ();
+//  GPIO_PinModeSet(gpioPortC, 2, gpioModeInput, 0);
+//  GPIO_PinModeSet(gpioPortB, 1, gpioModeInput, 0);
+//  sl_power_manager_init();
+  TIMER1_init ();
 }
 
 /**************************************************************************//**
  * Application Process Action.
  *****************************************************************************/
-SL_WEAK void app_process_action(void)
+SL_WEAK void app_process_action (void)
 {
   // Check if there was a request from client
-  if (report_sensor_data) {
-    sl_status_t sc;
+  if (report_sensor_data)
+    {
+      sl_status_t sc;
 
-    report_sensor_data = false; // Reset flag
+      report_sensor_data = false; // Reset flag
 
-    sc = update_sensor_data();
-    app_log_status_error(sc);
-
-    if (sc == SL_STATUS_OK) {
-      sc = send_sensor_data_notification();
+      sc = update_sensor_data ();
       app_log_status_error(sc);
+
+      if (sc == SL_STATUS_OK)
+        {
+          sc = send_sensor_data_notification ();
+          app_log_status_error(sc);
+        }
     }
-  }
 
   /////////////////////////////////////////////////////////////////////////////
   // Put your additional application code here!                              //
@@ -90,20 +89,21 @@ SL_WEAK void app_process_action(void)
  *
  * @param[in] evt Event coming from the Bluetooth stack.
  *****************************************************************************/
-void sl_bt_on_event(sl_bt_msg_t *evt)
+void sl_bt_on_event (sl_bt_msg_t *evt)
 {
   sl_status_t sc;
   bd_addr address;
   uint8_t address_type;
   uint8_t system_id[8];
 
-  switch (SL_BT_MSG_ID(evt->header)) {
+  switch (SL_BT_MSG_ID(evt->header))
+    {
     // -------------------------------
     // This event indicates the device has started and the radio is ready.
     // Do not call any stack command before receiving this boot event!
     case sl_bt_evt_system_boot_id:
       // Extract unique ID from BT Address.
-      sc = sl_bt_system_get_identity_address(&address, &address_type);
+      sc = sl_bt_system_get_identity_address (&address, &address_type);
       app_assert_status(sc);
 
       // Pad and reverse unique ID to get System ID.
@@ -116,182 +116,136 @@ void sl_bt_on_event(sl_bt_msg_t *evt)
       system_id[6] = address.addr[1];
       system_id[7] = address.addr[0];
 
-      sc = sl_bt_gatt_server_write_attribute_value(gattdb_system_id,
-                                                   0,
-                                                   sizeof(system_id),
-                                                   system_id);
+      sc = sl_bt_gatt_server_write_attribute_value (gattdb_system_id, 0,
+                                                    sizeof(system_id),
+                                                    system_id);
       app_assert_status(sc);
 
       // Create an advertising set.
-      sc = sl_bt_advertiser_create_set(&advertising_set_handle);
+      sc = sl_bt_advertiser_create_set (&advertising_set_handle);
       app_assert_status(sc);
 
       // Generate data for advertising
-      sc = sl_bt_legacy_advertiser_generate_data(advertising_set_handle,
-                                                 sl_bt_advertiser_general_discoverable);
+      sc = sl_bt_legacy_advertiser_generate_data (
+          advertising_set_handle, sl_bt_advertiser_general_discoverable);
       app_assert_status(sc);
 
       // Set advertising interval to 100ms.
-      sc = sl_bt_advertiser_set_timing(
-        advertising_set_handle,
-        160, // min. adv. interval (milliseconds * 1.6)
-        160, // max. adv. interval (milliseconds * 1.6)
-        0,   // adv. duration
-        0);  // max. num. adv. events
+      sc = sl_bt_advertiser_set_timing (advertising_set_handle, 160, // min. adv. interval (milliseconds * 1.6)
+                                        160, // max. adv. interval (milliseconds * 1.6)
+                                        0,   // adv. duration
+                                        0);  // max. num. adv. events
       app_assert_status(sc);
 
       // Start advertising and enable connections.
-      sc = sl_bt_legacy_advertiser_start(advertising_set_handle,
-                                         sl_bt_advertiser_connectable_scannable);
+      sc = sl_bt_legacy_advertiser_start (
+          advertising_set_handle, sl_bt_advertiser_connectable_scannable);
       app_assert_status(sc);
-
-      // Button events can be received from now on.
-      sl_button_enable(SL_SIMPLE_BUTTON_INSTANCE(0));
 
       // Check the report button state, then update the characteristic and
       // send notification.
-      sc = update_sensor_data();
+      sc = update_sensor_data ();
       app_log_status_error(sc);
 
-      if (sc == SL_STATUS_OK) {
-        sc = send_sensor_data_notification();
-        app_log_status_error(sc);
-      }
+      if (sc == SL_STATUS_OK)
+        {
+          sc = send_sensor_data_notification ();
+          app_log_status_error(sc);
+        }
       break;
 
-    // -------------------------------
-    // This event indicates that a new connection was opened.
+      // -------------------------------
+      // This event indicates that a new connection was opened.
     case sl_bt_evt_connection_opened_id:
       app_log_info("Connection opened.\n");
       break;
 
-    // -------------------------------
-    // This event indicates that a connection was closed.
+      // -------------------------------
+      // This event indicates that a connection was closed.
     case sl_bt_evt_connection_closed_id:
       app_log_info("Connection closed.\n");
 
       // Generate data for advertising
-      sc = sl_bt_legacy_advertiser_generate_data(advertising_set_handle,
-                                                 sl_bt_advertiser_general_discoverable);
+      sc = sl_bt_legacy_advertiser_generate_data (
+          advertising_set_handle, sl_bt_advertiser_general_discoverable);
       app_assert_status(sc);
 
       // Restart advertising after client has disconnected.
-      sc = sl_bt_legacy_advertiser_start(advertising_set_handle,
-                                         sl_bt_advertiser_connectable_scannable);
+      sc = sl_bt_legacy_advertiser_start (
+          advertising_set_handle, sl_bt_advertiser_connectable_scannable);
       app_assert_status(sc);
       break;
 
-    // -------------------------------
-    // This event indicates that the value of an attribute in the local GATT
-    // database was changed by a remote GATT client.
+      // -------------------------------
+      // This event indicates that the value of an attribute in the local GATT
+      // database was changed by a remote GATT client.
     case sl_bt_evt_gatt_server_attribute_value_id:
       // The value of the gattdb_led_control characteristic was changed.
-      if (gattdb_sensor_control == evt->data.evt_gatt_server_characteristic_status.characteristic) {
-        uint8_t data_recv;
-        size_t data_recv_len;
+      if (gattdb_sensor_control
+          == evt->data.evt_gatt_server_characteristic_status.characteristic)
+        {
+          uint8_t data_recv;
+          size_t data_recv_len;
 
-        // Read characteristic value.
-        sc = sl_bt_gatt_server_read_attribute_value(gattdb_sensor_control,
-                                                    0,
-                                                    sizeof(data_recv),
-                                                    &data_recv_len,
-                                                    &data_recv);
-        (void)data_recv_len;
-        app_log_status_error(sc);
-
-        if (sc != SL_STATUS_OK) {
-          break;
-        }
-
-        // Toggle sensor control flag
-        if (data_recv == 0x01) {
-            report_sensor_data = true;
-        } else {
-          app_log_error("Invalid attribute value: 0x%02x\n", (int)data_recv);
-        }
-      }
-      break;
-
-    // -------------------------------
-    // This event occurs when the remote device enabled or disabled the
-    // notification.
-    case sl_bt_evt_gatt_server_characteristic_status_id:
-      if (gattdb_light_ambient == evt->data.evt_gatt_server_characteristic_status.characteristic) {
-        // A local Client Characteristic Configuration descriptor was changed in
-        // the gattdb_report_button characteristic.
-        if (evt->data.evt_gatt_server_characteristic_status.client_config_flags
-            & sl_bt_gatt_notification) {
-          // The client just enabled the notification. Send notification of the
-          // current button state stored in the local GATT table.
-          app_log_info("Notification enabled.");
-
-          sc = send_sensor_data_notification();
+          // Read characteristic value.
+          sc = sl_bt_gatt_server_read_attribute_value (gattdb_sensor_control, 0,
+                                                       sizeof(data_recv),
+                                                       &data_recv_len,
+                                                       &data_recv);
+          (void) data_recv_len;
           app_log_status_error(sc);
-        } else {
-          app_log_info("Notification disabled.\n");
+
+          if (sc != SL_STATUS_OK)
+            {
+              break;
+            }
+
+          // Toggle sensor control flag
+          if (data_recv == 0x01)
+            {
+              report_sensor_data = true;
+            }
+          else
+            {
+              app_log_error("Invalid attribute value: 0x%02x\n",
+                            (int )data_recv);
+            }
         }
-      }
       break;
 
-    ///////////////////////////////////////////////////////////////////////////
-    // Add additional event handlers here as your application requires!      //
-    ///////////////////////////////////////////////////////////////////////////
+      // -------------------------------
+      // This event occurs when the remote device enabled or disabled the
+      // notification.
+    case sl_bt_evt_gatt_server_characteristic_status_id:
+      if (gattdb_light_ambient
+          == evt->data.evt_gatt_server_characteristic_status.characteristic)
+        {
+          // A local Client Characteristic Configuration descriptor was changed in
+          // the gattdb_report_button characteristic.
+          if (evt->data.evt_gatt_server_characteristic_status.client_config_flags
+              & sl_bt_gatt_notification)
+            {
+              // The client just enabled the notification. Send notification of the
+              // current button state stored in the local GATT table.
+              app_log_info("Notification enabled.");
 
-    // -------------------------------
-    // Default event handler.
+              sc = send_sensor_data_notification ();
+              app_log_status_error(sc);
+            }
+          else
+            {
+              app_log_info("Notification disabled.\n");
+            }
+        }
+      break;
+
+      ///////////////////////////////////////////////////////////////////////////
+      // Add additional event handlers here as your application requires!      //
+      ///////////////////////////////////////////////////////////////////////////
+
+      // -------------------------------
+      // Default event handler.
     default:
       break;
-  }
-}
-/***************************************************************************//**
- * Updates the Report Button characteristic.
- *
- * Checks the current button state and then writes it into the local GATT table.
- ******************************************************************************/
-static sl_status_t update_sensor_data(void)
-{
-  sl_status_t sc;
-  uint16_t data_send = measure_high_resolution2_once();
-  // Write attribute in the local GATT database.
-  sc = sl_bt_gatt_server_write_attribute_value(gattdb_light_ambient,
-                                               0,
-                                               sizeof(data_send),
-                                               (uint8_t*)&data_send);
-  if (sc == SL_STATUS_OK) {
-    app_log_info("Attribute written: 0x%02x", (int)data_send);
-  }
-
-  return sc;
-}
-
-/***************************************************************************//**
- * Sends notification of the light ambient sensor characteristic.
- *
- * Reads the current button state from the local GATT database and sends it as a
- * notification.
- ******************************************************************************/
-static sl_status_t send_sensor_data_notification(void)
-{
-  sl_status_t sc;
-  uint8_t data_send;
-  size_t data_len;
-
-  // Read report button characteristic stored in local GATT database.
-  sc = sl_bt_gatt_server_read_attribute_value(gattdb_light_ambient,
-                                              0,
-                                              sizeof(data_send),
-                                              &data_len,
-                                              &data_send);
-  if (sc != SL_STATUS_OK) {
-    return sc;
-  }
-
-  // Send characteristic notification.
-  sc = sl_bt_gatt_server_notify_all(gattdb_light_ambient,
-                                    sizeof(data_send),
-                                    &data_send);
-  if (sc == SL_STATUS_OK) {
-    app_log_append(" Notification sent: 0x%02x\n", (int)data_send);
-  }
-  return sc;
+    }
 }

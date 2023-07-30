@@ -267,6 +267,7 @@
           <file name="em_rtcc.c" uri="studio:/sdk/platform/emlib/src/em_rtcc.c"/>
           <file name="em_se.c" uri="studio:/sdk/platform/emlib/src/em_se.c"/>
           <file name="em_system.c" uri="studio:/sdk/platform/emlib/src/em_system.c"/>
+          <file name="em_timer.c" uri="studio:/sdk/platform/emlib/src/em_timer.c"/>
           <file name="em_usart.c" uri="studio:/sdk/platform/emlib/src/em_usart.c"/>
         </folder>
         <folder name="inc">
@@ -290,6 +291,7 @@
           <file name="em_se.h" uri="studio:/sdk/platform/emlib/inc/em_se.h"/>
           <file name="em_syscfg.h" uri="studio:/sdk/platform/emlib/inc/em_syscfg.h"/>
           <file name="em_system.h" uri="studio:/sdk/platform/emlib/inc/em_system.h"/>
+          <file name="em_timer.h" uri="studio:/sdk/platform/emlib/inc/em_timer.h"/>
           <file name="em_usart.h" uri="studio:/sdk/platform/emlib/inc/em_usart.h"/>
         </folder>
       </folder>

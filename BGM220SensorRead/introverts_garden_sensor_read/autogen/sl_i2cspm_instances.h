@@ -14,7 +14,7 @@
  * sections of the MSLA applicable to Source Code.
  *
  ******************************************************************************/
- 
+
 #ifndef SL_I2CSPM_INSTANCES_H
 #define SL_I2CSPM_INSTANCES_H
 
@@ -24,13 +24,12 @@ extern "C" {
 
 #include "sl_i2cspm.h"
 
-
 #define SL_I2CSPM_SENSOR_PRESENT
-
 
 extern sl_i2cspm_t *sl_i2cspm_sensor;
 
-void sl_i2cspm_init_instances(void);
+void
+sl_i2cspm_init_instances (void);
 
 #ifdef __cplusplus
 }
