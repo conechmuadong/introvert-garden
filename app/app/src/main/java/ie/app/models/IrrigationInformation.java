@@ -12,14 +12,14 @@ public class IrrigationInformation {
     private String _startDate, _startTime;
 
     private Date dateTime;
-    public int amount = 100;
+    public float amount = 100;
     private static SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-    public boolean irrigationCheck;
+    public boolean autoIrrigation;
 
     @Override
     public String toString() {
         return "IrrigationInformation: " + startTime + " - " + endTime
-                + ", auto is " + irrigationCheck + "\n";
+                + ", auto is " + autoIrrigation + "\n";
     }
 
     public String getStartDate() throws ParseException {
@@ -56,8 +56,8 @@ public class IrrigationInformation {
         return duration;
     }
 
-    public boolean isIrrigationCheck() {
-        return irrigationCheck;
+    public boolean isAutoIrrigation() {
+        return autoIrrigation;
     }
 
     public void setStartTime(String startTime) throws ParseException {
@@ -72,8 +72,9 @@ public class IrrigationInformation {
         this.duration = duration;
     }
 
-    public void setIrrigationCheck(boolean irrigationCheck) {
-        this.irrigationCheck = irrigationCheck;
+    public void setAutoIrrigation(boolean autoIrrigation, String field) {
+        this.autoIrrigation = autoIrrigation;
+        FirebaseAPI.changeAutoIrrigation("user", field, autoIrrigation);
     }
 
     public void setNewStartDate(String newStartDate, String field) {
@@ -86,6 +87,10 @@ public class IrrigationInformation {
         this._startTime = newStartTime;
         this.startTime = _startDate + " " + newStartTime;
         FirebaseAPI.changeIrrigationTime("user", field, startTime);
+    }
+
+    public void setNewAmount(float amount) {
+        this.amount = amount;
     }
 }
 

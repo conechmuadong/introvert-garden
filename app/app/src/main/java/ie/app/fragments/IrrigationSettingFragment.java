@@ -35,6 +35,7 @@ public class IrrigationSettingFragment extends BaseFragment {
 
     private FragmentIrrigationSettingBinding binding;
     private Mode mode = Mode.AUTO;
+    private String selectedStartDate, selectedStartTime, selectedAmount;
 
     @Override
     public View onCreateView(
@@ -44,7 +45,7 @@ public class IrrigationSettingFragment extends BaseFragment {
 
         Log.v("Irrigation Setting", field.irrigationInformation.toString());
         binding = FragmentIrrigationSettingBinding.inflate(inflater, container, false);
-        mode = field.irrigationInformation.isIrrigationCheck() == true ? Mode.AUTO : Mode.MANUAL;
+        mode = field.irrigationInformation.isAutoIrrigation() == true ? Mode.AUTO : Mode.MANUAL;
         Log.v("Irrigation Setting", mode.toString());
 
         if(mode == Mode.AUTO) {
@@ -52,16 +53,24 @@ public class IrrigationSettingFragment extends BaseFragment {
                     getResources().getColor(R.color.disable));
             binding.autoButton.setBackgroundColor(binding.autoButton.getContext().
                     getResources().getColor(R.color.colorPrimary));
+            binding.amountEditText.setEnabled(false);
+            binding.dateEditText.setEnabled(false);
+            binding.timeEditText.setEnabled(false);
         } else {
             binding.manualButton.setBackgroundColor(binding.manualButton.getContext().
                     getResources().getColor(R.color.colorPrimary));
             binding.autoButton.setBackgroundColor(binding.autoButton.getContext().
                     getResources().getColor(R.color.disable));
+            binding.amountEditText.setEnabled(true);
+            binding.dateEditText.setEnabled(true);
+            binding.timeEditText.setEnabled(true);
         }
 
         try {
-            binding.dateEditText.setHint(field.irrigationInformation.getStartDate());
-            binding.timeEditText.setHint(field.irrigationInformation.getStartTime());
+            selectedStartDate = field.irrigationInformation.getStartDate();
+            selectedStartTime = field.irrigationInformation.getStartTime();
+            binding.dateEditText.setText(selectedStartDate);
+            binding.timeEditText.setText(selectedStartTime);
         } catch (ParseException e) {
             throw new RuntimeException(e);
         }
@@ -76,26 +85,31 @@ public class IrrigationSettingFragment extends BaseFragment {
         binding.manualButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                field.irrigationInformation.setIrrigationCheck(false);
                 mode = Mode.MANUAL;
                 // set background
                 binding.manualButton.setBackgroundColor(binding.manualButton.getContext().
                         getResources().getColor(R.color.colorPrimary));
                 binding.autoButton.setBackgroundColor(binding.autoButton.getContext().
                         getResources().getColor(R.color.disable));
+
+                binding.amountEditText.setEnabled(true);
+                binding.dateEditText.setEnabled(true);
+                binding.timeEditText.setEnabled(true);
             }
         });
 
         binding.autoButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                field.irrigationInformation.setIrrigationCheck(true);
                 mode = Mode.AUTO;
                 // set background
                 binding.manualButton.setBackgroundColor(binding.manualButton.getContext().
                         getResources().getColor(R.color.disable));
                 binding.autoButton.setBackgroundColor(binding.autoButton.getContext().
                         getResources().getColor(R.color.colorPrimary));
+                binding.amountEditText.setEnabled(false);
+                binding.dateEditText.setEnabled(false);
+                binding.timeEditText.setEnabled(false);
             }
         });
 
@@ -119,15 +133,13 @@ public class IrrigationSettingFragment extends BaseFragment {
                         selectedCalendar.set(Calendar.DAY_OF_MONTH, dayOfMonth);
                         Date selectedDate = selectedCalendar.getTime(); // Lấy ra đối tượng Date tương ứng với giá trị được chọn
 
-                        // UPD field hiện tại
 
                         SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
                         String strDate = formatter.format(selectedDate);
-                        field.irrigationInformation.setNewStartDate(strDate, field.name);
+                        selectedStartDate = strDate;
 
                         binding.dateEditText.setText(strDate);
 
-                        // UPD database
 
                     }
                 }, year, month, dayOfMonth);
@@ -155,20 +167,34 @@ public class IrrigationSettingFragment extends BaseFragment {
                         selectedCalendar.set(Calendar.SECOND, 0);
                         Date selectedDate = selectedCalendar.getTime(); // Lấy ra đối tượng Date tương ứng với giá trị được chọn
 
-                        // UPD field hiện tại
 
                         SimpleDateFormat formatter = new SimpleDateFormat("hh:mm:ss");
-                        String strDate = formatter.format(selectedDate);
-                        field.irrigationInformation.setNewStartTime(strDate, field.name);
+                        String strTime = formatter.format(selectedDate);
+                        selectedStartTime = strTime;
 
-                        binding.timeEditText.setText(strDate);
-
-                        // UPD database
+                        binding.timeEditText.setText(strTime);
 
                         Log.v("Irrigation Setting", field.irrigationInformation.toString());
                     }
                 }, hour, min, true);
                 timePickerDialog.show();
+            }
+        });
+        binding.updateButton.setOnClickListener (new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                String input = binding.amountEditText.getText().toString();
+                float number = Float.parseFloat(input);
+                field.irrigationInformation.setNewAmount(number);
+
+
+                Log.v("API", "before call API");
+                field.irrigationInformation.setNewStartDate(selectedStartDate, field.name);
+                Log.v("API", "after change date");
+                field.irrigationInformation.setNewStartTime(selectedStartTime, field.name);
+                Log.v("API", "after change time");
+                field.irrigationInformation.setAutoIrrigation((mode == Mode.AUTO), field.name);
+                Log.v("API", "after change mode");
             }
         });
     }
@@ -178,6 +204,4 @@ public class IrrigationSettingFragment extends BaseFragment {
         super.onDestroyView();
         binding = null;
     }
-
-
 }

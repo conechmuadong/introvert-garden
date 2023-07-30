@@ -202,7 +202,6 @@ public class FirebaseAPI {
             public void onDataChange(DataSnapshot dataSnapshot) {
                 CustomizedParameter customizedParameter = new CustomizedParameter();
                 customizedParameter.acreage = dataSnapshot.child("acreage").getValue(Float.class);
-                customizedParameter.autoIrrigation = dataSnapshot.child("autoIrrigation").getValue(Boolean.class);
                 customizedParameter.distanceBetweenHole = dataSnapshot.child("distanceBetweenHole").getValue(Float.class);
                 customizedParameter.distanceBetweenRow = dataSnapshot.child("distanceBetweenRow").getValue(Float.class);
                 customizedParameter.dripRate = dataSnapshot.child("dripRate").getValue(Float.class);
@@ -235,6 +234,16 @@ public class FirebaseAPI {
 
         String donationKey = "startTime";
         ref.child(donationKey).setValue(startTime);
+        return "added to clould";
+    }
+
+    public static  String changeAutoIrrigation(String userID, String fieldID, boolean auto) {
+        DatabaseReference ref = FirebaseDatabase.getInstance().getReference()
+                .child(userID).child(fieldID).child("irrigation_information");
+
+        String donationKey = "autoIrrigation";
+        Log.v("API", ""+auto);
+        ref.child(donationKey).setValue(auto);
         return "added to clould";
     }
 
