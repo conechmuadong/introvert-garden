@@ -1,5 +1,6 @@
 package ie.app.fragments;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -13,18 +14,22 @@ import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.fragment.NavHostFragment;
 
+import java.util.Date;
+
 import ie.app.R;
+import ie.app.adapter.PhaseListAdapter;
 import ie.app.api.FirebaseAPI;
 import ie.app.databinding.FragmentAddNewFieldBinding;
+import ie.app.databinding.FragmentAddNewPhaseBinding;
 import ie.app.databinding.FragmentListFieldBinding;
 import ie.app.models.Field;
 import ie.app.models.OnFieldSelectedListener;
 
-public class AddNewFieldFragment extends Fragment {
+public class AddNewPhaseFragment extends BaseFragment {
 
-    private FragmentAddNewFieldBinding binding;
+    private FragmentAddNewPhaseBinding binding;
     private Button doneBtn;
-    private EditText addNewFieldEditText;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -33,11 +38,9 @@ public class AddNewFieldFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        binding = FragmentAddNewFieldBinding.inflate(inflater, container, false);
+        binding = FragmentAddNewPhaseBinding.inflate(inflater, container, false);
 
-        doneBtn = binding.doneBtn;
-        addNewFieldEditText = binding.newFieldEditText;
-
+        doneBtn = binding.doneButton;
         return binding.getRoot();
     }
 
@@ -47,9 +50,15 @@ public class AddNewFieldFragment extends Fragment {
         doneBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                NavHostFragment.findNavController(AddNewFieldFragment.this)
+                NavHostFragment.findNavController(AddNewPhaseFragment.this)
                         .navigateUp();
-                FirebaseAPI.addField("user", addNewFieldEditText.getText().toString());
+                Integer num = field.customizedParameter.getFieldCapacity().size() + 1;
+                if (binding.humidEditText.getText().toString().equals("")) {
+                    binding.humidEditText.setText("0.0");
+                }
+                FirebaseAPI.addPhase(binding.humidEditText.getText().toString(),
+                        binding.startDatEditText.getText().toString(),
+                        binding.endDatEditText.getText().toString(), "user", field.getName(), num);
             }
         });
     }

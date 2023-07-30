@@ -63,7 +63,35 @@
         android:id="@+id/CustomizedFragment"
         android:name="ie.app.fragments.CustomizedFragment"
         android:label="@string/customized_fragment_label"
-        tools:layout="@layout/fragment_customized"/>
+        tools:layout="@layout/fragment_customized">
+        <action
+            android:id="@+id/action_CustomizedFragment_to_listPhase"
+            app:destination="@id/listPhase"
+            app:enterAnim="@anim/to_right_in"
+            app:exitAnim="@anim/to_right_out"
+            app:popEnterAnim="@anim/to_left_in"
+            app:popExitAnim="@anim/to_left_out" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/listPhase"
+        android:name="ie.app.fragments.PhaseListFragment"
+        android:label="@string/phaseList_fragment_label"
+        tools:layout="@layout/fragment_phase_list">
+        <action
+            android:id="@+id/action_listPhase_to_addNewPhaseFragment"
+            app:destination="@id/addNewPhaseFragment"
+            app:enterAnim="@anim/to_right_in"
+            app:exitAnim="@anim/to_right_out"
+            app:popEnterAnim="@anim/to_left_in"
+            app:popExitAnim="@anim/to_left_out" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/addNewPhaseFragment"
+        android:name="ie.app.fragments.AddNewPhaseFragment"
+        android:label="Thêm giai đoạn"
+        tools:layout="@layout/fragment_add_new_phase"/>
 
     <fragment
         android:id="@+id/MeasuredDataFragment"

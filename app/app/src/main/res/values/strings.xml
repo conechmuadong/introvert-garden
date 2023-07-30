@@ -8,6 +8,7 @@
     <string name="measureddata_fragment_label">Tình trạng</string>
     <string name="irrigation_fragment_label">Cài đặt tưới</string>
     <string name="customized_fragment_label">Điều chỉnh</string>
+    <string name="phaseList_fragment_label">Các giai đoạn</string>
 
     <string name="add">Add</string>
     <string name="next">Next</string>
@@ -45,4 +46,9 @@
     <string name="insert_new_name">Nhập tên cánh đồng:</string>
     <string name="done">Xong</string>
     <string name="cant_blank">Không được để trống</string>
+    <string name="update">Cập nhật</string>
+    <string name="date_insert">YYYY-MM-YY</string>
+    <string name="start_date_insert">Nhập ngày bắt đầu</string>
+    <string name="end_date_insert">Nhập ngày kết thúc</string>
+    <string name="humid_insert">Nhập độ ẩm</string>
 </resources>

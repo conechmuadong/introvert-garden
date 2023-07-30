@@ -27,4 +27,7 @@ public class CustomizedParameter {
         return ret;
     }
 
+    public List<Phase> getFieldCapacity() {
+        return fieldCapacity;
+    }
 }

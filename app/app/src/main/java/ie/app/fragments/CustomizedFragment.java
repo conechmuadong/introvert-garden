@@ -17,6 +17,7 @@ import android.widget.AdapterView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.navigation.fragment.NavHostFragment;
 
 import com.google.android.gms.tasks.Task;
 import com.google.android.gms.tasks.Tasks;
@@ -26,6 +27,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
+import ie.app.R;
 import ie.app.adapter.FieldListAdapter;
 import ie.app.api.FirebaseAPI;
 import ie.app.databinding.FragmentCustomizedBinding;
@@ -84,6 +86,14 @@ public class CustomizedFragment extends BaseFragment implements AdapterView.OnIt
                 field.customizedParameter.fertilizationLevel = Float.parseFloat(binding.ferLevelEditText.getText().toString());
                 field.customizedParameter.fieldCapacity = phases;
                 FirebaseAPI.changeCustomizedParameter("user", field.name, field.customizedParameter);
+            }
+        });
+
+        binding.next.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                NavHostFragment.findNavController(CustomizedFragment.this)
+                        .navigate(R.id.action_CustomizedFragment_to_listPhase);
             }
         });
     }

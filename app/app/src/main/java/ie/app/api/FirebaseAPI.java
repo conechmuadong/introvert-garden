@@ -293,10 +293,23 @@ public class FirebaseAPI {
         return "added to cloud";
     }
 
+    public static String addPhase(String humid, String startDate, String endDate, String userID, String name, Integer newPhaseNum) {
+        String newPhaseName = "phase" + newPhaseNum;
+        DatabaseReference ref = FirebaseDatabase.getInstance().getReference()
+                .child(userID).child(name).child("customized_parameter")
+                .child("fieldCapacity").child(newPhaseName);
+        ref.child("endTime").setValue(endDate);
+        ref.child("startTime").setValue(startDate);
+        ref.child("threshHold").setValue(Float.parseFloat(humid));
+
+        return "added to cloud";
+    }
+
     public static String deleteField(String userID, String name) {
         DatabaseReference ref = FirebaseDatabase.getInstance().getReference()
                 .child(userID).child(name);
         ref.removeValue();
         return "delete from cloud";
     }
+
 }
