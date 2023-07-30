@@ -15,6 +15,7 @@
 
 uint32_t firstEdge;
 uint32_t secondEdge;
+uint32_t period;
 
 bool overflow = false; //Overflow flag
 
@@ -61,25 +62,23 @@ void TIMER1_IRQHandler (void)
   // Get the interrupt flags
   uint32_t flags = TIMER_IntGet (TIMER1);
 
-  // Get the time at which each falling edge was captured
-  firstEdge = TIMER_CaptureGet (TIMER1, 0);
-  secondEdge = TIMER_CaptureGet (TIMER1, 0);
+  // Get the time at which each rising edge was captured
+  firstEdge = TIMER_CaptureGet(TIMER1, 0);
+  secondEdge = TIMER_CaptureGet(TIMER1, 0);
 
-  // Was there an overflow between edges?
+  // Checking overflow between edges
   if (flags & TIMER_IF_OF)
     {
       overflow = true;
     }
-  // Clear the interrupt flags and exit
-  TIMER_IntClear (TIMER1, flags);
-}
-uint32_t calculatePeriod (void)
-{
+  if(!(flags & TIMER_IF_OF)){
+          overflow = false;
+  }
   uint32_t countsBetweenEdges;
 
   /*
    * Calculate the frequency of TIMER1 from the bus clock.  This
-   * assumes the prescaler remains at the default value of 1.
+   * assumes the pre-scaler remains at the default value of 1.
    */
   uint32_t timerClockMHz = CMU_ClockFreqGet (cmuClock_EM01GRPACLK) / 1000000;
 
@@ -96,6 +95,12 @@ uint32_t calculatePeriod (void)
   overflow = false;
 
   // Convert the count between edges to a period in microseconds
-  uint32_t period = (countsBetweenEdges / timerClockMHz);
+  period = (countsBetweenEdges / timerClockMHz);
+
+  // Clear the interrupt flags and exit
+  TIMER_IntClear (TIMER1, flags);
+}
+uint32_t calculatePeriod (void)
+{
   return period;
 }

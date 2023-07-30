@@ -38,9 +38,18 @@ sl_status_t update_soil_humidity_data(void)
 {
   sl_status_t sc;
   TIMER_Enable(TIMER1, true);
-  sl_sleeptimer_delay_millisecond(100);
-  uint32_t data_send = calculatePeriod();
+  sl_sleeptimer_delay_millisecond(5);
   TIMER_Enable(TIMER1, false);
+  uint32_t data_send = 0;
+  for(int i = 0; i< 10; i++){
+      uint32_t temp_results = calculatePeriod();
+      if (temp_results > 1000000)
+         continue;
+      if (data_send == 0 || temp_results < data_send - 1700)
+        data_send = temp_results;
+      else if (temp_results < 1000000)
+        data_send = temp_results - 1724;
+  }
   // Write attribute in the local GATT database.
   sc = sl_bt_gatt_server_write_attribute_value(gattdb_soil_humidity,
                                                0,
@@ -184,7 +193,7 @@ sl_status_t send_soil_humidity_notification(void)
                                     sizeof(data_send),
                                     &data_send);
   if (sc == SL_STATUS_OK) {
-    app_log_append("Soil humidity data sent: 0x%02x\n", (int)data_send);
+    app_log_append("Soil humidity data sent: %d\n", (int)data_send);
   }
   return sc;
 }

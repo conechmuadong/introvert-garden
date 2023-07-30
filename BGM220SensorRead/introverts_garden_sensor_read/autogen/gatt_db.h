@@ -23,4 +23,5 @@ extern const sli_bt_gattdb_t gattdb;
 #define gattdb_temperature                    29
 #define gattdb_relative_humidity              32
 
+
 #endif // __GATT_DB_H
