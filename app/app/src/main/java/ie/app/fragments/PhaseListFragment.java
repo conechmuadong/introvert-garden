@@ -17,7 +17,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.Toast;
 
@@ -82,16 +81,13 @@ public class PhaseListFragment extends BaseFragment {
             @Override
             public void onClick(View v) {
                 for (int i = 0; i < field.customizedParameter.getFieldCapacity().size(); i++) {
-                    EditText x = listView.getChildAt(i).findViewById(R.id.stageEditHumid);
-                    EditText y = listView.getChildAt(i).findViewById(R.id.stageStartDate);
-                    EditText z = listView.getChildAt(i).findViewById(R.id.stageEndDate);
-                    FirebaseAPI.addPhase(x.getText().toString(),
-                            y.getText().toString(),
-                            z.getText().toString(),
-                            "user", field.getName(),
-                            i + 1);
+                    Phase temp = (Phase) listView.getItemAtPosition(i);
+//                    FirebaseAPI.addPhase(String.valueOf(temp.threshHold),
+//                            temp.startTime, temp.endTime,
+//                            "user", field.getName(), i + 1);
+                    Log.e(String.valueOf(i), String.valueOf(temp.threshHold) +
+                            temp.startTime + temp.endTime);
                 }
-                Toast.makeText(getContext(), "Các thay đổi đã được cập nhật", Toast.LENGTH_SHORT).show();
             }
         });
     }
