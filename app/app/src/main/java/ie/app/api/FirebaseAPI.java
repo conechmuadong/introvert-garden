@@ -300,7 +300,7 @@ public class FirebaseAPI {
                 .child("fieldCapacity").child(newPhaseName);
         ref.child("endTime").setValue(endDate);
         ref.child("startTime").setValue(startDate);
-        ref.child("threshHold").setValue(Math.floor(Float.parseFloat(humid)*100)/100);
+        ref.child("threshHold").setValue(Float.parseFloat(humid));
 
         return "added to cloud";
     }
@@ -312,61 +312,4 @@ public class FirebaseAPI {
         return "delete from cloud";
     }
 
-    public static String deletePhase(String userID, String name, int position, int size) {
-        DatabaseReference ref = FirebaseDatabase.getInstance().getReference()
-                .child(userID).child(name).child("customized_parameter")
-                .child("fieldCapacity");
-        ArrayList<Double> humid = new ArrayList<>();
-        ArrayList<String> stTm = new ArrayList<>();
-        ArrayList<String> enTm = new ArrayList<>();
-
-        for(int i = position + 1; i < size; i++) {
-            int finalI = i;
-            ref.child("phase" + (i + 1)).child("threshHold").addValueEventListener(new ValueEventListener() {
-                @Override
-                public void onDataChange(@NonNull DataSnapshot snapshot) {
-                    humid.clear();
-                    humid.add(snapshot.getValue(Double.class));
-                    ref.child("phase" + (finalI)).child("threshHold").setValue(humid.get(0));
-                }
-
-                @Override
-                public void onCancelled(@NonNull DatabaseError error) {
-
-                }
-            });
-
-            ref.child("phase" + (i + 1)).child("startTime").addValueEventListener(new ValueEventListener() {
-                @Override
-                public void onDataChange(@NonNull DataSnapshot snapshot) {
-                    stTm.clear();
-                    stTm.add(snapshot.getValue(String.class));
-                    ref.child("phase" + (finalI)).child("startTime").setValue(stTm.get(0));
-                }
-
-                @Override
-                public void onCancelled(@NonNull DatabaseError error) {
-
-                }
-            });
-
-            ref.child("phase" + (i + 1)).child("endTime").addValueEventListener(new ValueEventListener() {
-                @Override
-                public void onDataChange(@NonNull DataSnapshot snapshot) {
-                    enTm.clear();
-                    enTm.add(snapshot.getValue(String.class));
-                    ref.child("phase" + (finalI)).child("endTime").setValue(enTm.get(0));
-                }
-
-                @Override
-                public void onCancelled(@NonNull DatabaseError error) {
-
-                }
-            });
-        }
-
-        ref.child("phase" + (size)).removeValue();
-
-        return "delete from cloud";
-    }
 }

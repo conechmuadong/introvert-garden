@@ -16,10 +16,8 @@ import androidx.annotation.NonNull;
 import java.util.List;
 
 import ie.app.R;
-import ie.app.fragments.PhaseListFragment;
 import ie.app.models.Field;
 import ie.app.models.OnFieldSelectedListener;
-import ie.app.models.OnPhaseSelectedListener;
 import ie.app.models.Phase;
 
 
@@ -27,18 +25,12 @@ public class PhaseListAdapter extends ArrayAdapter<Phase> {
     private Context context;
     public List<Phase> phases;
 
-    public void setListener(OnPhaseSelectedListener listener) {
-        this.listener = listener;
-    }
-
-    private OnPhaseSelectedListener listener;
-    public PhaseListAdapter(Context context, List<Phase> phases, OnPhaseSelectedListener listener) {
+    public PhaseListAdapter(Context context, List<Phase> phases) {
         super(context, R.layout.fragment_customized, phases);
         Log.v("ADAPTER", "Constructor: " + phases.size());
         for(Phase phase : phases) Log.v("ADAPTER","Constructor: " +  phase.toString());
         this.context = context;
         this.phases = phases;
-        this.listener = listener;
     }
 
     @Override
@@ -70,13 +62,6 @@ public class PhaseListAdapter extends ArrayAdapter<Phase> {
 
         TextView stageEndDate = convertView.findViewById(R.id.stageEndDate);
         stageEndDate.setText(phase.endTime);
-
-        convertView.findViewById(R.id.deletePhase).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                listener.onPhaseSelected(PhaseListFragment.field, position);
-            }
-        });
 
         return convertView;
     }

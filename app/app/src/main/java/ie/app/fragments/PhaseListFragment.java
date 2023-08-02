@@ -3,7 +3,6 @@ package ie.app.fragments;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.os.AsyncTask;
 import android.os.Bundle;
 
@@ -37,20 +36,16 @@ import ie.app.databinding.FragmentPhaseListBinding;
 import ie.app.models.CustomizedParameter;
 import ie.app.models.Field;
 import ie.app.models.OnFieldSelectedListener;
-import ie.app.models.OnPhaseSelectedListener;
 import ie.app.models.Phase;
 import ie.app.models.User;
 
-public class PhaseListFragment extends BaseFragment implements OnPhaseSelectedListener {
+public class PhaseListFragment extends BaseFragment {
 
     ListView listView;
     private FragmentPhaseListBinding binding;
     private PhaseListAdapter adapter;
     private Button addPhaseBtn;
     private Button updateBtn;
-    private OnPhaseSelectedListener listener;
-    private AlertDialog.Builder builder;
-    private AlertDialog alertDialog;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -72,7 +67,7 @@ public class PhaseListFragment extends BaseFragment implements OnPhaseSelectedLi
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         update();
-        adapter = new PhaseListAdapter(getContext(), field.customizedParameter.getFieldCapacity(), listener);
+        adapter = new PhaseListAdapter(getContext(), field.customizedParameter.getFieldCapacity());
         listView.setAdapter(adapter);
 
         addPhaseBtn.setOnClickListener(new View.OnClickListener() {
@@ -97,27 +92,14 @@ public class PhaseListFragment extends BaseFragment implements OnPhaseSelectedLi
                             i + 1);
                 }
                 Toast.makeText(getContext(), "Các thay đổi đã được cập nhật", Toast.LENGTH_SHORT).show();
-                update();
             }
         });
-
-        listener = new OnPhaseSelectedListener() {
-            @Override
-            public void onPhaseSelected(Field field, int position) {
-                confirmAlert(field, adapter.phases.get(position), position);
-            }
-        };
     }
 
     @Override
     public void onDestroyView() {
         super.onDestroyView();
         binding = null;
-    }
-
-    @Override
-    public void onPhaseSelected(Field field, int position) {
-        confirmAlert(field, adapter.phases.get(position), position);
     }
 
     private class GetTask extends AsyncTask<String, Void, CustomizedParameter> {
@@ -176,34 +158,9 @@ public class PhaseListFragment extends BaseFragment implements OnPhaseSelectedLi
             @Override
             protected void onPostExecute(CustomizedParameter customizedParameter) {
                 field.customizedParameter = customizedParameter;
-                adapter = new PhaseListAdapter(getContext(), field.customizedParameter.getFieldCapacity(), listener);
+                adapter = new PhaseListAdapter(getContext(), field.customizedParameter.getFieldCapacity());
                 listView.setAdapter(adapter);
             }
         }.execute();
-    }
-
-    private void confirmAlert(Field field, Phase phase, int position) {
-        builder = new AlertDialog.Builder(this.getContext());
-        builder.setTitle("XÁC NHẬN?");
-        builder.setMessage("Bạn có chắc muốn xoá " + phase.getName().toUpperCase() + " không?");
-
-        // Set Cancelable false for when the user clicks on the outside the Dialog Box then it will remain show
-        builder.setCancelable(false);
-
-        builder.setNegativeButton("Không", (DialogInterface.OnClickListener) (dialog, which) -> {
-            // If user click no then dialog box is canceled.
-            dialog.cancel();
-        });
-
-        builder.setPositiveButton("Có", (DialogInterface.OnClickListener) (dialog, which) -> {
-            FirebaseAPI.deletePhase("user", field.getName(), position, field.customizedParameter.getFieldCapacity().size());
-            Log.e("chan vc", field.customizedParameter.getFieldCapacity().toString());
-            update();
-        });
-
-        // Create the Alert dialog
-        alertDialog = builder.create();
-        // Show the Alert Dialog box
-        alertDialog.show();
     }
 }
