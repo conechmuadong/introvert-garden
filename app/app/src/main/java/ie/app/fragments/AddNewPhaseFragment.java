@@ -9,6 +9,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
@@ -24,6 +25,7 @@ import ie.app.databinding.FragmentAddNewPhaseBinding;
 import ie.app.databinding.FragmentListFieldBinding;
 import ie.app.models.Field;
 import ie.app.models.OnFieldSelectedListener;
+import ie.app.models.Phase;
 
 public class AddNewPhaseFragment extends BaseFragment {
 
@@ -50,15 +52,25 @@ public class AddNewPhaseFragment extends BaseFragment {
         doneBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                NavHostFragment.findNavController(AddNewPhaseFragment.this)
-                        .navigateUp();
                 Integer num = field.customizedParameter.getFieldCapacity().size() + 1;
-                if (binding.humidEditText.getText().toString().equals("")) {
-                    binding.humidEditText.setText("0.0");
+                if (binding.humidEditText.getText().toString().equals("") ||
+                        binding.startDatEditText.getText().toString().equals("") ||
+                        binding.endDatEditText.getText().toString().equals(" ")) {
+                    Toast.makeText(getContext(), "Không được để trống", Toast.LENGTH_SHORT).show();
+                } else {
+                    FirebaseAPI.addPhase(binding.humidEditText.getText().toString(),
+                            binding.startDatEditText.getText().toString(),
+                            binding.endDatEditText.getText().toString(), "user", field.getName(), num);
+                    Phase x = new Phase("phase" + (num),
+                            Float.parseFloat(binding.humidEditText.getText().toString()),
+                            binding.startDatEditText.getText().toString(),
+                            binding.endDatEditText.getText().toString());
+                    field.customizedParameter.getFieldCapacity().add(x);
+
+                    NavHostFragment.findNavController(AddNewPhaseFragment.this)
+                            .navigateUp();
                 }
-                FirebaseAPI.addPhase(binding.humidEditText.getText().toString(),
-                        binding.startDatEditText.getText().toString(),
-                        binding.endDatEditText.getText().toString(), "user", field.getName(), num);
+
             }
         });
     }

@@ -9,6 +9,16 @@ public class Phase {
     public float threshHold = 0;
     public String startTime, endTime;
 
+    public Phase() {
+    }
+
+    public Phase(String name, float threshHold, String startTime, String endTime) {
+        this.name = name;
+        this.threshHold = threshHold;
+        this.startTime = startTime;
+        this.endTime = endTime;
+    }
+
     public String getName() {
         return name;
     }
