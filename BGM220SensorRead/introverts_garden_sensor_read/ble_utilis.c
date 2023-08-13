@@ -38,18 +38,9 @@ sl_status_t update_soil_humidity_data(void)
 {
   sl_status_t sc;
   TIMER_Enable(TIMER1, true);
-  sl_sleeptimer_delay_millisecond(5);
+  sl_sleeptimer_delay_millisecond(100);
   TIMER_Enable(TIMER1, false);
-  uint32_t data_send = 0;
-  for(int i = 0; i< 10; i++){
-      uint32_t temp_results = calculatePeriod();
-      if (temp_results > 1000000)
-         continue;
-      if (data_send == 0 || temp_results < data_send - 1700)
-        data_send = temp_results;
-      else if (temp_results < 1000000)
-        data_send = temp_results - 1724;
-  }
+  uint32_t data_send = calculatePeriod();
   // Write attribute in the local GATT database.
   sc = sl_bt_gatt_server_write_attribute_value(gattdb_soil_humidity,
                                                0,
@@ -233,37 +224,73 @@ sl_status_t update_sensor_data(void){
   return sc;
 }
 
-sl_status_t send_sensor_data_notification(void){
-  sl_status_t sc = SL_STATUS_OK;
-  bool status = true;
-  sc = send_light_ambient_notification();
-  if (sc != SL_STATUS_OK){
-     app_log("An Error occurs while send light ambient notification\n");
-     app_log_append(sc);
-     status = false;
+sl_status_t send_sensor_data_notification(sl_bt_msg_t *evt){
+  sl_status_t sc = SL_STATUS_FAIL;
+  switch(evt->data.evt_gatt_server_characteristic_status.characteristic){
+    case gattdb_light_ambient:
+      if (evt->data.evt_gatt_server_characteristic_status.client_config_flags
+        & sl_bt_gatt_notification)
+      {
+        // The client just enabled the notification. Send notification of the
+        // current light ambient data stored in the local GATT table.
+        app_log_info("Light ambient notification enabled. ");
+
+        sc = send_light_ambient_notification();
+        app_log_status_error(sc);
+      }
+      else
+      {
+        app_log_info("Light ambient notification disabled.\n");
+      }
+      break;
+    case gattdb_temperature:
+      if (evt->data.evt_gatt_server_characteristic_status.client_config_flags
+        & sl_bt_gatt_notification)
+      {
+        // The client just enabled the notification. Send notification of the
+        // current temperature data stored in the local GATT table.
+        app_log_info("Temperature notification enabled. ");
+
+        sc = send_temperature_notification();
+        app_log_status_error(sc);
+      }
+      else
+      {
+        app_log_info("Temperature notification disabled.\n");
+      }
+      break;
+    case gattdb_soil_humidity:
+      if (evt->data.evt_gatt_server_characteristic_status.client_config_flags
+        & sl_bt_gatt_notification)
+      {
+        // The client just enabled the notification. Send notification of the
+        // current soil humidity data stored in the local GATT table.
+        app_log_info("Soil humidity notification enabled. ");
+
+        sc = send_soil_humidity_notification();
+        app_log_status_error(sc);
+      }
+      else
+      {
+        app_log_info("Soil humidity notification disabled.\n");
+      }
+      break;
+    case gattdb_relative_humidity:
+      if (evt->data.evt_gatt_server_characteristic_status.client_config_flags
+        & sl_bt_gatt_notification)
+      {
+        // The client just enabled the notification. Send notification of the
+        // current relative humidity data stored in the local GATT table.
+        app_log_info("Relative humidity notification enabled. ");
+
+        sc = send_relative_humidity_notification();
+        app_log_status_error(sc);
+      }
+      else
+      {
+        app_log_info("Relative humidity notification disabled.\n");
+      }
+      break;
   }
-  sl_udelay_wait(10000000);
-  sc = send_relative_humidity_notification();
-  if (sc != SL_STATUS_OK){
-     app_log("An Error occurs while send relative humidity notification\n");
-     app_log_append(sc);
-     status = false;
-  }
-  sl_udelay_wait(10000000);
-  sc = send_soil_humidity_notification();
-  if (sc != SL_STATUS_OK){
-     app_log("An Error occurs while send soil humidity notification\n");
-     app_log_append(sc);
-     status = false;
-  }
-  sl_udelay_wait(10000000);
-  sc = send_temperature_notification();
-  if (sc != SL_STATUS_OK){
-       app_log("An Error occurs while send temperature notification\n");
-       app_log_append(sc);
-       status = false;
-  }
-  if (!status)
-     return SL_STATUS_FAIL;
   return sc;
 }
