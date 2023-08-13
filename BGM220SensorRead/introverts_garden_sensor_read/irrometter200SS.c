@@ -37,6 +37,7 @@ void TIMER1_init (void)
   timerCCInit.mode = timerCCModeCapture;
   timerCCInit.edge = timerEdgeRising;             // Input capture on rising edge
   timerCCInit.eventCtrl = timerEventEvery2ndEdge; // Interrupt on every other edge
+  timerInit.prescale =timerPrescale32;
   timerInit.enable = false;
 
   TIMER_Init (TIMER1, &timerInit);
@@ -77,10 +78,9 @@ void TIMER1_IRQHandler (void)
   uint32_t countsBetweenEdges;
 
   /*
-   * Calculate the frequency of TIMER1 from the bus clock.  This
-   * assumes the pre-scaler remains at the default value of 1.
+   * Calculate the frequency of TIMER1 from the bus clock.  Pre-scaler is set by 32.
    */
-  uint32_t timerClockMHz = CMU_ClockFreqGet (cmuClock_EM01GRPACLK) / 1000000;
+  uint32_t timerClockMHz = CMU_ClockFreqGet (cmuClock_EM01GRPACLK)/ 32 / 1000000;
 
   /*
    * Calculate the count between edges depending on whether or not
