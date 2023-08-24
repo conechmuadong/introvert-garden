@@ -226,71 +226,83 @@ sl_status_t update_sensor_data(void){
 
 sl_status_t send_sensor_data_notification(sl_bt_msg_t *evt){
   sl_status_t sc = SL_STATUS_FAIL;
-  switch(evt->data.evt_gatt_server_characteristic_status.characteristic){
-    case gattdb_light_ambient:
-      if (evt->data.evt_gatt_server_characteristic_status.client_config_flags
-        & sl_bt_gatt_notification)
-      {
-        // The client just enabled the notification. Send notification of the
-        // current light ambient data stored in the local GATT table.
-        app_log_info("Light ambient notification enabled. ");
+    switch(evt->data.evt_gatt_server_characteristic_status.characteristic){
+      case gattdb_light_ambient:
+        if (evt->data.evt_gatt_server_characteristic_status.client_config_flags
+          & sl_bt_gatt_notification)
+        {
+          // The client just enabled the notification. Send notification of the
+          // current light ambient data stored in the local GATT table.
+          app_log_info("Light ambient notification enabled. ");
+          sc = update_light_ambient_data();
+          app_log_status_error(sc);
+          if (sc == SL_STATUS_OK){
+            sc = send_light_ambient_notification();
+            app_log_status_error(sc);
+          }
+        }
+        else
+        {
+          app_log_info("Light ambient notification disabled.\n");
+        }
+        break;
+      case gattdb_temperature:
+        if (evt->data.evt_gatt_server_characteristic_status.client_config_flags
+          & sl_bt_gatt_notification)
+        {
+          // The client just enabled the notification. Send notification of the
+          // current temperature data stored in the local GATT table.
+          app_log_info("Temperature notification enabled. ");
+          sc = update_temperature_data();
+          app_log_status_error(sc);
+          if (sc == SL_STATUS_OK){
+            sc = send_temperature_notification();
+            app_log_status_error(sc);
+          }
+        }
+        else
+        {
+          app_log_info("Temperature notification disabled.\n");
+        }
+        break;
+      case gattdb_soil_humidity:
+        if (evt->data.evt_gatt_server_characteristic_status.client_config_flags
+          & sl_bt_gatt_notification)
+        {
+          // The client just enabled the notification. Send notification of the
+          // current soil humidity data stored in the local GATT table.
+          app_log_info("Soil humidity notification enabled. ");
 
-        sc = send_light_ambient_notification();
-        app_log_status_error(sc);
-      }
-      else
-      {
-        app_log_info("Light ambient notification disabled.\n");
-      }
-      break;
-    case gattdb_temperature:
-      if (evt->data.evt_gatt_server_characteristic_status.client_config_flags
-        & sl_bt_gatt_notification)
-      {
-        // The client just enabled the notification. Send notification of the
-        // current temperature data stored in the local GATT table.
-        app_log_info("Temperature notification enabled. ");
-
-        sc = send_temperature_notification();
-        app_log_status_error(sc);
-      }
-      else
-      {
-        app_log_info("Temperature notification disabled.\n");
-      }
-      break;
-    case gattdb_soil_humidity:
-      if (evt->data.evt_gatt_server_characteristic_status.client_config_flags
-        & sl_bt_gatt_notification)
-      {
-        // The client just enabled the notification. Send notification of the
-        // current soil humidity data stored in the local GATT table.
-        app_log_info("Soil humidity notification enabled. ");
-
-        sc = send_soil_humidity_notification();
-        app_log_status_error(sc);
-      }
-      else
-      {
-        app_log_info("Soil humidity notification disabled.\n");
-      }
-      break;
-    case gattdb_relative_humidity:
-      if (evt->data.evt_gatt_server_characteristic_status.client_config_flags
-        & sl_bt_gatt_notification)
-      {
-        // The client just enabled the notification. Send notification of the
-        // current relative humidity data stored in the local GATT table.
-        app_log_info("Relative humidity notification enabled. ");
-
-        sc = send_relative_humidity_notification();
-        app_log_status_error(sc);
-      }
-      else
-      {
-        app_log_info("Relative humidity notification disabled.\n");
-      }
-      break;
-  }
-  return sc;
+          sc = update_soil_humidity_data();
+          app_log_status_error(sc);
+          if (sc == SL_STATUS_OK){
+            sc = send_soil_humidity_notification();
+            app_log_status_error(sc);
+          }
+        }
+        else
+        {
+          app_log_info("Soil humidity notification disabled.\n");
+        }
+        break;
+      case gattdb_relative_humidity:
+        if (evt->data.evt_gatt_server_characteristic_status.client_config_flags
+          & sl_bt_gatt_notification)
+        {
+          // The client just enabled the notification. Send notification of the
+          // current relative humidity data stored in the local GATT table.
+            sc = update_relative_humidity_data();
+            app_log_status_error(sc);
+            if (sc == SL_STATUS_OK){
+              sc = send_relative_humidity_notification();
+              app_log_status_error(sc);
+            }
+        }
+        else
+        {
+          app_log_info("Relative humidity notification disabled.\n");
+        }
+        break;
+    }
+    return sc;
 }
