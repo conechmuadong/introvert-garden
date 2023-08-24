@@ -151,7 +151,7 @@ public class FieldlistFragment extends BaseFragment implements AdapterView.OnIte
         protected void onPreExecute() {
             super.onPreExecute();
             this.dialog = new ProgressDialog(context, 1);
-            this.dialog.setMessage("Retrieving Fields List");
+            this.dialog.setMessage("Đang lấy dữ liệu");
             this.dialog.show();
         }
 

@@ -204,7 +204,7 @@ public class CustomizedFragment extends BaseFragment implements AdapterView.OnIt
         protected void onPreExecute() {
             super.onPreExecute();
             this.dialog = new ProgressDialog(context, 1);
-            this.dialog.setMessage("Retrieving Data");
+            this.dialog.setMessage("Đang lấy dữ liệu");
             this.dialog.show();
         }
 

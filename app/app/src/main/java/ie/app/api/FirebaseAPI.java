@@ -1,5 +1,6 @@
 package ie.app.api;
 
+import android.os.Build;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
@@ -13,12 +14,14 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.database.core.utilities.Tree;
 
 import java.sql.Time;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -32,6 +35,7 @@ import ie.app.models.Field;
 import ie.app.models.IrrigationInformation;
 import ie.app.models.MeasuredData;
 import ie.app.models.Phase;
+import ie.app.models.TreeData;
 import ie.app.models.User;
 
 
@@ -39,6 +43,8 @@ public class FirebaseAPI {
 
     static FirebaseDatabase database;
     static final String instance = "https://sample-c5146-default-rtdb.firebaseio.com/";
+    final static private double cuttingDryMass = 75.4; // (g)
+    final static private double numberOfSoilLayer = 5;
 
     public static Task<User> getUser(String userID) {
         DatabaseReference ref = FirebaseDatabase.getInstance().getReference().child(userID);
@@ -234,7 +240,7 @@ public class FirebaseAPI {
 
         String donationKey = "startTime";
         ref.child(donationKey).setValue(startTime);
-        return "added to clould";
+        return "added to cloud";
     }
 
     public static  String changeAutoIrrigation(String userID, String fieldID, boolean auto) {
@@ -244,7 +250,7 @@ public class FirebaseAPI {
         String donationKey = "autoIrrigation";
         Log.v("API", ""+auto);
         ref.child(donationKey).setValue(auto);
-        return "added to clould";
+        return "added to cloud";
     }
 
     public static  String changeCustomizedParameter(String userID, String fieldID, CustomizedParameter parameter) {
@@ -258,7 +264,22 @@ public class FirebaseAPI {
         ref.child("fertilizationLevel").setValue(parameter.fertilizationLevel);
         ref.child("numberOfHoles").setValue(parameter.numberOfHoles);
         ref.child("scaleRain").setValue(parameter.scaleRain);
-        return "added to clould";
+
+        List<Double> icontL = List.of(39.830, 10.105, 16.050, 8.0, 8.0);
+
+        DatabaseReference data = FirebaseDatabase.getInstance().getReference()
+                .child(userID).child(fieldID).child("treeData");
+        data.child("contL").child("first").setValue(parameter.fertilizationLevel *
+                icontL.get(0) / 100);
+        data.child("contL").child("second").setValue(parameter.fertilizationLevel *
+                icontL.get(1) / 100);
+        data.child("contL").child("third").setValue(parameter.fertilizationLevel *
+                icontL.get(2) / 100);
+        data.child("contL").child("forth").setValue(parameter.fertilizationLevel *
+                icontL.get(3) / 100);
+        data.child("contL").child("fifth").setValue(parameter.fertilizationLevel *
+                icontL.get(4) / 100);
+        return "change the cloud";
     }
 
     public static String addField(String userID, String name) {
@@ -267,7 +288,6 @@ public class FirebaseAPI {
 
         DatabaseReference cus = ref.child("customized_parameter");
         cus.child("acreage").setValue(0);
-        cus.child("autoIrrigation").setValue(true);
         cus.child("distanceBetweenHole").setValue(0);
         cus.child("distanceBetweenRow").setValue(0);
         cus.child("dripRate").setValue(0);
@@ -276,18 +296,66 @@ public class FirebaseAPI {
         cus.child("scaleRain").setValue(0);
 
         DatabaseReference irr = ref.child("irrigation_information");
+        irr.child("autoIrrigation").setValue(false);
         irr.child("duration").setValue("0");
         irr.child("endTime").setValue("0");
         irr.child("irrigationCheck").setValue(false);
         irr.child("startTime").setValue("0");
 
-        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
-            DatabaseReference mea = ref.child("measured_data").child(LocalDate.now().toString()).child("00:00:00");
-            mea.child("air_humidity").setValue(30);
-            mea.child("radiation").setValue(30);
-            mea.child("soil_humidity_30").setValue(30);
-            mea.child("soil_humidity_60").setValue(30);
-            mea.child("temperature").setValue(30);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            DatabaseReference mea = ref.child("measured_data").child(LocalDate.now().toString()).child(LocalTime.now().toString());
+            mea.child("air_humidity").setValue(0);
+            mea.child("radiation").setValue(0);
+            mea.child("soil_humidity_30").setValue(0);
+            mea.child("soil_humidity_60").setValue(0);
+            mea.child("temperature").setValue(0);
+        }
+
+        DatabaseReference data = ref.child("tree_data");
+        data.child("LDM").setValue(0);      // Leaf Dry Mass (g)
+        data.child("SDM").setValue(cuttingDryMass);     // Stem Dry Mass (g)
+        data.child("RDM").setValue(0);      // Root Dry Mass (g)
+        data.child("SRDM").setValue(0);     // Storage Root Dry Mass (g)
+        data.child("LA").setValue(0);      // Leaf Area (m2)
+
+        data.child("mDMl").setValue(0);
+        data.child("Clab").setValue(0);     // 8
+
+        data.child("rootLength").child("first").setValue(0);
+        data.child("rootLength").child("second").setValue(0);
+        data.child("rootLength").child("third").setValue(0);
+        data.child("rootLength").child("forth").setValue(0);
+        data.child("rootLength").child("fifth").setValue(0);
+
+        data.child("rootTips").child("first").setValue(6.0);
+        data.child("rootTips").child("second").setValue(0);
+        data.child("rootTips").child("third").setValue(0);
+        data.child("rootTips").child("forth").setValue(0);
+        data.child("rootTips").child("fifth").setValue(0);
+
+        data.child("soilWaterCapacity").child("first").setValue(0.2);
+        data.child("soilWaterCapacity").child("second").setValue(0.22);
+        data.child("soilWaterCapacity").child("third").setValue(0.24);
+        data.child("soilWaterCapacity").child("forth").setValue(0.26);
+        data.child("soilWaterCapacity").child("fifth").setValue(0.28);
+
+        data.child("contL").child("first").setValue(0);
+        data.child("contL").child("second").setValue(0);
+        data.child("contL").child("third").setValue(0);
+        data.child("contL").child("forth").setValue(0);
+        data.child("contL").child("fifth").setValue(0);
+
+        data.child("nuptL").child("first").setValue(cuttingDryMass * 30.0 / numberOfSoilLayer);
+        data.child("nuptL").child("second").setValue(cuttingDryMass * 30.0 / numberOfSoilLayer);
+        data.child("nuptL").child("third").setValue(cuttingDryMass * 30.0 / numberOfSoilLayer);
+        data.child("nuptL").child("forth").setValue(cuttingDryMass * 30.0 / numberOfSoilLayer);
+        data.child("nuptL").child("fifth").setValue(cuttingDryMass * 30.0 / numberOfSoilLayer);
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            data.child("timeFromLastUpdate").child("day")
+                    .setValue(LocalDate.now().toString());
+            data.child("timeFromLastUpdate").child("time")
+                    .setValue(LocalTime.now().toString());
         }
 
         return "added to cloud";
@@ -310,6 +378,95 @@ public class FirebaseAPI {
                 .child(userID).child(name);
         ref.removeValue();
         return "delete from cloud";
+    }
+
+    public static Task<TreeData> getTreeData(String userID, String fieldID) {
+        DatabaseReference ref = FirebaseDatabase.getInstance().getReference()
+                .child(userID).child(fieldID).child("tree_data");
+
+        TaskCompletionSource<TreeData> taskCompletionSource = new TaskCompletionSource<>();
+        ref.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange( DataSnapshot dataSnapshot) {
+                TreeData treeData = new TreeData();
+                treeData.LDM = dataSnapshot.child("LDM").getValue(Double.class);
+                treeData.SDM = dataSnapshot.child("SDM").getValue(Double.class);
+                treeData.RDM = dataSnapshot.child("RDM").getValue(Double.class);
+                treeData.SRDM = dataSnapshot.child("SRDM").getValue(Double.class);
+                treeData.LA = dataSnapshot.child("LA").getValue(Double.class);
+
+                treeData.mDMl = dataSnapshot.child("mDMl").getValue(Double.class);
+                treeData.Clab = dataSnapshot.child("Clab").getValue(Double.class);
+
+                treeData.rootLength.add(dataSnapshot.child("rootLength")
+                        .child("first").getValue(Double.class));
+                treeData.rootLength.add(dataSnapshot.child("rootLength")
+                        .child("second").getValue(Double.class));
+                treeData.rootLength.add(dataSnapshot.child("rootLength")
+                        .child("third").getValue(Double.class));
+                treeData.rootLength.add(dataSnapshot.child("rootLength")
+                        .child("forth").getValue(Double.class));
+                treeData.rootLength.add(dataSnapshot.child("rootLength")
+                        .child("fifth").getValue(Double.class));
+
+                treeData.rootTips.add(dataSnapshot.child("rootTips")
+                        .child("first").getValue(Double.class));
+                treeData.rootTips.add(dataSnapshot.child("rootTips")
+                        .child("second").getValue(Double.class));
+                treeData.rootTips.add(dataSnapshot.child("rootTips")
+                        .child("third").getValue(Double.class));
+                treeData.rootTips.add(dataSnapshot.child("rootTips")
+                        .child("forth").getValue(Double.class));
+                treeData.rootTips.add(dataSnapshot.child("rootTips")
+                        .child("fifth").getValue(Double.class));
+
+                treeData.soilWaterCapacity.add(dataSnapshot.child("soilWaterCapacity")
+                        .child("first").getValue(Double.class));
+                treeData.soilWaterCapacity.add(dataSnapshot.child("soilWaterCapacity")
+                        .child("second").getValue(Double.class));
+                treeData.soilWaterCapacity.add(dataSnapshot.child("soilWaterCapacity")
+                        .child("third").getValue(Double.class));
+                treeData.soilWaterCapacity.add(dataSnapshot.child("soilWaterCapacity")
+                        .child("forth").getValue(Double.class));
+                treeData.soilWaterCapacity.add(dataSnapshot.child("soilWaterCapacity")
+                        .child("fifth").getValue(Double.class));
+
+                treeData.contL.add(dataSnapshot.child("contL")
+                        .child("first").getValue(Double.class));
+                treeData.contL.add(dataSnapshot.child("contL")
+                        .child("second").getValue(Double.class));
+                treeData.contL.add(dataSnapshot.child("contL")
+                        .child("third").getValue(Double.class));
+                treeData.contL.add(dataSnapshot.child("contL")
+                        .child("forth").getValue(Double.class));
+                treeData.contL.add(dataSnapshot.child("contL")
+                        .child("fifth").getValue(Double.class));
+
+                treeData.nuptL.add(dataSnapshot.child("nuptL")
+                        .child("first").getValue(Double.class));
+                treeData.nuptL.add(dataSnapshot.child("nuptL")
+                        .child("second").getValue(Double.class));
+                treeData.nuptL.add(dataSnapshot.child("nuptL")
+                        .child("third").getValue(Double.class));
+                treeData.nuptL.add(dataSnapshot.child("nuptL")
+                        .child("forth").getValue(Double.class));
+                treeData.nuptL.add(dataSnapshot.child("nuptL")
+                        .child("fifth").getValue(Double.class));
+
+                treeData.dayFromLastUpdate = dataSnapshot.child("timeFromLastUpdate")
+                        .child("day").getValue(String.class);
+                treeData.timeFromLastUpdate = dataSnapshot.child("timeFromLastUpdate")
+                        .child("time").getValue(String.class);
+
+                taskCompletionSource.setResult(treeData);
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                taskCompletionSource.setException(databaseError.toException());
+            }
+        });
+        return taskCompletionSource.getTask();
     }
 
 }

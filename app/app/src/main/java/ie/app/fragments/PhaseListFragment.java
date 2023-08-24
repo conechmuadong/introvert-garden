@@ -92,6 +92,7 @@ public class PhaseListFragment extends BaseFragment {
                             i + 1);
                 }
                 Toast.makeText(getContext(), "Các thay đổi đã được cập nhật", Toast.LENGTH_SHORT).show();
+                update();
             }
         });
     }
@@ -114,7 +115,7 @@ public class PhaseListFragment extends BaseFragment {
         protected void onPreExecute() {
             super.onPreExecute();
             this.dialog = new ProgressDialog(context, 1);
-            this.dialog.setMessage("Retrieving Data");
+            this.dialog.setMessage("Đang lấy dữ liệu");
             this.dialog.show();
         }
 

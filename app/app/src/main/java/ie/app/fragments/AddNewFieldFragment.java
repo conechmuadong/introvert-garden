@@ -8,10 +8,16 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.fragment.NavHostFragment;
+
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.util.Scanner;
 
 import ie.app.R;
 import ie.app.api.FirebaseAPI;
@@ -47,9 +53,25 @@ public class AddNewFieldFragment extends Fragment {
         doneBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                NavHostFragment.findNavController(AddNewFieldFragment.this)
-                        .navigateUp();
-                FirebaseAPI.addField("user", addNewFieldEditText.getText().toString());
+                if (addNewFieldEditText.getText().toString().equals("")) {
+                    Toast.makeText(getContext(), "Không được để trống!", Toast.LENGTH_SHORT).show();
+                    try {
+                        File myObj = new File("filename.txt");
+                        if (myObj.createNewFile()) {
+                            Log.e("haiya", "File created: " + myObj.getName());
+                        } else {
+                            Log.e("haiya", "File already exists.");
+                        }
+                    } catch (Exception e) {
+                        Log.e("haiya", "An error occurred.");
+                        e.printStackTrace();
+                    }
+                } else {
+                    NavHostFragment.findNavController(AddNewFieldFragment.this)
+                            .navigateUp();
+                    FirebaseAPI.addField("user", addNewFieldEditText.getText().toString());
+                }
+
             }
         });
     }

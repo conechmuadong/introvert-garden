@@ -16,16 +16,23 @@ import android.widget.TimePicker;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 
+import com.google.android.gms.tasks.Task;
+import com.google.android.gms.tasks.Tasks;
+
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.concurrent.ExecutionException;
 
 import ie.app.R;
+import ie.app.adapter.PhaseListAdapter;
 import ie.app.api.FirebaseAPI;
 import ie.app.databinding.FragmentIrrigationSettingBinding;
 import ie.app.main.MainActivity;
+import ie.app.models.CustomizedParameter;
 import ie.app.models.IrrigationInformation;
+import ie.app.models.TreeData;
 
 enum Mode {
     MANUAL,
@@ -45,7 +52,8 @@ public class IrrigationSettingFragment extends BaseFragment {
 
         Log.v("Irrigation Setting", field.irrigationInformation.toString());
         binding = FragmentIrrigationSettingBinding.inflate(inflater, container, false);
-        mode = field.irrigationInformation.isAutoIrrigation() == true ? Mode.AUTO : Mode.MANUAL;
+        update();
+        mode = field.irrigationInformation.isAutoIrrigation() ? Mode.AUTO : Mode.MANUAL;
         Log.v("Irrigation Setting", mode.toString());
 
         if(mode == Mode.AUTO) {
@@ -81,6 +89,7 @@ public class IrrigationSettingFragment extends BaseFragment {
 
     public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        update();
 
         binding.manualButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -203,5 +212,65 @@ public class IrrigationSettingFragment extends BaseFragment {
     public void onDestroyView() {
         super.onDestroyView();
         binding = null;
+    }
+
+    private class GetTask extends AsyncTask<String, Void, TreeData> {
+        protected ProgressDialog dialog;
+        protected Context context;
+
+        public GetTask(Context context) {
+            this.context = context;
+        }
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            this.dialog = new ProgressDialog(context, 1);
+            this.dialog.setMessage("Đang lấy dữ liệu");
+            this.dialog.show();
+        }
+
+        @Override
+        protected TreeData doInBackground(String... params) {
+            try {
+                Task<TreeData> task = FirebaseAPI.getTreeData((String) params[0], (String) params[1]);
+                field.treeData = Tasks.await(task);
+                Log.v("TreeData", "Got update");
+                return field.treeData;
+            } catch (Exception e) {
+                Log.v("ASYNC", "ERROR : " + e);
+                e.printStackTrace();
+            }
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(TreeData result) {
+            super.onPostExecute(result);
+            field.treeData = result;
+            if (dialog.isShowing())
+                dialog.dismiss();
+        }
+    }
+
+    private void update() {
+        GetTask task = new GetTask(getContext());
+        task.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, "/user", "/" + field.getName());
+        new AsyncTask<Void, Void, TreeData>() {
+            @Override
+            protected TreeData doInBackground(Void... voids) {
+                try {
+                    return task.get();
+                } catch (InterruptedException | ExecutionException e) {
+                    e.printStackTrace();
+                }
+                return null;
+            }
+
+            @Override
+            protected void onPostExecute(TreeData treeData) {
+                field.treeData = treeData;
+            }
+        }.execute();
     }
 }
