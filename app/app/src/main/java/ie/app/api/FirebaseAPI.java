@@ -169,7 +169,134 @@ public class FirebaseAPI {
         return taskCompletionSource.getTask();
     }
 
-    // successfull
+    public void deleteMeasuredData(String userID, String fieldID) {
+        DatabaseReference ref = FirebaseDatabase.getInstance().getReference()
+                .child(userID).child(fieldID).child("measured_data");
+
+        Log.v("MeasuredDataFragment", userID + " " + fieldID);
+
+        ref.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                if(!snapshot.exists()) {
+                    Log.v("API", "data is empty");
+                    return;
+                }
+                // Tìm ngày gần nhất có dữ liệu
+                Date lastDate = new Date(0, 0, 0);
+                String lastDateString = "00-00-00";
+                for (DataSnapshot childSnapshot : snapshot.getChildren()) {
+                    String dateString = childSnapshot.getKey();
+                    DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+                    Date date = null;
+                    try {
+                        date = dateFormat.parse(dateString);
+                    } catch (ParseException e) {
+                        e.printStackTrace();
+                    }
+                    if(date.after(lastDate)) {
+                        lastDate = date;
+                        lastDateString = dateString;
+                    }
+                }
+                for (DataSnapshot childSnapshot : snapshot.getChildren()) {
+                    String dateString = childSnapshot.getKey();
+                    if(!dateString.equals(lastDateString)) {
+                        childSnapshot.getRef().removeValue();
+                    }
+                }
+                Log.v("MeasuredData API", lastDateString);
+                // Tìm giờ gần nhất có dữ liệu
+                DatabaseReference ref1 = FirebaseDatabase.getInstance().getReference()
+                        .child(userID).child(fieldID).child("measured_data").child(lastDateString);
+                ref1.addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot snapshot) {
+                        Time lastTime = new Time(0, 0, 0);
+                        String lastTimeString = "00:00:00";
+                        MeasuredData data = new MeasuredData();
+                        for (DataSnapshot childSnapshot : snapshot.getChildren()) {
+                            String timeString = childSnapshot.getKey();
+                            DateFormat dateFormat = new SimpleDateFormat("HH:mm:ss");
+                            Date date = null;
+                            try {
+                                date = dateFormat.parse(timeString);
+                            } catch (ParseException e) {
+                                e.printStackTrace();
+                            }
+                            Time time = new Time(date.getTime());
+                            if(time.after(lastTime)) {
+                                lastTime = time;
+                                lastTimeString = timeString;
+                            }
+                        }
+                        for (DataSnapshot childSnapshot : snapshot.getChildren()) {
+                            String timeString = childSnapshot.getKey();
+                            if(!timeString.equals(lastTimeString))
+                                childSnapshot.getRef().removeValue();
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+                        System.out.println("Error: " + databaseError.getMessage());
+                    }
+                });
+            }
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+            }
+        });
+    }
+
+    public static Task<List<List<Double>>> getAllMeasuredData(String userID, String fieldID) {
+        DatabaseReference ref = FirebaseDatabase.getInstance().getReference()
+                .child(userID).child(fieldID).child("measured_data");
+
+        Log.v("AllMeasuredData", userID + " " + fieldID);
+
+        TaskCompletionSource<List<List<Double>>> taskCompletionSource = new TaskCompletionSource<>();
+        List<List<Double>> data = new ArrayList<>();
+
+        ref.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                for (DataSnapshot childSnapshot : snapshot.getChildren()) {
+                    String dateString = childSnapshot.getKey();
+                    DatabaseReference ref1 = FirebaseDatabase.getInstance().getReference().child(userID)
+                            .child(fieldID).child("measured_data").child(dateString);
+                    ref1.addListenerForSingleValueEvent(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(DataSnapshot snapshot) {
+                            for (DataSnapshot childSnapshot : snapshot.getChildren()) {
+                                String timeString = childSnapshot.getKey();
+                                List<Double> num = new ArrayList<>();
+                                num.add(snapshot.child(timeString).child("air_humidity").getValue(Double.class));
+                                num.add(snapshot.child(timeString).child("radiation").getValue(Double.class));
+                                num.add(snapshot.child(timeString).child("temperature").getValue(Double.class));
+                                data.add(num);
+                            }
+                            taskCompletionSource.setResult(data);
+                        }
+
+                        @Override
+                        public void onCancelled(DatabaseError databaseError) {
+                            System.out.println("Error: " + databaseError.getMessage());
+                        }
+                    });
+                }
+
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                taskCompletionSource.setException(databaseError.toException());
+            }
+        });
+
+        return taskCompletionSource.getTask();
+    }
+
     public static Task<IrrigationInformation> getIrrigationInformation(String userID, String fieldID) {
         DatabaseReference ref = FirebaseDatabase.getInstance().getReference()
                 .child(userID).child(fieldID).child("irrigation_information");

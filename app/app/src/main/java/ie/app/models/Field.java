@@ -31,6 +31,7 @@ public class Field {
     public CustomizedParameter customizedParameter = new CustomizedParameter();
     public IrrigationInformation irrigationInformation = new IrrigationInformation();
     public TreeData treeData = new TreeData();
+    public List<List<Double>> allMeasuredDate = new ArrayList<>();
 
     public void setName(String name) {
         this.name = name;

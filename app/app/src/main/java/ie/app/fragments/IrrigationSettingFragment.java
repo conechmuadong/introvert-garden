@@ -23,6 +23,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 import java.util.concurrent.ExecutionException;
 
 import ie.app.R;
@@ -214,11 +215,11 @@ public class IrrigationSettingFragment extends BaseFragment {
         binding = null;
     }
 
-    private class GetTask extends AsyncTask<String, Void, TreeData> {
+    private class GetTreeData extends AsyncTask<String, Void, TreeData> {
         protected ProgressDialog dialog;
         protected Context context;
 
-        public GetTask(Context context) {
+        public GetTreeData(Context context) {
             this.context = context;
         }
 
@@ -253,14 +254,53 @@ public class IrrigationSettingFragment extends BaseFragment {
         }
     }
 
+    private class GetAllMeasureData extends AsyncTask<String, Void, List<List<Double>>> {
+        protected ProgressDialog dialog;
+        protected Context context;
+
+        public GetAllMeasureData(Context context) {
+            this.context = context;
+        }
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            this.dialog = new ProgressDialog(context, 1);
+            this.dialog.setMessage("Đang lấy dữ liệu");
+            this.dialog.show();
+        }
+
+        @Override
+        protected List<List<Double>> doInBackground(String... params) {
+            try {
+                Task<List<List<Double>>> task = FirebaseAPI.getAllMeasuredData((String) params[0], (String) params[1]);
+                field.allMeasuredDate = Tasks.await(task);
+                Log.v("TreeData", "Got update");
+                return field.allMeasuredDate;
+            } catch (Exception e) {
+                Log.v("ASYNC", "ERROR : " + e);
+                e.printStackTrace();
+            }
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(List<List<Double>> result) {
+            super.onPostExecute(result);
+            field.allMeasuredDate = result;
+            if (dialog.isShowing())
+                dialog.dismiss();
+        }
+    }
+
     private void update() {
-        GetTask task = new GetTask(getContext());
-        task.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, "/user", "/" + field.getName());
+        GetTreeData taskTreeData = new GetTreeData(getContext());
+        taskTreeData.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, "/user", "/" + field.getName());
         new AsyncTask<Void, Void, TreeData>() {
             @Override
             protected TreeData doInBackground(Void... voids) {
                 try {
-                    return task.get();
+                    return taskTreeData.get();
                 } catch (InterruptedException | ExecutionException e) {
                     e.printStackTrace();
                 }
@@ -270,6 +310,25 @@ public class IrrigationSettingFragment extends BaseFragment {
             @Override
             protected void onPostExecute(TreeData treeData) {
                 field.treeData = treeData;
+            }
+        }.execute();
+
+        GetAllMeasureData taskAll = new GetAllMeasureData(getContext());
+        taskAll.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, "/user", "/" + field.getName());
+        new AsyncTask<Void, Void, List<List<Double>>>() {
+            @Override
+            protected List<List<Double>> doInBackground(Void... voids) {
+                try {
+                    return taskAll.get();
+                } catch (InterruptedException | ExecutionException e) {
+                    e.printStackTrace();
+                }
+                return null;
+            }
+
+            @Override
+            protected void onPostExecute(List<List<Double>> data) {
+                field.allMeasuredDate = data;
             }
         }.execute();
     }
