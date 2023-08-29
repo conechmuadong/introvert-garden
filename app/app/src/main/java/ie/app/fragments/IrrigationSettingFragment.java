@@ -21,6 +21,7 @@ import com.google.android.gms.tasks.Tasks;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -80,7 +81,7 @@ public class IrrigationSettingFragment extends BaseFragment {
             selectedStartTime = field.irrigationInformation.getStartTime();
             binding.dateEditText.setText(selectedStartDate);
             binding.timeEditText.setText(selectedStartTime);
-        } catch (ParseException e) {
+        } catch (Exception e) {
             throw new RuntimeException(e);
         }
 
@@ -120,6 +121,10 @@ public class IrrigationSettingFragment extends BaseFragment {
                 binding.amountEditText.setEnabled(false);
                 binding.dateEditText.setEnabled(false);
                 binding.timeEditText.setEnabled(false);
+
+                field.simulation();
+//                binding.dateEditText.setText("");
+//                Log.e("Đây này thằng loz", field.treeData)
             }
         });
 
@@ -274,9 +279,9 @@ public class IrrigationSettingFragment extends BaseFragment {
         protected List<List<Double>> doInBackground(String... params) {
             try {
                 Task<List<List<Double>>> task = FirebaseAPI.getAllMeasuredData((String) params[0], (String) params[1]);
-                field.allMeasuredDate = Tasks.await(task);
+                field.allMeasuredData = Tasks.await(task);
                 Log.v("TreeData", "Got update");
-                return field.allMeasuredDate;
+                return field.allMeasuredData;
             } catch (Exception e) {
                 Log.v("ASYNC", "ERROR : " + e);
                 e.printStackTrace();
@@ -287,7 +292,7 @@ public class IrrigationSettingFragment extends BaseFragment {
         @Override
         protected void onPostExecute(List<List<Double>> result) {
             super.onPostExecute(result);
-            field.allMeasuredDate = result;
+            field.allMeasuredData = result;
             if (dialog.isShowing())
                 dialog.dismiss();
         }
@@ -328,7 +333,7 @@ public class IrrigationSettingFragment extends BaseFragment {
 
             @Override
             protected void onPostExecute(List<List<Double>> data) {
-                field.allMeasuredDate = data;
+                field.allMeasuredData = data;
             }
         }.execute();
     }

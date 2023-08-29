@@ -31,7 +31,7 @@ public class Field {
     public CustomizedParameter customizedParameter = new CustomizedParameter();
     public IrrigationInformation irrigationInformation = new IrrigationInformation();
     public TreeData treeData = new TreeData();
-    public List<List<Double>> allMeasuredDate = new ArrayList<>();
+    public List<List<Double>> allMeasuredData = new ArrayList<>();
 
     public void setName(String name) {
         this.name = name;
@@ -50,22 +50,40 @@ public class Field {
 
     public void simulation() {
         List<Double> _treeData = new ArrayList<>();
-        _treeData.add(treeData.LDM);
-        _treeData.add(treeData.SDM);
-        _treeData.add(treeData.RDM);
-        _treeData.add(treeData.SRDM);
-        _treeData.add(treeData.LA);
+        _treeData.add(treeData.LDM);//                      0
+        _treeData.add(treeData.SDM);//                      1
+        _treeData.add(treeData.RDM);//                      2
+        _treeData.add(treeData.SRDM);//                     3
+        _treeData.add(treeData.LA);//                       4
 
-        _treeData.add(treeData.mDMl);
-        _treeData.add(treeData.Clab);
+        _treeData.add(treeData.mDMl);//                     5
+        _treeData.add(treeData.Clab);//                     6
 
-        _treeData.addAll(treeData.rootLength);
-        _treeData.addAll(treeData.rootTips);
-        _treeData.addAll(treeData.soilWaterCapacity);
-        _treeData.addAll(treeData.contL);
-        _treeData.addAll(treeData.nuptL);
+        _treeData.addAll(treeData.rootLength);//            7 -> 11
+        _treeData.addAll(treeData.rootTips);//              12 -> 16
+        _treeData.addAll(treeData.soilWaterCapacity);//     17 -> 21
+        _treeData.addAll(treeData.contL);//                 22 -> 26
+        _treeData.addAll(treeData.nuptL);//                 27 -> 31
 
-        _treeData.add(Double.valueOf(irrigationInformation.getDuration()));
+        _treeData.add(Double.valueOf(irrigationInformation.getDuration()));// 32
+
+        for (int i = 0; i < allMeasuredData.size(); i++) {
+            List<Double> weatherData = new ArrayList<>();
+            for (int j = 1; j < 4; j++) {
+                weatherData.add(allMeasuredData.get(i).get(j));
+            }
+            rk4Step(allMeasuredData.get(i).get(0) - treeData.growTime, _treeData, 5.0 / 24 / 60, weatherData);
+            Log.e("haiya", String.valueOf(_treeData.get(32)));
+        }
+
+//        FirebaseAPI.changeTreeData("user", getName(), _treeData);
+//        if (_treeData.get(32) == 0) {
+//            FirebaseAPI.changeIrrigationCheck("user", getName(), false);
+//        } else {
+//            FirebaseAPI.changeIrrigationCheck("user", getName(), true);
+//            double duration = _treeData.get(32) / customizedParameter.dripRate;
+//            FirebaseAPI.changeDuration("user", getName(), duration);
+//        }
     }
 
     // Ngưỡng hàm lượng nước duy trì
@@ -568,6 +586,7 @@ public class Field {
         double ClabR = (CFR - CFG - RR) / cDm;
 
         irrigation = evaporation + countWuptrL - precipitation;
+        double _irrigation = max(0.0, irrigation);
 
         List<Double> YR = new ArrayList<>();
         YR.add(LDMR);// 0
@@ -585,7 +604,7 @@ public class Field {
         YR.addAll(ncontrL);
         YR.addAll(nuptrL);
 
-        YR.add(irrigation);
+        YR.add(_irrigation);
 
         return YR;
     }
