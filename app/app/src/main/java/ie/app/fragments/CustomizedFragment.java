@@ -15,6 +15,7 @@ import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.navigation.fragment.NavHostFragment;
@@ -86,6 +87,8 @@ public class CustomizedFragment extends BaseFragment implements AdapterView.OnIt
                 field.customizedParameter.fertilizationLevel = Float.parseFloat(binding.ferLevelEditText.getText().toString());
                 field.customizedParameter.fieldCapacity = phases;
                 FirebaseAPI.changeCustomizedParameter("user", field.name, field.customizedParameter);
+                updateUI();
+                Toast.makeText(getContext(), "Các thay đổi đã được cập nhật", Toast.LENGTH_SHORT).show();
             }
         });
 

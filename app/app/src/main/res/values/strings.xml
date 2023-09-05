@@ -26,7 +26,7 @@
     <string name="area">Diện tích:</string>
     <string name="area_unit">m²</string>
     <string name="drip_unit">ml/s</string>
-    <string name="rain_unit">ml</string>
+    <string name="rain_unit">%</string>
     <string name="distance_unit">m</string>
     <string name="percent_unit">%</string>
     <string name="number_holes">Tổng số lỗ tưới:</string>
@@ -34,7 +34,7 @@
     <string name="distance_row">Khoảng cách giữa hai hàng:</string>
     <string name="drip_rate">Tốc độ nhỏ giọt: </string>
     <string name="fer_level">Cấp độ bón phân: </string>
-    <string name="rain">Lượng mưa: </string>
+    <string name="rain">Tỉ lệ mưa: </string>
     <string name="number_holes_unit">lỗ</string>
     <string name="humidity">Phần trăm độ ẩm </string>
 

@@ -72,18 +72,19 @@ public class Field {
             for (int j = 1; j < 4; j++) {
                 weatherData.add(allMeasuredData.get(i).get(j));
             }
-            rk4Step(allMeasuredData.get(i).get(0) - treeData.growTime, _treeData, 5.0 / 24 / 60, weatherData);
-            Log.e("haiya", String.valueOf(_treeData.get(32)));
+            double t = 5.0 / 24 / 60;
+            rk4Step(allMeasuredData.get(i).get(0) - treeData.growTime, _treeData, t, weatherData);
+            Log.e("final irritation", String.valueOf(_treeData.get(32)));
         }
 
-//        FirebaseAPI.changeTreeData("user", getName(), _treeData);
-//        if (_treeData.get(32) == 0) {
-//            FirebaseAPI.changeIrrigationCheck("user", getName(), false);
-//        } else {
-//            FirebaseAPI.changeIrrigationCheck("user", getName(), true);
-//            double duration = _treeData.get(32) / customizedParameter.dripRate;
-//            FirebaseAPI.changeDuration("user", getName(), duration);
-//        }
+        FirebaseAPI.changeTreeData("user", getName(), _treeData);
+        if (_treeData.get(32) == 0) {
+            FirebaseAPI.changeIrrigationCheck("user", getName(), false);
+        } else {
+            FirebaseAPI.changeIrrigationCheck("user", getName(), true);
+            double duration = _treeData.get(32) / customizedParameter.dripRate;
+            FirebaseAPI.changeDuration("user", getName(), duration);
+        }
     }
 
     // Ngưỡng hàm lượng nước duy trì
@@ -392,7 +393,14 @@ public class Field {
             irrigation += autoIrrigate;
         }
 
-        double rain = new Random().nextInt(30);
+        double rain;
+        int[] rainRate = {0, 0, 0, 0, 1};
+        int rate = new Random().nextInt(5);
+        if (rainRate[rate] == 0) {
+            rain = 0;
+        } else {
+            rain = new Random().nextDouble();
+        }
         double precipitation = customizedParameter.scaleRain / 100 * rain + irrigation;
 
         // Lượng thoát hơi nước Transpiration
@@ -477,7 +485,7 @@ public class Field {
                     NuptLimiter * rootLength.get(i) * 0.8));
         }
 
-        List<Double> ncontrL = new ArrayList<>(numberOfSoilLayer); //mg/kg/day
+        List<Double> ncontrL = Arrays.asList(0.0, 0.0, 0.0, 0.0, 0.0); //mg/kg/day
         List<Double> NminR_l = new ArrayList<>();
         // volume of one soil layer
         double layerVolume = layerThickness * areaPerPlant;
@@ -573,7 +581,7 @@ public class Field {
         List<Double> nrtrL = new ArrayList<>();
         for (int i = 0; i < numberOfSoilLayer; ++i) {
             double ln1 = rlrL.get(i);
-            nrtrL.set(i, ln1 * 60.0 + max(0, (ln0 - ln1 - 6.0 * layerThickness) * 10.0 / layerThickness));
+            nrtrL.add(i, ln1 * 60.0 + max(0, (ln0 - ln1 - 6.0 * layerThickness) * 10.0 / layerThickness));
             ln0 = ln1;
         }
 
@@ -585,8 +593,15 @@ public class Field {
         // labile pool
         double ClabR = (CFR - CFG - RR) / cDm;
 
+        precipitation -= irrigation;
         irrigation = evaporation + countWuptrL - precipitation;
+//        Log.e("evaporation", String.valueOf(evaporation));
+//        Log.e("countWuptrL", String.valueOf(countWuptrL));
+//        Log.e("precipitation", String.valueOf(precipitation));
         double _irrigation = max(0.0, irrigation);
+//        while (_irrigation < 10e-3) {
+            _irrigation *= 10;
+//        }
 
         List<Double> YR = new ArrayList<>();
         YR.add(LDMR);// 0

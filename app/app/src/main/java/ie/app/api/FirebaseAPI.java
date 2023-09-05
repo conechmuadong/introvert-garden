@@ -7,12 +7,14 @@ import androidx.annotation.NonNull;
 
 import com.google.android.gms.tasks.Task;
 import com.google.android.gms.tasks.TaskCompletionSource;
+import com.google.android.gms.tasks.Tasks;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import java.sql.Array;
 import java.sql.Time;
 import java.text.DateFormat;
 import java.text.ParseException;
@@ -25,7 +27,7 @@ import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.SimpleTimeZone;
+import java.util.concurrent.ExecutionException;
 
 import ie.app.models.CustomizedParameter;
 import ie.app.models.Field;
@@ -400,7 +402,7 @@ public class FirebaseAPI {
         List<Double> icontL = List.of(39.830, 10.105, 16.050, 8.0, 8.0);
 
         DatabaseReference data = FirebaseDatabase.getInstance().getReference()
-                .child(userID).child(fieldID).child("treeData");
+                .child(userID).child(fieldID).child("tree_data");
         data.child("contL").child("first").setValue(parameter.fertilizationLevel *
                 icontL.get(0) / 100);
         data.child("contL").child("second").setValue(parameter.fertilizationLevel *
@@ -442,14 +444,14 @@ public class FirebaseAPI {
         cus.child("numberOfHoles").setValue(0);
         cus.child("scaleRain").setValue(0);
 
-        DatabaseReference irr = ref.child("irrigation_information");
-        irr.child("autoIrrigation").setValue(false);
-        irr.child("duration").setValue("0");
-        irr.child("endTime").setValue(LocalDate.now().toString() + " " + LocalTime.now().withNano(0).toString());
-        irr.child("irrigationCheck").setValue(false);
-        irr.child("startTime").setValue(LocalDate.now().toString() + " " + LocalTime.now().withNano(0).toString());
-
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            DatabaseReference irr = ref.child("irrigation_information");
+            irr.child("autoIrrigation").setValue(false);
+            irr.child("duration").setValue("0");
+            irr.child("endTime").setValue(LocalDate.now().toString() + " " + LocalTime.now().withNano(0).toString());
+            irr.child("irrigationCheck").setValue(false);
+            irr.child("startTime").setValue(LocalDate.now().toString() + " " + LocalTime.now().withNano(0).toString());
+
             DatabaseReference mea = ref.child("measured_data").child(LocalDate.now().toString())
                     .child(LocalTime.now().withNano(0).toString());
             mea.child("air_humidity").setValue(0);
@@ -518,7 +520,6 @@ public class FirebaseAPI {
         ref.child("endTime").setValue(endDate);
         ref.child("startTime").setValue(startDate);
         ref.child("threshHold").setValue(Float.parseFloat(humid));
-
     }
 
     public static void deleteField(String userID, String name) {
@@ -527,7 +528,7 @@ public class FirebaseAPI {
         ref.removeValue();
     }
 
-    public static Task<TreeData> getTreeData(String userID, String fieldID) {
+    public static Task<TreeData> getTreeData1(String userID, String fieldID) {
         DatabaseReference ref = FirebaseDatabase.getInstance().getReference()
                 .child(userID).child(fieldID).child("tree_data");
 
@@ -545,62 +546,102 @@ public class FirebaseAPI {
                 treeData.mDMl = dataSnapshot.child("mDMl").getValue(Double.class);
                 treeData.Clab = dataSnapshot.child("Clab").getValue(Double.class);
 
-//                treeData.rootLength.add(dataSnapshot.child("rootLength")
-//                        .child("first").getValue(Double.class));
-//                treeData.rootLength.add(dataSnapshot.child("rootLength")
-//                        .child("second").getValue(Double.class));
-//                treeData.rootLength.add(dataSnapshot.child("rootLength")
-//                        .child("third").getValue(Double.class));
-//                treeData.rootLength.add(dataSnapshot.child("rootLength")
-//                        .child("forth").getValue(Double.class));
-//                treeData.rootLength.add(dataSnapshot.child("rootLength")
-//                        .child("fifth").getValue(Double.class));
-//
-//                treeData.rootTips.add(dataSnapshot.child("rootTips")
-//                        .child("first").getValue(Double.class));
-//                treeData.rootTips.add(dataSnapshot.child("rootTips")
-//                        .child("second").getValue(Double.class));
-//                treeData.rootTips.add(dataSnapshot.child("rootTips")
-//                        .child("third").getValue(Double.class));
-//                treeData.rootTips.add(dataSnapshot.child("rootTips")
-//                        .child("forth").getValue(Double.class));
-//                treeData.rootTips.add(dataSnapshot.child("rootTips")
-//                        .child("fifth").getValue(Double.class));
-//
-//                treeData.soilWaterCapacity.add(dataSnapshot.child("soilWaterCapacity")
-//                        .child("first").getValue(Double.class));
-//                treeData.soilWaterCapacity.add(dataSnapshot.child("soilWaterCapacity")
-//                        .child("second").getValue(Double.class));
-//                treeData.soilWaterCapacity.add(dataSnapshot.child("soilWaterCapacity")
-//                        .child("third").getValue(Double.class));
-//                treeData.soilWaterCapacity.add(dataSnapshot.child("soilWaterCapacity")
-//                        .child("forth").getValue(Double.class));
-//                treeData.soilWaterCapacity.add(dataSnapshot.child("soilWaterCapacity")
-//                        .child("fifth").getValue(Double.class));
-//
-//                treeData.contL.add(dataSnapshot.child("contL")
-//                        .child("first").getValue(Double.class));
-//                treeData.contL.add(dataSnapshot.child("contL")
-//                        .child("second").getValue(Double.class));
-//                treeData.contL.add(dataSnapshot.child("contL")
-//                        .child("third").getValue(Double.class));
-//                treeData.contL.add(dataSnapshot.child("contL")
-//                        .child("forth").getValue(Double.class));
-//                treeData.contL.add(dataSnapshot.child("contL")
-//                        .child("fifth").getValue(Double.class));
-//
-//                treeData.nuptL.add(dataSnapshot.child("nuptL")
-//                        .child("first").getValue(Double.class));
-//                treeData.nuptL.add(dataSnapshot.child("nuptL")
-//                        .child("second").getValue(Double.class));
-//                treeData.nuptL.add(dataSnapshot.child("nuptL")
-//                        .child("third").getValue(Double.class));
-//                treeData.nuptL.add(dataSnapshot.child("nuptL")
-//                        .child("forth").getValue(Double.class));
-//                treeData.nuptL.add(dataSnapshot.child("nuptL")
-//                        .child("fifth").getValue(Double.class));
-//
-//                treeData.growTime = dataSnapshot.child("timeFromGrow").getValue(Double.class);
+                TaskCompletionSource<ArrayList<Double>> rootLengthSource = new TaskCompletionSource<>();
+                FirebaseDatabase.getInstance().getReference().child(userID).child(fieldID)
+                        .child("tree_data").child("rootLength").addListenerForSingleValueEvent(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                                ArrayList<Double> rootLength = new ArrayList<>();
+                                rootLength.add(dataSnapshot.child("first").getValue(Double.class));
+                                rootLength.add(dataSnapshot.child("second").getValue(Double.class));
+                                rootLength.add(dataSnapshot.child("third").getValue(Double.class));
+                                rootLength.add(dataSnapshot.child("forth").getValue(Double.class));
+                                rootLength.add(dataSnapshot.child("fifth").getValue(Double.class));
+
+                                rootLengthSource.setResult(rootLength);
+                            }
+
+                            @Override
+                            public void onCancelled(@NonNull DatabaseError error) {
+                                rootLengthSource.setException(error.toException());
+                            }
+                        });
+                FirebaseDatabase.getInstance().getReference().child(userID).child(fieldID)
+                        .child("tree_data").child("rootTips").addListenerForSingleValueEvent(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                                ArrayList<Double> rootTips = new ArrayList<>();
+                                rootTips.add(dataSnapshot.child("first").getValue(Double.class));
+                                rootTips.add(dataSnapshot.child("second").getValue(Double.class));
+                                rootTips.add(dataSnapshot.child("third").getValue(Double.class));
+                                rootTips.add(dataSnapshot.child("forth").getValue(Double.class));
+                                rootTips.add(dataSnapshot.child("fifth").getValue(Double.class));
+
+                                treeData.rootTips = (ArrayList<Double>) rootTips.clone();
+                            }
+
+                            @Override
+                            public void onCancelled(@NonNull DatabaseError error) {
+
+                            }
+                        });
+                FirebaseDatabase.getInstance().getReference().child(userID).child(fieldID)
+                        .child("tree_data").child("soilWaterCapacity").addListenerForSingleValueEvent(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                                ArrayList<Double> rootLength = new ArrayList<>();
+                                rootLength.add(dataSnapshot.child("first").getValue(Double.class));
+                                rootLength.add(dataSnapshot.child("second").getValue(Double.class));
+                                rootLength.add(dataSnapshot.child("third").getValue(Double.class));
+                                rootLength.add(dataSnapshot.child("forth").getValue(Double.class));
+                                rootLength.add(dataSnapshot.child("fifth").getValue(Double.class));
+
+                                treeData.soilWaterCapacity = (ArrayList<Double>) rootLength.clone();
+                            }
+
+                            @Override
+                            public void onCancelled(@NonNull DatabaseError error) {
+
+                            }
+                        });
+                FirebaseDatabase.getInstance().getReference().child(userID).child(fieldID)
+                        .child("tree_data").child("contL").addListenerForSingleValueEvent(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                                ArrayList<Double> rootLength = new ArrayList<>();
+                                rootLength.add(dataSnapshot.child("first").getValue(Double.class));
+                                rootLength.add(dataSnapshot.child("second").getValue(Double.class));
+                                rootLength.add(dataSnapshot.child("third").getValue(Double.class));
+                                rootLength.add(dataSnapshot.child("forth").getValue(Double.class));
+                                rootLength.add(dataSnapshot.child("fifth").getValue(Double.class));
+
+                                treeData.contL = (ArrayList<Double>) rootLength.clone();
+                            }
+
+                            @Override
+                            public void onCancelled(@NonNull DatabaseError error) {
+
+                            }
+                        });
+                FirebaseDatabase.getInstance().getReference().child(userID).child(fieldID)
+                        .child("tree_data").child("nuptL").addListenerForSingleValueEvent(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                                ArrayList<Double> rootLength = new ArrayList<>();
+                                rootLength.add(dataSnapshot.child("first").getValue(Double.class));
+                                rootLength.add(dataSnapshot.child("second").getValue(Double.class));
+                                rootLength.add(dataSnapshot.child("third").getValue(Double.class));
+                                rootLength.add(dataSnapshot.child("forth").getValue(Double.class));
+                                rootLength.add(dataSnapshot.child("fifth").getValue(Double.class));
+
+                                treeData.nuptL = (ArrayList<Double>) rootLength.clone();
+                            }
+
+                            @Override
+                            public void onCancelled(@NonNull DatabaseError error) {
+
+                            }
+                        });
 
                 taskCompletionSource.setResult(treeData);
             }
@@ -612,6 +653,133 @@ public class FirebaseAPI {
         });
         return taskCompletionSource.getTask();
     }
+
+    public static Task<ArrayList<Double>> getRootLength(String userID, String fieldID) {
+        DatabaseReference ref = FirebaseDatabase.getInstance().getReference()
+                .child(userID).child(fieldID).child("tree_data").child("rootLength");
+
+        TaskCompletionSource<ArrayList<Double>> taskCompletionSource = new TaskCompletionSource<>();
+        ref.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange( DataSnapshot dataSnapshot) {
+                ArrayList<Double> rootLength = new ArrayList<>();
+                rootLength.add(dataSnapshot.child("first").getValue(Double.class));
+                rootLength.add(dataSnapshot.child("second").getValue(Double.class));
+                rootLength.add(dataSnapshot.child("third").getValue(Double.class));
+                rootLength.add(dataSnapshot.child("forth").getValue(Double.class));
+                rootLength.add(dataSnapshot.child("fifth").getValue(Double.class));
+
+                taskCompletionSource.setResult(rootLength);
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                taskCompletionSource.setException(databaseError.toException());
+            }
+        });
+        return taskCompletionSource.getTask();
+    }
+    public static Task<ArrayList<Double>> getRootTips(String userID, String fieldID) {
+        DatabaseReference ref = FirebaseDatabase.getInstance().getReference()
+                .child(userID).child(fieldID).child("tree_data").child("rootTips");
+
+        TaskCompletionSource<ArrayList<Double>> taskCompletionSource = new TaskCompletionSource<>();
+        ref.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange( DataSnapshot dataSnapshot) {
+                ArrayList<Double> rootTips = new ArrayList<>();
+                rootTips.add(dataSnapshot.child("first").getValue(Double.class));
+                rootTips.add(dataSnapshot.child("second").getValue(Double.class));
+                rootTips.add(dataSnapshot.child("third").getValue(Double.class));
+                rootTips.add(dataSnapshot.child("forth").getValue(Double.class));
+                rootTips.add(dataSnapshot.child("fifth").getValue(Double.class));
+
+                taskCompletionSource.setResult(rootTips);
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                taskCompletionSource.setException(databaseError.toException());
+            }
+        });
+        return taskCompletionSource.getTask();
+    }
+    public static Task<ArrayList<Double>> getSoilWaterCapacity(String userID, String fieldID) {
+        DatabaseReference ref = FirebaseDatabase.getInstance().getReference()
+                .child(userID).child(fieldID).child("tree_data").child("soilWaterCapacity");
+
+        TaskCompletionSource<ArrayList<Double>> taskCompletionSource = new TaskCompletionSource<>();
+        ref.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange( DataSnapshot dataSnapshot) {
+                ArrayList<Double> rootLength = new ArrayList<>();
+                rootLength.add(dataSnapshot.child("first").getValue(Double.class));
+                rootLength.add(dataSnapshot.child("second").getValue(Double.class));
+                rootLength.add(dataSnapshot.child("third").getValue(Double.class));
+                rootLength.add(dataSnapshot.child("forth").getValue(Double.class));
+                rootLength.add(dataSnapshot.child("fifth").getValue(Double.class));
+
+                taskCompletionSource.setResult(rootLength);
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                taskCompletionSource.setException(databaseError.toException());
+            }
+        });
+        return taskCompletionSource.getTask();
+    }
+    public static Task<ArrayList<Double>> getContL(String userID, String fieldID) {
+        DatabaseReference ref = FirebaseDatabase.getInstance().getReference()
+                .child(userID).child(fieldID).child("tree_data").child("contL");
+
+        TaskCompletionSource<ArrayList<Double>> taskCompletionSource = new TaskCompletionSource<>();
+        ref.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange( DataSnapshot dataSnapshot) {
+                ArrayList<Double> rootLength = new ArrayList<>();
+                rootLength.add(dataSnapshot.child("first").getValue(Double.class));
+                rootLength.add(dataSnapshot.child("second").getValue(Double.class));
+                rootLength.add(dataSnapshot.child("third").getValue(Double.class));
+                rootLength.add(dataSnapshot.child("forth").getValue(Double.class));
+                rootLength.add(dataSnapshot.child("fifth").getValue(Double.class));
+
+                taskCompletionSource.setResult(rootLength);
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                taskCompletionSource.setException(databaseError.toException());
+            }
+        });
+        return taskCompletionSource.getTask();
+    }
+    public static Task<ArrayList<Double>> getNuptL(String userID, String fieldID) {
+        DatabaseReference ref = FirebaseDatabase.getInstance().getReference()
+                .child(userID).child(fieldID).child("tree_data").child("nuptL");
+
+        TaskCompletionSource<ArrayList<Double>> taskCompletionSource = new TaskCompletionSource<>();
+        ref.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange( DataSnapshot dataSnapshot) {
+                ArrayList<Double> rootLength = new ArrayList<>();
+                rootLength.add(dataSnapshot.child("first").getValue(Double.class));
+                rootLength.add(dataSnapshot.child("second").getValue(Double.class));
+                rootLength.add(dataSnapshot.child("third").getValue(Double.class));
+                rootLength.add(dataSnapshot.child("forth").getValue(Double.class));
+                rootLength.add(dataSnapshot.child("fifth").getValue(Double.class));
+
+                taskCompletionSource.setResult(rootLength);
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                taskCompletionSource.setException(databaseError.toException());
+            }
+        });
+        return taskCompletionSource.getTask();
+    }
+
 
     public static void changeTreeData(String userID, String fieldID, List<Double> treeData) {
         DatabaseReference ref = FirebaseDatabase.getInstance().getReference()
