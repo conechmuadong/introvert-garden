@@ -1,37 +1,27 @@
 {
   "project_info": {
-    "project_number": "1006989729401",
-    "firebase_url": "https://sample-c5146-default-rtdb.firebaseio.com",
-    "project_id": "sample-c5146",
-    "storage_bucket": "sample-c5146.appspot.com"
+    "project_number": "336272297460",
+    "firebase_url": "https://introvert-s-garden-default-rtdb.firebaseio.com",
+    "project_id": "introvert-s-garden",
+    "storage_bucket": "introvert-s-garden.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:1006989729401:android:bd198a9dc2f3c0fd68bea8",
+        "mobilesdk_app_id": "1:336272297460:android:50e3fc707faba455fafda1",
         "android_client_info": {
           "package_name": "ie.app"
         }
       },
-      "oauth_client": [
-        {
-          "client_id": "1006989729401-sleuq0gt7665r3tm2vqia00rjgn3j20i.apps.googleusercontent.com",
-          "client_type": 3
-        }
-      ],
+      "oauth_client": [],
       "api_key": [
         {
-          "current_key": "AIzaSyBSamI7TEQxuKP0flN0OmTSq2ITeGpnJYo"
+          "current_key": "AIzaSyAlLTwWs-gqKB6nzTgr5Ssm2sARZwD6zso"
         }
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": [
-            {
-              "client_id": "1006989729401-sleuq0gt7665r3tm2vqia00rjgn3j20i.apps.googleusercontent.com",
-              "client_type": 3
-            }
-          ]
+          "other_platform_oauth_client": []
         }
       }
     }

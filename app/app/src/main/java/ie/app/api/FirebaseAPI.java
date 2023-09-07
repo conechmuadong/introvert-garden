@@ -41,7 +41,7 @@ import ie.app.models.User;
 public class FirebaseAPI {
 
     static FirebaseDatabase database;
-    static final String instance = "https://sample-c5146-default-rtdb.firebaseio.com/";
+    static final String instance = "https://introvert-s-garden-default-rtdb.firebaseio.com/";
     final static private double cuttingDryMass = 75.4; // (g)
     final static private double numberOfSoilLayer = 5;
 

@@ -71,6 +71,7 @@
                 android:layout_weight="1"
                 android:layout_height="wrap_content"
                 android:focusable="false"
+                android:inputType="text"
                 android:hint="Ngày" />
             <Space
                 android:layout_width="15dp"
@@ -81,6 +82,7 @@
                 android:layout_weight="1"
                 android:layout_height="wrap_content"
                 android:focusable="false"
+                android:inputType="text"
                 android:hint="Giờ" />
             <Space
                 android:layout_width="30dp"

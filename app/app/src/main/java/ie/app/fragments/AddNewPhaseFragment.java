@@ -60,7 +60,7 @@ public class AddNewPhaseFragment extends BaseFragment {
                 } else {
                     FirebaseAPI.addPhase(binding.humidEditText.getText().toString(),
                             binding.startDatEditText.getText().toString(),
-                            binding.endDatEditText.getText().toString(), "user", field.getName(), num);
+                            binding.endDatEditText.getText().toString(), "users", field.getName(), num);
                     Phase x = new Phase("phase" + (num),
                             Float.parseFloat(binding.humidEditText.getText().toString()),
                             binding.startDatEditText.getText().toString(),

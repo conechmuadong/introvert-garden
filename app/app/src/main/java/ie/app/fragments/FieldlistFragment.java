@@ -22,6 +22,7 @@ import com.google.android.gms.tasks.Task;
 import com.google.android.gms.tasks.Tasks;
 
 import java.util.List;
+import java.util.Objects;
 
 import ie.app.R;
 import ie.app.adapter.FieldListAdapter;
@@ -49,7 +50,7 @@ public class FieldlistFragment extends BaseFragment implements AdapterView.OnIte
         binding = FragmentListFieldBinding.inflate(inflater, container, false);
 
         listView = (ListView) binding.listField;
-        new GetAllTask(getContext()).execute("/user");
+        new GetAllTask(getContext()).execute("/users");
 
         addBtn = binding.addButton;
 
@@ -65,25 +66,20 @@ public class FieldlistFragment extends BaseFragment implements AdapterView.OnIte
                 Log.v("onFieldSelected", field.getName() + " onViewCreated");
                 Bundle bundle = new Bundle();
                 bundle.putString("selectedFieldName", field.getName());
-                if(type == "status") {
+                if(Objects.equals(type, "status")) {
                     NavHostFragment.findNavController(FieldlistFragment.this)
                             .navigate(R.id.action_FieldlistFragment_to_MeasuredDataFragment, bundle);
-                } else if(type == "adjust") {
+                } else if(Objects.equals(type, "adjust")) {
                     NavHostFragment.findNavController(FieldlistFragment.this)
                             .navigate(R.id.action_FieldlistFragment_to_CustomizedFragment, bundle);
-                } else if (type == "delete") {
+                } else if (Objects.equals(type, "delete")) {
                     confirmAlert(field);
                 }
             }
         };
 
-        addBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                NavHostFragment.findNavController(FieldlistFragment.this)
-                        .navigate(R.id.action_FieldlistFragment_to_AddNewFieldFragment);
-            }
-        });
+        addBtn.setOnClickListener(v -> NavHostFragment.findNavController(FieldlistFragment.this)
+                .navigate(R.id.action_FieldlistFragment_to_AddNewFieldFragment));
     }
 
     @Override
@@ -97,20 +93,18 @@ public class FieldlistFragment extends BaseFragment implements AdapterView.OnIte
         Field field = (Field) adapterView.getItemAtPosition(i);
     }
 
-
-
     @Override
     public void onFieldSelected(Field field, String type) {
         Bundle bundle = new Bundle();
         bundle.putString("selectedField", field.getName());
         Log.v("onFieldSelected", field.getName() + " in fieldlist Fragment");
-        if(type == "status") {
+        if(Objects.equals(type, "status")) {
             NavHostFragment.findNavController(FieldlistFragment.this)
                     .navigate(R.id.action_FieldlistFragment_to_MeasuredDataFragment, bundle);
-        } else if(type == "adjust") {
+        } else if(Objects.equals(type, "adjust")) {
             NavHostFragment.findNavController(FieldlistFragment.this)
                     .navigate(R.id.action_FieldlistFragment_to_CustomizedFragment, bundle);
-        } else if (type == "delete") {
+        } else if (Objects.equals(type, "delete")) {
             confirmAlert(field);
         }
     }
@@ -129,8 +123,8 @@ public class FieldlistFragment extends BaseFragment implements AdapterView.OnIte
         });
 
         builder.setPositiveButton("Có", (DialogInterface.OnClickListener) (dialog, which) -> {
-            FirebaseAPI.deleteField("user", field.getName());
-            new GetAllTask(getContext()).execute("/user");
+            FirebaseAPI.deleteField("users", field.getName());
+            new GetAllTask(getContext()).execute("/users");
         });
 
         // Create the Alert dialog

@@ -69,7 +69,7 @@ public class AddNewFieldFragment extends Fragment {
                 } else {
                     NavHostFragment.findNavController(AddNewFieldFragment.this)
                             .navigateUp();
-                    FirebaseAPI.addField("user", addNewFieldEditText.getText().toString());
+                    FirebaseAPI.addField("users", addNewFieldEditText.getText().toString());
                 }
 
             }

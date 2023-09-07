@@ -88,7 +88,7 @@ public class PhaseListFragment extends BaseFragment {
                     FirebaseAPI.addPhase(x.getText().toString(),
                             y.getText().toString(),
                             z.getText().toString(),
-                            "user", field.getName(),
+                            "users", field.getName(),
                             i + 1);
                 }
                 Toast.makeText(getContext(), "Các thay đổi đã được cập nhật", Toast.LENGTH_SHORT).show();

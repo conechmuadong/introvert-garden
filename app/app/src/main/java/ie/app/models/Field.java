@@ -74,16 +74,16 @@ public class Field {
             }
             double t = 5.0 / 24 / 60;
             rk4Step(allMeasuredData.get(i).get(0) - treeData.growTime, _treeData, t, weatherData);
-            Log.e("final irritation", String.valueOf(_treeData.get(32)));
         }
 
-        FirebaseAPI.changeTreeData("user", getName(), _treeData);
+        FirebaseAPI.changeTreeData("users", getName(), _treeData);
         if (_treeData.get(32) == 0) {
-            FirebaseAPI.changeIrrigationCheck("user", getName(), false);
+//            FirebaseAPI.changeIrrigationCheck("users", getName(), false);
         } else {
-            FirebaseAPI.changeIrrigationCheck("user", getName(), true);
+//            FirebaseAPI.changeIrrigationCheck("users", getName(), true);
             double duration = _treeData.get(32) / customizedParameter.dripRate;
-            FirebaseAPI.changeDuration("user", getName(), duration);
+            Log.e("final irritation", String.valueOf(duration));
+//            FirebaseAPI.changeDuration("users", getName(), duration);
         }
     }
 

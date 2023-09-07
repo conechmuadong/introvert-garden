@@ -86,7 +86,7 @@ public class CustomizedFragment extends BaseFragment implements AdapterView.OnIt
                 field.customizedParameter.scaleRain = Float.parseFloat(binding.scaleRainEditText.getText().toString());
                 field.customizedParameter.fertilizationLevel = Float.parseFloat(binding.ferLevelEditText.getText().toString());
                 field.customizedParameter.fieldCapacity = phases;
-                FirebaseAPI.changeCustomizedParameter("user", field.name, field.customizedParameter);
+                FirebaseAPI.changeCustomizedParameter("users", field.name, field.customizedParameter);
                 updateUI();
                 Toast.makeText(getContext(), "Các thay đổi đã được cập nhật", Toast.LENGTH_SHORT).show();
             }
@@ -110,7 +110,7 @@ public class CustomizedFragment extends BaseFragment implements AdapterView.OnIt
     private void getFieldByName(String name) {
         field.name = name;
         CustomizedFragment.GetTask task = new CustomizedFragment.GetTask(getContext());
-        task.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, "/user", "/" + name);
+        task.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, "/users", "/" + name);
         new AsyncTask<Void, Void, CustomizedParameter>() {
             @Override
             protected CustomizedParameter doInBackground(Void... voids) {

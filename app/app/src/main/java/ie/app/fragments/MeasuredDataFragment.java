@@ -70,7 +70,7 @@ public class MeasuredDataFragment extends BaseFragment {
     private void getFieldByName(String name) {
         field.name = name;
         GetTask task = new GetTask(getContext());
-        task.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, "/user", "/" + name);
+        task.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, "/users", "/" + name);
         new AsyncTask<Void, Void, MeasuredData>() {
             @Override
             protected MeasuredData doInBackground(Void... voids) {

@@ -74,19 +74,19 @@ public class IrrigationInformation {
 
     public void setAutoIrrigation(boolean autoIrrigation, String field) {
         this.autoIrrigation = autoIrrigation;
-        FirebaseAPI.changeAutoIrrigation("user", field, autoIrrigation);
+        FirebaseAPI.changeAutoIrrigation("users", field, autoIrrigation);
     }
 
     public void setNewStartDate(String newStartDate, String field) {
         this._startDate = newStartDate;
         this.startTime = newStartDate + " " + _startTime;
-        FirebaseAPI.changeIrrigationTime("user", field, startTime);
+        FirebaseAPI.changeIrrigationTime("users", field, startTime);
     }
 
     public void setNewStartTime(String newStartTime, String field) {
         this._startTime = newStartTime;
         this.startTime = _startDate + " " + newStartTime;
-        FirebaseAPI.changeIrrigationTime("user", field, startTime);
+        FirebaseAPI.changeIrrigationTime("users", field, startTime);
     }
 
     public void setNewAmount(float amount) {
