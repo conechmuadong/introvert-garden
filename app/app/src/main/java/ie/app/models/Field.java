@@ -69,20 +69,20 @@ public class Field {
 
         for (int i = 0; i < allMeasuredData.size(); i++) {
             List<Double> weatherData = new ArrayList<>();
-            for (int j = 1; j < 4; j++) {
+            for (int j = 1; j < 5; j++) {
                 weatherData.add(allMeasuredData.get(i).get(j));
             }
             double t = 5.0 / 24 / 60;
             rk4Step(allMeasuredData.get(i).get(0) - treeData.growTime, _treeData, t, weatherData);
         }
 
-        FirebaseAPI.changeTreeData("users", getName(), _treeData);
+//        FirebaseAPI.changeTreeData("users", getName(), _treeData);
         if (_treeData.get(32) == 0) {
 //            FirebaseAPI.changeIrrigationCheck("users", getName(), false);
         } else {
 //            FirebaseAPI.changeIrrigationCheck("users", getName(), true);
             double duration = _treeData.get(32) / customizedParameter.dripRate;
-            Log.e("final irritation", String.valueOf(duration));
+            Log.e("final irritation", String.valueOf(duration) + '\n' + customizedParameter.dripRate);
 //            FirebaseAPI.changeDuration("users", getName(), duration);
         }
     }

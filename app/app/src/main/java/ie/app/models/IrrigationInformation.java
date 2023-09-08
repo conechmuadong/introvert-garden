@@ -10,6 +10,7 @@ import ie.app.api.FirebaseAPI;
 public class IrrigationInformation {
     private String startTime, endTime, duration;
     private String _startDate, _startTime;
+    boolean checked;
 
     private Date dateTime;
     public float amount = 100;
@@ -91,6 +92,14 @@ public class IrrigationInformation {
 
     public void setNewAmount(float amount) {
         this.amount = amount;
+    }
+
+    public boolean isChecked() {
+        return checked;
+    }
+
+    public void setChecked(boolean checked) {
+        this.checked = checked;
     }
 }
 

@@ -23,6 +23,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Date;
@@ -262,6 +263,7 @@ public class FirebaseAPI {
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 for (DataSnapshot childSnapshot : snapshot.getChildren()) {
                     String dateString = childSnapshot.getKey();
+                    assert dateString != null;
                     DatabaseReference ref1 = FirebaseDatabase.getInstance().getReference().child(userID)
                             .child(fieldID).child("measured_data").child(dateString);
                     ref1.addListenerForSingleValueEvent(new ValueEventListener() {
@@ -272,17 +274,37 @@ public class FirebaseAPI {
                                 List<Double> num = new ArrayList<>();
 
                                 if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
-                                    LocalDate date = LocalDate.parse(dateString, DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+                                    LocalDate date = null;
+                                    try {
+                                        date = LocalDate.parse(dateString, DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+                                    } catch (DateTimeParseException e) {
+                                        try {
+                                            date = LocalDate.parse(dateString, DateTimeFormatter.ofPattern("yyyy-M-dd"));
+                                        } catch (DateTimeParseException e2) {
+                                            try {
+                                                date = LocalDate.parse(dateString, DateTimeFormatter.ofPattern("yyyy-MM-d"));
+                                            } catch (DateTimeParseException e3) {
+                                                try {
+                                                    date = LocalDate.parse(dateString, DateTimeFormatter.ofPattern("yyyy-M-d"));
+                                                } catch (DateTimeParseException ignored) {
+
+                                                }
+                                            }
+                                        }
+                                    }
                                     LocalTime time = LocalTime.parse(timeString);
+                                    assert date != null;
                                     LocalDate x = LocalDate.of(date.getYear(), 1, 1);
                                     double different = ChronoUnit.DAYS.between(x, date);
                                     different += time.getHour() / 24.0 + time.getMinute() / 24.0 / 60.0 +
                                             time.getSecond() / 24.0 / 3600.0;
                                     num.add(different);
                                 }
+                                assert timeString != null;
                                 num.add(snapshot.child(timeString).child("air_humidity").getValue(Double.class));
                                 num.add(snapshot.child(timeString).child("radiation").getValue(Double.class));
                                 num.add(snapshot.child(timeString).child("temperature").getValue(Double.class));
+                                num.add(snapshot.child(timeString).child("soil_humidity").getValue(Double.class));
                                 data.add(num);
                             }
                             taskCompletionSource.setResult(data);
@@ -318,7 +340,6 @@ public class FirebaseAPI {
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 IrrigationInformation data = new IrrigationInformation();
                 data = snapshot.getValue(IrrigationInformation.class);
-                Log.v("API", data.toString());
                 taskCompletionSource.setResult(data);
             }
 
@@ -341,7 +362,7 @@ public class FirebaseAPI {
         TaskCompletionSource<CustomizedParameter> taskCompletionSource = new TaskCompletionSource<>();
         ref.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 CustomizedParameter customizedParameter = new CustomizedParameter();
                 customizedParameter.acreage = dataSnapshot.child("acreage").getValue(Float.class);
                 customizedParameter.distanceBetweenHole = dataSnapshot.child("distanceBetweenHole").getValue(Float.class);
@@ -456,8 +477,7 @@ public class FirebaseAPI {
                     .child(LocalTime.now().withNano(0).toString());
             mea.child("air_humidity").setValue(0);
             mea.child("radiation").setValue(0);
-            mea.child("soil_humidity_30").setValue(0);
-            mea.child("soil_humidity_60").setValue(0);
+            mea.child("soil_humidity").setValue(0);
             mea.child("temperature").setValue(0);
         }
 
@@ -693,7 +713,6 @@ public class FirebaseAPI {
                 rootTips.add(dataSnapshot.child("third").getValue(Double.class));
                 rootTips.add(dataSnapshot.child("forth").getValue(Double.class));
                 rootTips.add(dataSnapshot.child("fifth").getValue(Double.class));
-
                 taskCompletionSource.setResult(rootTips);
             }
 

@@ -110,6 +110,7 @@ public class IrrigationSettingFragment extends BaseFragment {
             mode = Mode.AUTO;
             if (!isComputed) {
                 field.simulation();
+                isComputed = true;
             }
             // set background
             binding.manualButton.setBackgroundColor(binding.manualButton.getContext().
@@ -119,7 +120,6 @@ public class IrrigationSettingFragment extends BaseFragment {
             binding.amountEditText.setEnabled(false);
             binding.dateEditText.setEnabled(false);
             binding.timeEditText.setEnabled(false);
-//            binding.dateEditText.setText();
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                 if (LocalTime.now().getHour() > 8) {
                     binding.dateEditText.setText(LocalDate.now().plusDays(1).toString());
@@ -128,8 +128,6 @@ public class IrrigationSettingFragment extends BaseFragment {
                 }
                 binding.timeEditText.setText(LocalTime.of(8, 0, 0).toString());
             }
-
-            field.simulation();
         });
 
         binding.dateEditText.setOnClickListener(v -> {
