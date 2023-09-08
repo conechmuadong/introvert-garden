@@ -324,7 +324,7 @@ public class Field {
         return (r);
     }
 
-    private List<Double> ode2(double ct, List<Double> y, List<Double> measuredData/* air_humidity, radiation, temperature */) {
+    private List<Double> ode2(double ct, List<Double> y, List<Double> measuredData/* air_humidity, radiation, temperature, soil_humidity */) {
         int cnt = -1;
         double LDM = y.get(++cnt); // Leaf Dry Mass (g)             0
         double SDM = y.get(++cnt); // Stem Dry Mass (g)             1
@@ -350,7 +350,7 @@ public class Field {
         double TDM = LDM + SDM + RDM + SRDM + Clab; // Total Dry Mass (g)
         double cDm = 0.43; // carbon to dry matter ratio (g C/g DM)
 
-        double leafTemp = measuredData.get(2); // [air_humidity, radiation, temperature]
+        double leafTemp = measuredData.get(2); // [air_humidity, radiation, temperature, soil_humidity]
         double TSphot = lim(-0.832097717 + 0.124485738 * leafTemp -
                 0.002114081 * pow(leafTemp, 2));
         double TSshoot = lim(-1.5 + 0.125 * leafTemp) * lim(7.4 - 0.2 * leafTemp);
@@ -422,7 +422,7 @@ public class Field {
                 measuredData.get(0),
                 wind,
                 doy,
-                latitude, longitude, elevation, longitude, height); // [air_humidity, radiation, temperature]
+                latitude, longitude, elevation, longitude, height); // [air_humidity, radiation, temperature, soil_humidity]
         double ETrainFactor = (precipitation > 0) ? 1 : 0;
         double kdf = -0.47;
         double ll = exp(kdf * LA / areaPerPlant);
@@ -554,7 +554,7 @@ public class Field {
         double IDM = Csink / cDm;
 
         //photosynthesis
-        double PPFD = 2.5 * measuredData.get(1); // [air_humidity, radiation, temperature]
+        double PPFD = 2.5 * measuredData.get(1); // [air_humidity, radiation, temperature, soil_humidity]
         double SFphot = min(min(TSphot, WSphot), min(NSphot, CSphot));
         double CFR = photoFixMean(PPFD, LA / areaPerPlant, 29.37 * SFphot);
 

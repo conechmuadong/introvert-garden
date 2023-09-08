@@ -307,7 +307,6 @@ public class FirebaseAPI {
                                 num.add(snapshot.child(timeString).child("soil_humidity").getValue(Double.class));
                                 data.add(num);
                             }
-                            taskCompletionSource.setResult(data);
                         }
 
                         @Override
@@ -316,7 +315,7 @@ public class FirebaseAPI {
                         }
                     });
                 }
-
+                taskCompletionSource.setResult(data);
             }
 
             @Override
