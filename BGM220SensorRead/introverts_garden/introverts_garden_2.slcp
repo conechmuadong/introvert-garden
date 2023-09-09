@@ -1,6 +1,6 @@
 # Silicon Labs Project Configuration Tools: slcp, v0, Component selection file.
-project_name: introverts_garden
-label: introverts_garden
+project_name: introverts_garden_2
+label: introverts_garden_2
 description: |
   The classic blinky example using Bluetooth communication. Demonstrates a simple two-way data exchange over GATT. This can be tested with the EFR Connect mobile app.
 category: Bluetooth Examples
@@ -28,8 +28,8 @@ sdk: {id: gecko_sdk, version: 4.1.0}
 toolchain_settings: []
 component:
 - {id: bluetooth_feature_gatt_server}
-- {id: bluetooth_feature_legacy_advertiser}
 - {id: mpu}
+- {id: bluetooth_feature_legacy_advertiser}
 - {id: gatt_configuration}
 - instance: [led0]
   id: simple_led
