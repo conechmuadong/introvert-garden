@@ -169,7 +169,7 @@ public class FirebaseAPI {
         return taskCompletionSource.getTask();
     }
 
-    public void deleteMeasuredData(String userID, String fieldID) {
+    public static void deleteMeasuredData(String userID, String fieldID) {
         DatabaseReference ref = FirebaseDatabase.getInstance().getReference()
                 .child(userID).child(fieldID).child("measured_data");
 
@@ -351,7 +351,6 @@ public class FirebaseAPI {
         return taskCompletionSource.getTask();
     }
 
-    // unsuccessfull
     public static Task<CustomizedParameter> getCustomizedParameter(String userID, String fieldID) {
         DatabaseReference ref = FirebaseDatabase.getInstance().getReference()
                 .child(userID).child(fieldID).child("customized_parameter");
@@ -390,12 +389,48 @@ public class FirebaseAPI {
         return taskCompletionSource.getTask();
     }
 
+    public static Task<ArrayList<Phase>> getPhases(String userID, String fieldID) {
+        DatabaseReference ref = FirebaseDatabase.getInstance().getReference()
+                .child(userID).child(fieldID).child("customized_parameter")
+                .child("fieldCapacity");
+
+        TaskCompletionSource<ArrayList<Phase>> taskCompletionSource = new TaskCompletionSource<>();
+        ref.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                ArrayList<Phase> ans = new ArrayList<>();
+                for (DataSnapshot phaseSnapshot : snapshot.getChildren()) {
+                    Phase phase = phaseSnapshot.getValue(Phase.class);
+                    phase.setName(phaseSnapshot.getKey());
+                    ans.add(phase);
+                }
+                Log.e("number", String.valueOf(ans.size()));
+                taskCompletionSource.setResult(ans);
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
+
+        return taskCompletionSource.getTask();
+    }
+
     public static void changeIrrigationTime(String userID, String fieldID, String startTime) {
         DatabaseReference ref = FirebaseDatabase.getInstance().getReference()
                 .child(userID).child(fieldID).child("irrigation_information");
 
         String donationKey = "startTime";
         ref.child(donationKey).setValue(startTime);
+    }
+
+    public static void changeEndTime(String userID, String fieldID, String endTime) {
+        DatabaseReference ref = FirebaseDatabase.getInstance().getReference()
+                .child(userID).child(fieldID).child("irrigation_information");
+
+        String donationKey = "endTime";
+        ref.child(donationKey).setValue(endTime);
     }
 
     public static void changeAutoIrrigation(String userID, String fieldID, boolean auto) {
@@ -468,7 +503,7 @@ public class FirebaseAPI {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             DatabaseReference irr = ref.child("irrigation_information");
             irr.child("autoIrrigation").setValue(false);
-            irr.child("duration").setValue("0");
+            irr.child("duration").setValue("00:00:00");
             irr.child("endTime").setValue(LocalDate.now().toString() + " " + LocalTime.now().withNano(0).toString());
             irr.child("irrigationCheck").setValue(false);
             irr.child("checked").setValue(false);
@@ -800,7 +835,6 @@ public class FirebaseAPI {
         return taskCompletionSource.getTask();
     }
 
-
     public static void changeTreeData(String userID, String fieldID, List<Double> treeData) {
         DatabaseReference ref = FirebaseDatabase.getInstance().getReference()
                 .child(userID).child(fieldID).child("tree_data");
@@ -812,7 +846,7 @@ public class FirebaseAPI {
         ref.child("SRDM").setValue(treeData.get(++num));
         ref.child("LA").setValue(treeData.get(++num));
 
-        ref.child("mDML").setValue(treeData.get(++num));
+        ref.child("mDMl").setValue(treeData.get(++num));
         ref.child("Clab").setValue(treeData.get(++num));
 
         ref.child("rootLength")

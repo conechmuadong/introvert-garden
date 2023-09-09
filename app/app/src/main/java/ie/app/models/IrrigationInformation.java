@@ -1,5 +1,7 @@
 package ie.app.models;
 
+import android.annotation.SuppressLint;
+
 import java.sql.Time;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -10,9 +12,10 @@ import ie.app.fragments.BaseFragment;
 
 public class IrrigationInformation extends BaseFragment {
     private String startTime, endTime, duration;
-    private String _startDate, _startTime;
+    private String _startDate, _startTime, _endDate, _endTime;
     boolean checked;
     private Date dateTime;
+    @SuppressLint("SimpleDateFormat")
     private static SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
     public boolean autoIrrigation;
 
@@ -70,7 +73,6 @@ public class IrrigationInformation extends BaseFragment {
 
     public void setDuration(String duration) {
         this.duration = duration;
-        FirebaseAPI.changeDuration("users", field.getName(), duration);
     }
 
     public void setAutoIrrigation(boolean autoIrrigation, String field) {
@@ -88,6 +90,18 @@ public class IrrigationInformation extends BaseFragment {
         this._startTime = newStartTime;
         this.startTime = _startDate + " " + newStartTime;
         FirebaseAPI.changeIrrigationTime("users", field, startTime);
+    }
+
+    public void setNewEndDate(String newEndDate, String field) {
+        this._endDate = newEndDate;
+        this.endTime = newEndDate + " " + _endTime;
+        FirebaseAPI.changeEndTime("users", field, endTime);
+    }
+
+    public void setNewEndTime(String newEndTime, String field) {
+        this._endTime = newEndTime;
+        this.endTime = _endDate + " " + newEndTime;
+        FirebaseAPI.changeEndTime("users", field, endTime);
     }
 
     public boolean isChecked() {

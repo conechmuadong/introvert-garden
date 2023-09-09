@@ -72,7 +72,6 @@ public class Field {
             _treeData.add(x.getHour()/24.0 + x.getMinute()/24.0/60.0 + x.getSecond()/24.0/60.0/60.0); // 32
         }
 
-
         for (int i = 0; i < allMeasuredData.size(); i++) {
             List<Double> weatherData = new ArrayList<>();
             for (int j = 1; j < 5; j++) {
@@ -90,12 +89,12 @@ public class Field {
             while (duration < 0.01) {
                 duration *= 10;
             }
-            Log.e("Duration", String.valueOf(duration));
             int hour = (int) (duration * 24.0);
             int minute = (int) (duration * 24.0 * 60.0 - hour * 60.0);
             int second = (int) (duration * 24.0 * 60.0 * 60.0 - minute * 60.0) % 60;
             if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
                 String dur = LocalTime.of(hour, minute, second).toString();
+                Log.e("dur", dur);
                 return dur;
             }
         }

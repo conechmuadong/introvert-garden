@@ -1,5 +1,6 @@
 package ie.app.fragments;
 
+import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
@@ -24,6 +25,7 @@ import android.widget.Toast;
 import com.google.android.gms.tasks.Task;
 import com.google.android.gms.tasks.Tasks;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
@@ -55,6 +57,7 @@ public class PhaseListFragment extends BaseFragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+        update();
         binding = FragmentPhaseListBinding.inflate(inflater, container, false);
         listView = (ListView) binding.listPhase;
         addPhaseBtn = binding.addPhaseButton;
@@ -66,7 +69,6 @@ public class PhaseListFragment extends BaseFragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        update();
         adapter = new PhaseListAdapter(getContext(), field.customizedParameter.getFieldCapacity());
         listView.setAdapter(adapter);
 
@@ -103,7 +105,7 @@ public class PhaseListFragment extends BaseFragment {
         binding = null;
     }
 
-    private class GetTask extends AsyncTask<String, Void, CustomizedParameter> {
+    private class GetTask extends AsyncTask<String, Void, ArrayList<Phase>> {
         protected ProgressDialog dialog;
         protected Context context;
 
@@ -120,12 +122,11 @@ public class PhaseListFragment extends BaseFragment {
         }
 
         @Override
-        protected CustomizedParameter doInBackground(String... params) {
+        protected ArrayList<Phase> doInBackground(String... params) {
             try {
-                Task<CustomizedParameter> task = FirebaseAPI.getCustomizedParameter((String) params[0], (String) params[1]);
-                field.customizedParameter = Tasks.await(task);
-                Log.v("PhaseListFragment", "Got update");
-                return field.customizedParameter;
+                Task<ArrayList<Phase>> task = FirebaseAPI.getPhases((String) params[0], (String) params[1]);
+                field.customizedParameter.setFieldCapacity(Tasks.await(task));
+                return field.customizedParameter.getFieldCapacity();
             } catch (Exception e) {
                 Log.v("ASYNC", "ERROR : " + e);
                 e.printStackTrace();
@@ -134,20 +135,21 @@ public class PhaseListFragment extends BaseFragment {
         }
 
         @Override
-        protected void onPostExecute(CustomizedParameter result) {
+        protected void onPostExecute(ArrayList<Phase> result) {
             super.onPostExecute(result);
-            field.customizedParameter = result;
+            field.customizedParameter.setFieldCapacity(result);
             if (dialog.isShowing())
                 dialog.dismiss();
         }
     }
 
+    @SuppressLint("StaticFieldLeak")
     private void update() {
         GetTask task = new GetTask(getContext());
-        task.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, "/user", "/" + field.getName());
-        new AsyncTask<Void, Void, CustomizedParameter>() {
+        task.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, "/users", "/" + field.getName());
+        new AsyncTask<Void, Void, ArrayList<Phase>>() {
             @Override
-            protected CustomizedParameter doInBackground(Void... voids) {
+            protected ArrayList<Phase> doInBackground(Void... voids) {
                 try {
                     return task.get();
                 } catch (InterruptedException | ExecutionException e) {
@@ -157,8 +159,8 @@ public class PhaseListFragment extends BaseFragment {
             }
 
             @Override
-            protected void onPostExecute(CustomizedParameter customizedParameter) {
-                field.customizedParameter = customizedParameter;
+            protected void onPostExecute(ArrayList<Phase> result) {
+                field.customizedParameter.setFieldCapacity(result);
                 adapter = new PhaseListAdapter(getContext(), field.customizedParameter.getFieldCapacity());
                 listView.setAdapter(adapter);
             }

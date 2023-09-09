@@ -44,7 +44,7 @@ public class CustomizedFragment extends BaseFragment implements AdapterView.OnIt
     private FragmentCustomizedBinding binding;
     private OnFieldSelectedListener listener;
 
-    private List<Phase> phases = field.customizedParameter.fieldCapacity;
+    private ArrayList<Phase> phases = field.customizedParameter.fieldCapacity;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -183,7 +183,6 @@ public class CustomizedFragment extends BaseFragment implements AdapterView.OnIt
             }
         }
         TextView humidityView = binding.humidityValue;
-        humidityView.setText(humidityText);
         humidityView.setLineSpacing(10f, 1f);
     }
 

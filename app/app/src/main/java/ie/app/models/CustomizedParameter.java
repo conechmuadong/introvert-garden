@@ -13,9 +13,9 @@ public class CustomizedParameter {
     public float fertilizationLevel;
     public int numberOfHoles;
     public float scaleRain;
-    public List<Phase> fieldCapacity = new ArrayList<Phase>();
+    public ArrayList<Phase> fieldCapacity = new ArrayList<>();
 
-    public void setFieldCapacity(List<Phase> fieldCapacity) {
+    public void setFieldCapacity(ArrayList<Phase> fieldCapacity) {
         this.fieldCapacity = fieldCapacity;
     }
 
@@ -27,7 +27,11 @@ public class CustomizedParameter {
         return ret;
     }
 
-    public List<Phase> getFieldCapacity() {
+    public ArrayList<Phase> getFieldCapacity() {
         return fieldCapacity;
+    }
+
+    public int numberOfPhases() {
+        return fieldCapacity.size();
     }
 }

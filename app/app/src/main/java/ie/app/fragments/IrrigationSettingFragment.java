@@ -9,10 +9,13 @@ import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.DatePicker;
+import android.widget.TextView;
 import android.widget.TimePicker;
 
 import androidx.annotation.NonNull;
@@ -23,6 +26,7 @@ import com.google.android.gms.tasks.Tasks;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -46,6 +50,7 @@ public class IrrigationSettingFragment extends BaseFragment {
     private String selectedStartDate, selectedStartTime, selectedAmount;
     private boolean isComputed = false;
 
+    @SuppressLint("SetTextI18n")
     @Override
     public View onCreateView(
             LayoutInflater inflater, ViewGroup container,
@@ -76,17 +81,14 @@ public class IrrigationSettingFragment extends BaseFragment {
             binding.timeEditText.setEnabled(true);
         }
 
-
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            binding.endDate.setText(LocalDate.now().toString());
-            binding.endTime.setText(LocalTime.now().withNano(0).toString());
-        }
-
         try {
             selectedStartDate = field.irrigationInformation.getStartDate();
             selectedStartTime = field.irrigationInformation.getStartTime();
             binding.dateEditText.setText(selectedStartDate);
             binding.timeEditText.setText(selectedStartTime);
+            binding.endDate.setText(binding.dateEditText.getText().toString());
+            binding.endTime.setText(binding.timeEditText.getText().toString());
+            binding.amountEditText.setText("00:00:00");
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
@@ -95,6 +97,7 @@ public class IrrigationSettingFragment extends BaseFragment {
 
     }
 
+    @SuppressLint("SetTextI18n")
     public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         update();
@@ -132,7 +135,7 @@ public class IrrigationSettingFragment extends BaseFragment {
                 } else {
                     binding.dateEditText.setText(LocalDate.now().toString());
                 }
-                binding.timeEditText.setText(LocalTime.of(8, 0, 0).toString());
+                binding.timeEditText.setText("08:00:00");
                 binding.amountEditText.setText(field.irrigationInformation.getDuration());
                 binding.endDate.setText(binding.dateEditText.getText().toString());
 
@@ -141,7 +144,9 @@ public class IrrigationSettingFragment extends BaseFragment {
                         .plusHours(x.getHour())
                                 .plusMinutes(x.getMinute())
                                         .plusSeconds(x.getSecond());
-                binding.endTime.setText(y.toString());
+                String end = y.toString() + ((y.toString().length() < 8) ? ":00" : "");
+
+                binding.endTime.setText(end);
             }
         });
 
@@ -170,7 +175,7 @@ public class IrrigationSettingFragment extends BaseFragment {
 
                     binding.dateEditText.setText(strDate);
 
-
+                    binding.endDate.setText(binding.dateEditText.getText().toString());
                 }
             }, year, month, dayOfMonth);
             datePickerDialog.show();
@@ -195,13 +200,20 @@ public class IrrigationSettingFragment extends BaseFragment {
                     Date selectedDate = selectedCalendar.getTime(); // Lấy ra đối tượng Date tương ứng với giá trị được chọn
 
 
-                    SimpleDateFormat formatter = new SimpleDateFormat("hh:mm:ss");
+                    @SuppressLint("SimpleDateFormat") SimpleDateFormat formatter = new SimpleDateFormat("hh:mm:ss");
                     String strTime = formatter.format(selectedDate);
                     selectedStartTime = strTime;
 
                     binding.timeEditText.setText(strTime);
-
-                    Log.v("Irrigation Setting", field.irrigationInformation.toString());
+                    if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+                        LocalTime x = LocalTime.parse(binding.amountEditText.getText());
+                        LocalTime y = LocalTime.parse(strTime)
+                                .plusHours(x.getHour())
+                                .plusMinutes(x.getMinute())
+                                .plusSeconds(x.getSecond());
+                        String end = y.toString() + ((y.toString().length() == 5) ? ":00" : "");
+                        binding.endTime.setText(end);
+                    }
                 }
             }, hour, min, true);
             timePickerDialog.show();
@@ -212,16 +224,23 @@ public class IrrigationSettingFragment extends BaseFragment {
             public void onClick(View view) {
                 String input = binding.amountEditText.getText().toString();
                 field.irrigationInformation.setDuration(input);
-                if (input != "00:00:00") {
+                if (!input.equals("00:00:00")) {
                     FirebaseAPI.changeIrrigationCheck("users", field.getName(), true);
                 } else {
                     FirebaseAPI.changeIrrigationCheck("users", field.getName(), false);
                 }
 
+                FirebaseAPI.deleteMeasuredData("users", field.getName());
+                FirebaseAPI.changeDuration("users", field.getName(), field.irrigationInformation.getDuration());
+
                 input = binding.dateEditText.getText().toString();
-                field.irrigationInformation.setNewStartDate(input, field.name);
+                field.irrigationInformation.setNewStartDate(input, field.getName());
                 input = binding.timeEditText.getText().toString();
-                field.irrigationInformation.setNewStartTime(selectedStartTime, field.name);
+                field.irrigationInformation.setNewStartTime(input, field.getName());
+                input = binding.endDate.getText().toString();
+                field.irrigationInformation.setNewEndDate(input, field.getName());
+                input = binding.endTime.getText().toString();
+                field.irrigationInformation.setNewEndTime(input, field.getName());
 
                 field.irrigationInformation.setAutoIrrigation((mode == Mode.AUTO), field.name);
                 Log.v("API", "after change mode");
