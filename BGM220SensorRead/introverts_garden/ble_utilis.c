@@ -1,7 +1,7 @@
 /**
  * @file ble_utilis.c
  * @brief BLE utilities source file
- * 
+ *
  * @author Duy Hung Nguyen
  * @date June 25th 2023
 */
@@ -88,7 +88,7 @@ sl_status_t update_temperature_data(void)
 sl_status_t send_light_ambient_notification(void)
 {
   sl_status_t sc;
-  uint16_t data_send = (uint16_t*)calloc(1,sizeof(uint16_t));
+  uint16_t data_send;
   size_t data_len;
 
   // Read light ambient characteristic stored in local GATT database.
@@ -104,7 +104,7 @@ sl_status_t send_light_ambient_notification(void)
   // Send characteristic notification.
   sc = sl_bt_gatt_server_notify_all(gattdb_light_ambient,
                                     sizeof(data_send),
-                                    (uint8_t*)data_send);
+                                    (uint8_t*)&data_send);
   if (sc == SL_STATUS_OK) {
     app_log_append("Light ambient data sent: 0x%04x\n", (int)data_send);
   }
@@ -257,6 +257,9 @@ sl_status_t send_sensor_data_notification(sl_bt_msg_t *evt){
         app_log_status_error(sc);
         if (sc == SL_STATUS_OK){
           sc = send_temperature_notification();
+          if (sc != SL_STATUS_OK){
+              app_log("Error in Temperature measure process");
+          }
           app_log_status_error(sc);
         }
       }
@@ -278,6 +281,12 @@ sl_status_t send_sensor_data_notification(sl_bt_msg_t *evt){
         if (sc == SL_STATUS_OK){
           sc = send_soil_humidity_notification();
           app_log_status_error(sc);
+        }
+        else{
+            uint32_t data_send = 0x00000000;
+            sc = sl_bt_gatt_server_notify_all(gattdb_soil_humidity,
+                                               sizeof(data_send),
+                                               &data_send);
         }
       }
       else

@@ -36,6 +36,7 @@
 #include "sl_i2cspm.h"
 #include "ble_utilis.h"
 #include "irrometter200SS.h"
+#include "em_gpio.h"
 #include "sl_simple_led_instances.h"
 
 // The advertising set handle allocated from Bluetooth stack.
@@ -49,7 +50,8 @@ SL_WEAK void app_init (void)
   //Initialize I2C protocol
   sl_i2cspm_init_instances ();
   //Initialize TIMER1 for frequency measurement
-  TIMER1_init ();
+  TIMER1_init();
+  GPIO_PinModeSet(gpioPortB, 2, gpioModePushPull, 0);
 }
 
 /**************************************************************************//**
@@ -57,6 +59,7 @@ SL_WEAK void app_init (void)
  *****************************************************************************/
 SL_WEAK void app_process_action (void)
 {
+
   /////////////////////////////////////////////////////////////////////////////
   // Put your additional application code here!                              //
   // This is called infinitely.                                              //
@@ -166,15 +169,19 @@ void sl_bt_on_event (sl_bt_msg_t *evt)
            app_log_status_error(sc);
 
            if (sc != SL_STATUS_OK) {
-             break;
+               app_log("An Error occurs");
+               break;
            }
 
            // Toggle LED.
            if (data_recv == 0x00) {
+             GPIO_PinOutClear(gpioPortB, 2);
              sl_led_turn_off(SL_SIMPLE_LED_INSTANCE(0));
              app_log_info("LED off.\n");
+
            } else if (data_recv == 0x01) {
              sl_led_turn_on(SL_SIMPLE_LED_INSTANCE(0));
+             GPIO_PinOutSet(gpioPortB, 2);
              app_log_info("LED on.\n");
            }
         }
