@@ -6,6 +6,7 @@ import android.util.Log;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -48,7 +49,7 @@ public class Field {
 
 //    ----------------------------------All simulation--------------------------
 
-    public void simulation() {
+    public String simulation() {
         List<Double> _treeData = new ArrayList<>();
         _treeData.add(treeData.LDM);//                      0
         _treeData.add(treeData.SDM);//                      1
@@ -65,7 +66,12 @@ public class Field {
         _treeData.addAll(treeData.contL);//                 22 -> 26
         _treeData.addAll(treeData.nuptL);//                 27 -> 31
 
-        _treeData.add(Double.valueOf(irrigationInformation.getDuration()));// 32
+        LocalTime x;
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+            x = LocalTime.parse(irrigationInformation.getDuration());
+            _treeData.add(x.getHour()/24.0 + x.getMinute()/24.0/60.0 + x.getSecond()/24.0/60.0/60.0); // 32
+        }
+
 
         for (int i = 0; i < allMeasuredData.size(); i++) {
             List<Double> weatherData = new ArrayList<>();
@@ -76,15 +82,24 @@ public class Field {
             rk4Step(allMeasuredData.get(i).get(0) - treeData.growTime, _treeData, t, weatherData);
         }
 
-//        FirebaseAPI.changeTreeData("users", getName(), _treeData);
+        FirebaseAPI.changeTreeData("users", getName(), _treeData);
         if (_treeData.get(32) == 0) {
-//            FirebaseAPI.changeIrrigationCheck("users", getName(), false);
+            return "00:00:00";
         } else {
-//            FirebaseAPI.changeIrrigationCheck("users", getName(), true);
             double duration = _treeData.get(32) / customizedParameter.dripRate;
-            Log.e("final irritation", String.valueOf(duration) + '\n' + customizedParameter.dripRate);
-//            FirebaseAPI.changeDuration("users", getName(), duration);
+            while (duration < 0.01) {
+                duration *= 10;
+            }
+            Log.e("Duration", String.valueOf(duration));
+            int hour = (int) (duration * 24.0);
+            int minute = (int) (duration * 24.0 * 60.0 - hour * 60.0);
+            int second = (int) (duration * 24.0 * 60.0 * 60.0 - minute * 60.0) % 60;
+            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+                String dur = LocalTime.of(hour, minute, second).toString();
+                return dur;
+            }
         }
+        return "00:00:00";
     }
 
     // Ngưỡng hàm lượng nước duy trì
@@ -379,9 +394,9 @@ public class Field {
         }
 
         double fcThreshHold = fieldCapacityThreshHold();
-        double irrigation = this.irrigationInformation.autoIrrigation ? Double.parseDouble(irrigationInformation.getDuration()) : 0.0;
+        double irrigation = this.irrigationInformation.autoIrrigation ? y.get(32) : 0.0;
         // convert from hour to day
-        double autoIrrigationDuration = Double.parseDouble(irrigationInformation.getDuration()) / 24;
+        double autoIrrigationDuration = (y.get(32)) / 24;
         double autoIrrigate = customizedParameter.dripRate * 24.0 /(customizedParameter.distanceBetweenHole *
                 customizedParameter.distanceBetweenRow / 10000.0);
 
@@ -594,14 +609,14 @@ public class Field {
         double ClabR = (CFR - CFG - RR) / cDm;
 
         precipitation -= irrigation;
-        irrigation = evaporation + countWuptrL - precipitation;
-//        Log.e("evaporation", String.valueOf(evaporation));
-//        Log.e("countWuptrL", String.valueOf(countWuptrL));
-//        Log.e("precipitation", String.valueOf(precipitation));
+        irrigation = abs(evaporation + countWuptrL - precipitation);
+        Log.e("evaporation", String.valueOf(evaporation));
+        Log.e("countWuptrL", String.valueOf(countWuptrL));
+        Log.e("precipitation", String.valueOf(precipitation));
         double _irrigation = max(0.0, irrigation);
-//        while (_irrigation < 10e-3) {
+        while (_irrigation < 0.01) {
             _irrigation *= 10;
-//        }
+        }
 
         List<Double> YR = new ArrayList<>();
         YR.add(LDMR);// 0

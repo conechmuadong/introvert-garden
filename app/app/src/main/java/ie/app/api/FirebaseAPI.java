@@ -441,14 +441,15 @@ public class FirebaseAPI {
 
         String donationKey = "irrigationCheck";
         ref.child(donationKey).setValue(check);
+        ref.child("checked").setValue(false);
     }
 
-    public static void changeDuration(String userID, String fieldID, double duration) {
+    public static void changeDuration(String userID, String fieldID, String duration) {
         DatabaseReference ref = FirebaseDatabase.getInstance().getReference()
                 .child(userID).child(fieldID).child("irrigation_information");
 
         String donationKey = "duration";
-        ref.child(donationKey).setValue(String.valueOf(duration));
+        ref.child(donationKey).setValue(duration);
     }
 
     public static void addField(String userID, String name) {
@@ -470,6 +471,7 @@ public class FirebaseAPI {
             irr.child("duration").setValue("0");
             irr.child("endTime").setValue(LocalDate.now().toString() + " " + LocalTime.now().withNano(0).toString());
             irr.child("irrigationCheck").setValue(false);
+            irr.child("checked").setValue(false);
             irr.child("startTime").setValue(LocalDate.now().toString() + " " + LocalTime.now().withNano(0).toString());
 
             DatabaseReference mea = ref.child("measured_data").child(LocalDate.now().toString())

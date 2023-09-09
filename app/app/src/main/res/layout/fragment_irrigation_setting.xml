@@ -134,16 +134,15 @@
                 android:layout_weight="1"
                 android:layout_height="wrap_content"
                 android:focusable="true"
-                android:text="00.00" />
+                android:text="00:00:00" />
             <Space
                 android:layout_width="2dp"
                 android:layout_height="wrap_content" />
             <TextView
                 android:id="@+id/unit"
                 android:layout_width="0dp"
-                android:layout_weight="1"
-                android:layout_height="wrap_content"
-                android:text="@string/water_unit" />
+                android:layout_weight="0.5"
+                android:layout_height="wrap_content"/>
         </LinearLayout>
 
         <Space
@@ -168,7 +167,7 @@
             android:layout_height="10dp" />
 
         <TextView
-            android:id="@+id/end_time"
+            android:id="@+id/end_ttime"
             android:layout_height="wrap_content"
             android:layout_width="wrap_content"
             android:gravity="center"

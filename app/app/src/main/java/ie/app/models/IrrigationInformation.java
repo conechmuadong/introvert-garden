@@ -6,14 +6,13 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import ie.app.api.FirebaseAPI;
+import ie.app.fragments.BaseFragment;
 
-public class IrrigationInformation {
+public class IrrigationInformation extends BaseFragment {
     private String startTime, endTime, duration;
     private String _startDate, _startTime;
     boolean checked;
-
     private Date dateTime;
-    public float amount = 100;
     private static SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
     public boolean autoIrrigation;
 
@@ -71,6 +70,7 @@ public class IrrigationInformation {
 
     public void setDuration(String duration) {
         this.duration = duration;
+        FirebaseAPI.changeDuration("users", field.getName(), duration);
     }
 
     public void setAutoIrrigation(boolean autoIrrigation, String field) {
@@ -88,10 +88,6 @@ public class IrrigationInformation {
         this._startTime = newStartTime;
         this.startTime = _startDate + " " + newStartTime;
         FirebaseAPI.changeIrrigationTime("users", field, startTime);
-    }
-
-    public void setNewAmount(float amount) {
-        this.amount = amount;
     }
 
     public boolean isChecked() {

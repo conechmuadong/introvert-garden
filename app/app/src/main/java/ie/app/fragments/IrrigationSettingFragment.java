@@ -42,7 +42,7 @@ enum Mode {
 public class IrrigationSettingFragment extends BaseFragment {
 
     private FragmentIrrigationSettingBinding binding;
-    private Mode mode = Mode.AUTO;
+    private Mode mode = Mode.MANUAL;
     private String selectedStartDate, selectedStartTime, selectedAmount;
     private boolean isComputed = false;
 
@@ -55,7 +55,7 @@ public class IrrigationSettingFragment extends BaseFragment {
         Log.v("Irrigation Setting", field.irrigationInformation.toString());
         binding = FragmentIrrigationSettingBinding.inflate(inflater, container, false);
         update();
-        mode = field.irrigationInformation.isAutoIrrigation() ? Mode.AUTO : Mode.MANUAL;
+        mode = Mode.MANUAL;
         Log.v("Irrigation Setting", mode.toString());
 
         if(mode == Mode.AUTO) {
@@ -74,6 +74,12 @@ public class IrrigationSettingFragment extends BaseFragment {
             binding.amountEditText.setEnabled(true);
             binding.dateEditText.setEnabled(true);
             binding.timeEditText.setEnabled(true);
+        }
+
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            binding.endDate.setText(LocalDate.now().toString());
+            binding.endTime.setText(LocalTime.now().withNano(0).toString());
         }
 
         try {
@@ -109,7 +115,7 @@ public class IrrigationSettingFragment extends BaseFragment {
         binding.autoButton.setOnClickListener(view12 -> {
             mode = Mode.AUTO;
             if (!isComputed) {
-                field.simulation();
+                field.irrigationInformation.setDuration(field.simulation());
                 isComputed = true;
             }
             // set background
@@ -127,6 +133,15 @@ public class IrrigationSettingFragment extends BaseFragment {
                     binding.dateEditText.setText(LocalDate.now().toString());
                 }
                 binding.timeEditText.setText(LocalTime.of(8, 0, 0).toString());
+                binding.amountEditText.setText(field.irrigationInformation.getDuration());
+                binding.endDate.setText(binding.dateEditText.getText().toString());
+
+                LocalTime x = LocalTime.parse(binding.amountEditText.getText());
+                LocalTime y = LocalTime.of(8, 0, 0)
+                        .plusHours(x.getHour())
+                                .plusMinutes(x.getMinute())
+                                        .plusSeconds(x.getSecond());
+                binding.endTime.setText(y.toString());
             }
         });
 
@@ -196,14 +211,18 @@ public class IrrigationSettingFragment extends BaseFragment {
             @Override
             public void onClick(View view) {
                 String input = binding.amountEditText.getText().toString();
-                float number = Float.parseFloat(input);
-                field.irrigationInformation.setNewAmount(number);
+                field.irrigationInformation.setDuration(input);
+                if (input != "00:00:00") {
+                    FirebaseAPI.changeIrrigationCheck("users", field.getName(), true);
+                } else {
+                    FirebaseAPI.changeIrrigationCheck("users", field.getName(), false);
+                }
 
-                Log.v("API", "before call API");
-                field.irrigationInformation.setNewStartDate(selectedStartDate, field.name);
-                Log.v("API", "after change date");
+                input = binding.dateEditText.getText().toString();
+                field.irrigationInformation.setNewStartDate(input, field.name);
+                input = binding.timeEditText.getText().toString();
                 field.irrigationInformation.setNewStartTime(selectedStartTime, field.name);
-                Log.v("API", "after change time");
+
                 field.irrigationInformation.setAutoIrrigation((mode == Mode.AUTO), field.name);
                 Log.v("API", "after change mode");
             }
