@@ -88,7 +88,7 @@ public class IrrigationSettingFragment extends BaseFragment {
             binding.timeEditText.setText(selectedStartTime);
             binding.endDate.setText(binding.dateEditText.getText().toString());
             binding.endTime.setText(binding.timeEditText.getText().toString());
-            binding.amountEditText.setText("00:00:00");
+            binding.amountEditText.setText("00.00");
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
@@ -136,10 +136,13 @@ public class IrrigationSettingFragment extends BaseFragment {
                     binding.dateEditText.setText(LocalDate.now().toString());
                 }
                 binding.timeEditText.setText("08:00:00");
-                binding.amountEditText.setText(field.irrigationInformation.getDuration());
                 binding.endDate.setText(binding.dateEditText.getText().toString());
 
-                LocalTime x = LocalTime.parse(binding.amountEditText.getText());
+                LocalTime x = LocalTime.parse(field.irrigationInformation.getDuration());
+                double amount = x.getHour() + x.getMinute() / 60.0 + x.getSecond() / 60.0 / 60.0;
+                amount = amount * field.customizedParameter.dripRate;
+                binding.amountEditText.setText(String.valueOf(Math.round(amount * 100) / 100.0));
+
                 LocalTime y = LocalTime.of(8, 0, 0)
                         .plusHours(x.getHour())
                                 .plusMinutes(x.getMinute())
@@ -219,32 +222,29 @@ public class IrrigationSettingFragment extends BaseFragment {
             timePickerDialog.show();
         });
 
-        binding.updateButton.setOnClickListener (new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                String input = binding.amountEditText.getText().toString();
-                field.irrigationInformation.setDuration(input);
-                if (!input.equals("00:00:00")) {
-                    FirebaseAPI.changeIrrigationCheck("users", field.getName(), true);
-                } else {
-                    FirebaseAPI.changeIrrigationCheck("users", field.getName(), false);
-                }
-
-                FirebaseAPI.deleteMeasuredData("users", field.getName());
-                FirebaseAPI.changeDuration("users", field.getName(), field.irrigationInformation.getDuration());
-
-                input = binding.dateEditText.getText().toString();
-                field.irrigationInformation.setNewStartDate(input, field.getName());
-                input = binding.timeEditText.getText().toString();
-                field.irrigationInformation.setNewStartTime(input, field.getName());
-                input = binding.endDate.getText().toString();
-                field.irrigationInformation.setNewEndDate(input, field.getName());
-                input = binding.endTime.getText().toString();
-                field.irrigationInformation.setNewEndTime(input, field.getName());
-
-                field.irrigationInformation.setAutoIrrigation((mode == Mode.AUTO), field.name);
-                Log.v("API", "after change mode");
+        binding.updateButton.setOnClickListener (view15 -> {
+            String input = binding.amountEditText.getText().toString();
+            field.irrigationInformation.setDuration(input);
+            if (!input.equals("00:00:00")) {
+                FirebaseAPI.changeIrrigationCheck("users", field.getName(), true);
+            } else {
+                FirebaseAPI.changeIrrigationCheck("users", field.getName(), false);
             }
+
+            FirebaseAPI.deleteMeasuredData("users", field.getName());
+            FirebaseAPI.changeDuration("users", field.getName(), field.irrigationInformation.getDuration());
+
+            input = binding.dateEditText.getText().toString();
+            field.irrigationInformation.setNewStartDate(input, field.getName());
+            input = binding.timeEditText.getText().toString();
+            field.irrigationInformation.setNewStartTime(input, field.getName());
+            input = binding.endDate.getText().toString();
+            field.irrigationInformation.setNewEndDate(input, field.getName());
+            input = binding.endTime.getText().toString();
+            field.irrigationInformation.setNewEndTime(input, field.getName());
+
+            field.irrigationInformation.setAutoIrrigation((mode == Mode.AUTO), field.name);
+            Log.v("API", "after change mode");
         });
     }
 
@@ -253,6 +253,8 @@ public class IrrigationSettingFragment extends BaseFragment {
         super.onDestroyView();
         binding = null;
     }
+
+// ------------------------------- GET TASK---------------------------------------------------
 
     private class GetTreeData extends AsyncTask<String, Void, TreeData> {
         protected ProgressDialog dialog;

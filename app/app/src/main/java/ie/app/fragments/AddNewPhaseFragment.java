@@ -1,5 +1,7 @@
 package ie.app.fragments;
 
+import android.annotation.SuppressLint;
+import android.app.DatePickerDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
@@ -7,6 +9,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.Toast;
@@ -15,6 +18,8 @@ import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.fragment.NavHostFragment;
 
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 
 import ie.app.R;
@@ -41,7 +46,6 @@ public class AddNewPhaseFragment extends BaseFragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         binding = FragmentAddNewPhaseBinding.inflate(inflater, container, false);
-
         doneBtn = binding.doneButton;
         return binding.getRoot();
     }
@@ -71,6 +75,60 @@ public class AddNewPhaseFragment extends BaseFragment {
                             .navigateUp();
                 }
             }
+        });
+
+        binding.startDatEditText.setOnClickListener(v -> {
+            Calendar calendar = Calendar.getInstance();
+            int year = calendar.get(Calendar.YEAR);
+            int month = calendar.get(Calendar.MONTH);
+            int dayOfMonth = calendar.get(Calendar.DAY_OF_MONTH);
+
+            // Hiển thị DatePickerDialog để cho phép người dùng chọn giá trị ngày giờ
+            DatePickerDialog datePickerDialog = new DatePickerDialog(getContext(), new DatePickerDialog.OnDateSetListener() {
+                @Override
+                public void onDateSet(DatePicker view13, int year, int monthOfYear, int dayOfMonth) {
+                    // Cập nhật giá trị ngày giờ của EditText khi người dùng chọn giá trị trên DatePicker
+                    Calendar selectedCalendar = Calendar.getInstance();
+                    selectedCalendar.set(Calendar.YEAR, year);
+                    selectedCalendar.set(Calendar.MONTH, monthOfYear);
+                    selectedCalendar.set(Calendar.DAY_OF_MONTH, dayOfMonth);
+                    Date selectedDate = selectedCalendar.getTime(); // Lấy ra đối tượng Date tương ứng với giá trị được chọn
+
+
+                    @SuppressLint("SimpleDateFormat") SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
+                    String strDate = formatter.format(selectedDate);
+
+                    binding.startDatEditText.setText(strDate);
+                }
+            }, year, month, dayOfMonth);
+            datePickerDialog.show();
+        });
+
+        binding.endDatEditText.setOnClickListener(v -> {
+            Calendar calendar = Calendar.getInstance();
+            int year = calendar.get(Calendar.YEAR);
+            int month = calendar.get(Calendar.MONTH);
+            int dayOfMonth = calendar.get(Calendar.DAY_OF_MONTH);
+
+            // Hiển thị DatePickerDialog để cho phép người dùng chọn giá trị ngày giờ
+            DatePickerDialog datePickerDialog = new DatePickerDialog(getContext(), new DatePickerDialog.OnDateSetListener() {
+                @Override
+                public void onDateSet(DatePicker view13, int year, int monthOfYear, int dayOfMonth) {
+                    // Cập nhật giá trị ngày giờ của EditText khi người dùng chọn giá trị trên DatePicker
+                    Calendar selectedCalendar = Calendar.getInstance();
+                    selectedCalendar.set(Calendar.YEAR, year);
+                    selectedCalendar.set(Calendar.MONTH, monthOfYear);
+                    selectedCalendar.set(Calendar.DAY_OF_MONTH, dayOfMonth);
+                    Date selectedDate = selectedCalendar.getTime(); // Lấy ra đối tượng Date tương ứng với giá trị được chọn
+
+
+                    @SuppressLint("SimpleDateFormat") SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
+                    String strDate = formatter.format(selectedDate);
+
+                    binding.endDatEditText.setText(strDate);
+                }
+            }, year, month, dayOfMonth);
+            datePickerDialog.show();
         });
     }
 }

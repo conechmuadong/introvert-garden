@@ -86,8 +86,8 @@ public class Field {
             return "00:00:00";
         } else {
             double duration = _treeData.get(32) / customizedParameter.dripRate;
-            while (duration < 0.01) {
-                duration *= 10;
+            while (duration < 0.011) {
+                duration *= 2;
             }
             int hour = (int) (duration * 24.0);
             int minute = (int) (duration * 24.0 * 60.0 - hour * 60.0);
@@ -613,9 +613,6 @@ public class Field {
         Log.e("countWuptrL", String.valueOf(countWuptrL));
         Log.e("precipitation", String.valueOf(precipitation));
         double _irrigation = max(0.0, irrigation);
-        while (_irrigation < 0.01) {
-            _irrigation *= 10;
-        }
 
         List<Double> YR = new ArrayList<>();
         YR.add(LDMR);// 0
