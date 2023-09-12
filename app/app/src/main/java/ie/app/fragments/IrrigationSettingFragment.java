@@ -19,6 +19,7 @@ import android.widget.TextView;
 import android.widget.TimePicker;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.RequiresApi;
 
 import com.google.android.gms.tasks.Task;
 import com.google.android.gms.tasks.Tasks;
@@ -49,6 +50,23 @@ public class IrrigationSettingFragment extends BaseFragment {
     private Mode mode = Mode.MANUAL;
     private String selectedStartDate, selectedStartTime, selectedAmount;
     private boolean isComputed = false;
+
+    @RequiresApi(api = Build.VERSION_CODES.O)
+    private String amountToDuration(String amount) {
+        double y = Double.parseDouble(amount) / field.customizedParameter.dripRate;
+        int hour = (int) (y);
+        int minute = (int) (y * 60.0 - hour * 60.0);
+        int second = (int) (y * 60.0 * 60.0 - minute * 60.0) % 60;
+        return LocalTime.of(hour, minute, second).toString();
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.O)
+    private String durationToAmount(String duration) {
+        LocalTime dur = LocalTime.parse(duration);
+        double hourTime = dur.getHour() + dur.getMinute() / 60.0 + dur.getSecond() / 60.0 / 60.0;
+        double amount = hourTime * field.customizedParameter.dripRate;
+        return String.valueOf(Math.floor(amount * 100) / 100.0);
+    }
 
     @SuppressLint("SetTextI18n")
     @Override
@@ -138,10 +156,10 @@ public class IrrigationSettingFragment extends BaseFragment {
                 binding.timeEditText.setText("08:00:00");
                 binding.endDate.setText(binding.dateEditText.getText().toString());
 
-                LocalTime x = LocalTime.parse(field.irrigationInformation.getDuration());
-                double amount = x.getHour() + x.getMinute() / 60.0 + x.getSecond() / 60.0 / 60.0;
-                amount = amount * field.customizedParameter.dripRate;
-                binding.amountEditText.setText(String.valueOf(Math.round(amount * 100) / 100.0));
+                String duration = field.irrigationInformation.getDuration();
+                String amount = durationToAmount(duration);
+                binding.amountEditText.setText(amount);
+                LocalTime x = LocalTime.parse(duration);
 
                 LocalTime y = LocalTime.of(8, 0, 0)
                         .plusHours(x.getHour())
@@ -209,7 +227,8 @@ public class IrrigationSettingFragment extends BaseFragment {
 
                     binding.timeEditText.setText(strTime);
                     if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
-                        LocalTime x = LocalTime.parse(binding.amountEditText.getText());
+                        String amount = binding.amountEditText.getText().toString();
+                        LocalTime x = LocalTime.parse(amountToDuration(amount));
                         LocalTime y = LocalTime.parse(strTime)
                                 .plusHours(x.getHour())
                                 .plusMinutes(x.getMinute())
@@ -223,16 +242,21 @@ public class IrrigationSettingFragment extends BaseFragment {
         });
 
         binding.updateButton.setOnClickListener (view15 -> {
-            String input = binding.amountEditText.getText().toString();
-            field.irrigationInformation.setDuration(input);
-            if (!input.equals("00:00:00")) {
-                FirebaseAPI.changeIrrigationCheck("users", field.getName(), true);
-            } else {
-                FirebaseAPI.changeIrrigationCheck("users", field.getName(), false);
+            String input = "";
+            if (mode == Mode.AUTO) {
+                input = field.irrigationInformation.getDuration();
+            } else if (mode == Mode.MANUAL){
+                String amount = binding.amountEditText.getText().toString();
+                Log.e("amount", amount);
+                if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+                    input = amountToDuration(amount);
+                }
+                Log.e("input", input);
             }
+            FirebaseAPI.changeIrrigationCheck("users", field.getName(), !input.equals("00:00:00"));
 
             FirebaseAPI.deleteMeasuredData("users", field.getName());
-            FirebaseAPI.changeDuration("users", field.getName(), field.irrigationInformation.getDuration());
+            FirebaseAPI.changeDuration("users", field.getName(), input);
 
             input = binding.dateEditText.getText().toString();
             field.irrigationInformation.setNewStartDate(input, field.getName());

@@ -609,9 +609,9 @@ public class Field {
 
         precipitation -= irrigation;
         irrigation = abs(evaporation + countWuptrL - precipitation);
-        Log.e("evaporation", String.valueOf(evaporation));
-        Log.e("countWuptrL", String.valueOf(countWuptrL));
-        Log.e("precipitation", String.valueOf(precipitation));
+//        Log.e("evaporation", String.valueOf(evaporation));
+//        Log.e("countWuptrL", String.valueOf(countWuptrL));
+//        Log.e("precipitation", String.valueOf(precipitation));
         double _irrigation = max(0.0, irrigation);
 
         List<Double> YR = new ArrayList<>();
