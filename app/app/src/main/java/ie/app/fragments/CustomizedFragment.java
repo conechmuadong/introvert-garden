@@ -2,13 +2,16 @@ package ie.app.fragments;
 
 import static androidx.core.content.ContextCompat.getSystemService;
 
+import android.annotation.SuppressLint;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
@@ -43,6 +46,7 @@ public class CustomizedFragment extends BaseFragment implements AdapterView.OnIt
 
     private FragmentCustomizedBinding binding;
     private OnFieldSelectedListener listener;
+    private boolean isUpdated = true;
 
     private ArrayList<Phase> phases = field.customizedParameter.fieldCapacity;
 
@@ -67,16 +71,61 @@ public class CustomizedFragment extends BaseFragment implements AdapterView.OnIt
     public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        binding.humidityView.setOnClickListener(new View.OnClickListener() {
+        binding.areaEditText.setOnKeyListener(new View.OnKeyListener() {
             @Override
-            public void onClick(View view) {
-                //Nav to phases view
+            public boolean onKey(View v, int keyCode, KeyEvent event) {
+                isUpdated = false;
+                return false;
+            }
+        });
+        binding.numberHolesEditText.setOnKeyListener(new View.OnKeyListener() {
+            @Override
+            public boolean onKey(View v, int keyCode, KeyEvent event) {
+                isUpdated = false;
+                return false;
+            }
+        });
+        binding.distanceHoleEditText.setOnKeyListener(new View.OnKeyListener() {
+            @Override
+            public boolean onKey(View v, int keyCode, KeyEvent event) {
+                isUpdated = false;
+                return false;
+            }
+        });
+        binding.distanceRowEditText.setOnKeyListener(new View.OnKeyListener() {
+            @Override
+            public boolean onKey(View v, int keyCode, KeyEvent event) {
+                isUpdated = false;
+                return false;
+            }
+        });
+        binding.dripRateEditText.setOnKeyListener(new View.OnKeyListener() {
+            @Override
+            public boolean onKey(View v, int keyCode, KeyEvent event) {
+                isUpdated = false;
+                return false;
+            }
+        });
+        binding.scaleRainEditText.setOnKeyListener(new View.OnKeyListener() {
+            @Override
+            public boolean onKey(View v, int keyCode, KeyEvent event) {
+                isUpdated = false;
+                return false;
+            }
+        });
+        binding.ferLevelEditText.setOnKeyListener(new View.OnKeyListener() {
+            @Override
+            public boolean onKey(View v, int keyCode, KeyEvent event) {
+                isUpdated = false;
+                return false;
             }
         });
 
         binding.updateButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                Log.e("isUpdated", String.valueOf(isUpdated));
+                isUpdated = true;
                 field.customizedParameter.acreage = Float.parseFloat(binding.areaEditText.getText().toString());
                 field.customizedParameter.numberOfHoles = Integer.parseInt(binding.numberHolesEditText.getText().toString());
                 field.customizedParameter.distanceBetweenHole = Float.parseFloat(binding.distanceHoleEditText.getText().toString());
@@ -94,8 +143,25 @@ public class CustomizedFragment extends BaseFragment implements AdapterView.OnIt
         binding.next.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                NavHostFragment.findNavController(CustomizedFragment.this)
-                        .navigate(R.id.action_CustomizedFragment_to_listPhase);
+                if (!isUpdated) {
+                    Toast.makeText(getContext(), "Các thay đổi chưa được cập nhật", Toast.LENGTH_SHORT).show();
+                } else {
+                    NavHostFragment.findNavController(CustomizedFragment.this)
+                            .navigate(R.id.action_CustomizedFragment_to_listPhase);
+                }
+            }
+        });
+
+        view.setOnKeyListener(new View.OnKeyListener() {
+            @Override
+            public boolean onKey(View v, int keyCode, KeyEvent event) {
+                if (keyCode == KeyEvent.KEYCODE_BACK) {
+                    if (!isUpdated) {
+                        Toast.makeText(getContext(), "Các thay đổi chưa được cập nhật", Toast.LENGTH_SHORT).show();
+                        return true;
+                    }
+                }
+                return false;
             }
         });
     }

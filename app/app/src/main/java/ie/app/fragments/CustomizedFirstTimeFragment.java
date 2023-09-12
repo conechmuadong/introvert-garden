@@ -62,7 +62,6 @@ public class CustomizedFirstTimeFragment extends BaseFragment {
                     NavHostFragment.findNavController(CustomizedFirstTimeFragment.this).navigateUp();
                     NavHostFragment.findNavController(CustomizedFirstTimeFragment.this).navigateUp();
                 }
-
             }
         });
     }
