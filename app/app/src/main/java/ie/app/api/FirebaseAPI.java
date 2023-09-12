@@ -487,18 +487,19 @@ public class FirebaseAPI {
         ref.child(donationKey).setValue(duration);
     }
 
-    public static void addField(String userID, String name) {
+    public static void addField(String userID, String name, ArrayList<Double> customized) {
         DatabaseReference ref = FirebaseDatabase.getInstance().getReference()
                 .child(userID).child(name);
 
         DatabaseReference cus = ref.child("customized_parameter");
-        cus.child("acreage").setValue(0);
-        cus.child("distanceBetweenHole").setValue(0);
-        cus.child("distanceBetweenRow").setValue(0);
-        cus.child("dripRate").setValue(0);
-        cus.child("fertilizationLevel").setValue(0);
-        cus.child("numberOfHoles").setValue(0);
-        cus.child("scaleRain").setValue(0);
+        int cnt = -1;
+        cus.child("acreage").setValue(customized.get(++cnt));
+        cus.child("numberOfHoles").setValue(customized.get(++cnt));
+        cus.child("distanceBetweenHole").setValue(customized.get(++cnt));
+        cus.child("distanceBetweenRow").setValue(customized.get(++cnt));
+        cus.child("dripRate").setValue(customized.get(++cnt));
+        cus.child("scaleRain").setValue(customized.get(++cnt));
+        cus.child("fertilizationLevel").setValue(customized.get(++cnt));
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             DatabaseReference irr = ref.child("irrigation_information");

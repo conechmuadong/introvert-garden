@@ -16,25 +16,9 @@
             android:layout_width="match_parent"
             android:layout_height="20dp" />
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:gravity="center" >
-
-            <TextView
-                android:id="@+id/fieldName"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:gravity="center"
-                android:textSize="24sp"
-                android:background="@drawable/fieldname_background"/>
-
-        </LinearLayout>
-
         <Space
             android:layout_width="match_parent"
-            android:layout_height="20dp" />
+            android:layout_height="50dp" />
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -372,7 +356,7 @@
             android:layout_height="20dp" />
 
         <Button
-            android:id="@+id/updateButton"
+            android:id="@+id/doneBtn"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"

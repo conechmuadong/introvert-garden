@@ -55,21 +55,11 @@ public class AddNewFieldFragment extends Fragment {
             public void onClick(View v) {
                 if (addNewFieldEditText.getText().toString().equals("")) {
                     Toast.makeText(getContext(), "Không được để trống!", Toast.LENGTH_SHORT).show();
-                    try {
-                        File myObj = new File("filename.txt");
-                        if (myObj.createNewFile()) {
-                            Log.e("haiya", "File created: " + myObj.getName());
-                        } else {
-                            Log.e("haiya", "File already exists.");
-                        }
-                    } catch (Exception e) {
-                        Log.e("haiya", "An error occurred.");
-                        e.printStackTrace();
-                    }
                 } else {
-                    FirebaseAPI.addField("users", addNewFieldEditText.getText().toString());
+                    Bundle bundle = new Bundle();
+                    bundle.putString("newField", addNewFieldEditText.getText().toString());
                     NavHostFragment.findNavController(AddNewFieldFragment.this)
-                            .navigateUp();
+                            .navigate(R.id.action_AddNewFieldFragment_to_customizedFirstTimeFragment, bundle);
                 }
 
             }

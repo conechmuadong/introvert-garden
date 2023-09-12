@@ -51,7 +51,6 @@ public class CustomizedFragment extends BaseFragment implements AdapterView.OnIt
         binding = FragmentCustomizedBinding.inflate(inflater, container, false);
         View view = binding.getRoot();
 
-
         Bundle bundle = getArguments();
         Log.v("CustomizedFragment", "onCreateView ");
         if (bundle != null) {
