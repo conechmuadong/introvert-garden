@@ -89,7 +89,7 @@ public class Field {
             while (duration < 0.011) {
                 duration *= 2;
             }
-            int hour = (int) (duration * 24.0);
+            int hour = (int) (duration * 24.0) % 2;
             int minute = (int) (duration * 24.0 * 60.0 - hour * 60.0);
             int second = (int) (duration * 24.0 * 60.0 * 60.0 - minute * 60.0) % 60;
             if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
@@ -293,27 +293,6 @@ public class Field {
         return (rr);
     }
 
-    private double getStress(double clab, double dm, double low) {
-        double dm1 = max(dm, 0.001);
-        double cc = clab / dm1;
-        return (lim((cc - low) / (-9999.9 - low)));
-    }
-
-    private double getStress(double clab, double dm, double low, boolean swap) {
-        double dm1 = max(dm, 0.001);
-        double cc = clab / dm1;
-        double rr = lim((cc - low) / (-9999.9 - low));
-        if (swap) rr = 1.0 - rr;
-        return (rr);
-    }
-
-    private double getStress(double clab, double dm, double low, double high) {
-        if (high < -9999.0) high = low + 0.01;
-        double dm1 = max(dm, 0.001);
-        double cc = clab / dm1;
-        return (lim((cc - low) / (high - low)));
-    }
-
     double fNSstress(double upt, double low, double high) {
         double rr = (upt - low) / (high - low);
         return lim(rr);
@@ -463,7 +442,6 @@ public class Field {
         double actFactor = max(ll * swfe, ETrainFactor);
         double evaporation = actFactor * ET0reference; // su bay hoi
 
-        double drain;
         List<Double> qFlow = new ArrayList<>();
         for (int i = 0; i < numberOfSoilLayer + 1; i++) {
             qFlow.add(0.0);
@@ -478,15 +456,16 @@ public class Field {
                     ? soilWaterCapacity.get(i - 1) + thetaG
                     : thetaM;
             double rateFlow = 1.3;
-            qFlow.set(i, (soilWaterCapacity.get(i - 1) + thetaG - thdown) * rateFlow * (soilWaterCapacity.get(i - 1) / thetaS) +
-                    4.0 * max(soilWaterCapacity.get(i - 1) - thetaS, 0));
+            double A = (soilWaterCapacity.get(i - 1) + thetaG - thdown);
+            double B =  rateFlow * (soilWaterCapacity.get(i - 1) / thetaS);
+            double C = max(soilWaterCapacity.get(i - 1) - thetaS, 0);
+            qFlow.set(i, qFlow.get(i) + A * B + 4.0 * C);
         }
 
         List<Double> dThetaDt = new ArrayList<>();
         for (int i = 0; i < numberOfSoilLayer; i++) {
             dThetaDt.add(qFlow.get(i) - qFlow.get(i + 1) - wuptrL.get(i) / (layerThickness * 1000.0));
         }
-        drain = qFlow.get(numberOfSoilLayer) * layerThickness * 1000;
 
         // nutrient concentrations in the plant
         double Nopt = 45 * LDM + 7 * SRDM + 20 * SDM + 20 * RDM;
@@ -508,13 +487,13 @@ public class Field {
         }
         for (int i = 0; i < numberOfSoilLayer; ++i) {
             ncontrL.set(i, NminR_l.get(i));
-            ncontrL.set(i, nuptrL.get(i) / (bulkDensity * layerVolume)); //mg/day/ (m3*kg/m3)
+            ncontrL.set(i, ncontrL.get(i) - nuptrL.get(i) / (bulkDensity * layerVolume)); //mg/day/ (m3*kg/m3)
             double Nl = ncontL.get(i);
             double Nu = (i > 0) ? ncontL.get(i - 1) : -ncontL.get(i);
             //double Nd = (i < (numberOfSoilLayer - 1)) ? Ncont_l[i + 1] : -Ncont_l[i];//zero flux bottom
             double Nd = (i < (numberOfSoilLayer - 1)) ? ncontL.get(i + 1) : 0.0; //leaching
             // no diffusion, just mass flow with water.
-            ncontrL.set(i, qFlow.get(i) * (Nu + Nl) / 2.0 - qFlow.get(i + 1) * (Nl + Nd) / 2.0);
+            ncontrL.set(i, ncontrL.get(i) + qFlow.get(i) * (Nu + Nl) / 2.0 - qFlow.get(i + 1) * (Nl + Nd) / 2.0);
         }
 
         //double NcontR_l =  substractLists(NminR_l, NuptR_l); // change in N in soil (mg/day)
@@ -536,24 +515,23 @@ public class Field {
         double mGRsr = min(7.08, pow(max(0.0, (ct - 32.3) * 0.02176), 2));
 
         // carbon limitations
-        double CSphot = getStress(Clab, TDM, 0.05, true); //Lower photosynthesis when starche accumulates
-        double CSshoota = getStress(Clab, TDM, -0.05); //do not allocat to shoot when starche levels are low
+        double CSphot = getStress(Clab, TDM, 0.05, -9999.9, true); //Lower photosynthesis when starche accumulates
+        double CSshoota = getStress(Clab, TDM, -0.05, -9999.9, false); //do not allocat to shoot when starche levels are low
         double CSshootl = lim(5 - LA / areaPerPlant); // do not allocat to shoot when LAI is high
         double CSshoot = CSshoota * CSshootl;
-        double CSroot = getStress(Clab, TDM, -0.03);
-        double CSsrootl = getStress(Clab, TDM, -0.0);
-        double CSsrooth = getStress(Clab, TDM, 0.01, 0.20);
+        double CSroot = getStress(Clab, TDM, -0.03, -9999.9, false);
+        double CSsrootl = getStress(Clab, TDM, -0.0, -9999.9, false);
+        double CSsrooth = getStress(Clab, TDM, 0.01, 0.20, false);
         double starchRealloc = getStress(Clab, TDM, -0.2, -0.1, true) * -0.05 * SRDM;
         double CSsroot = CSsrootl + 2 * CSsrooth;
         double SFleaf = WSshoot * NSshoot * TSshoot * CSshootl;
         double SFstem = WSshoot * NSshoot * TSshoot * CSshoot;
         double SFroot = WSroot * NSroot * TSroot * CSroot;
-        double SFsroot = CSsroot;
 
         double CsinkL = cDm * mGRl * SFleaf; //*
         double CsinkS = cDm * mGRs * SFstem; //* ((mDMs > 30 && ct > 500) ? SDM / mDMs : 1);
         double CsinkR = cDm * mGRr * SFroot; //* ((mDMr > 1 && ct > 300) ? RDM / mDMr : 1);
-        double CsinkSR = cDm * mGRsr * SFsroot - starchRealloc;
+        double CsinkSR = cDm * mGRsr * CSsroot - starchRealloc;
         double Csink = CsinkL + CsinkS + CsinkR + CsinkSR;
 
         // biomass partitioning
@@ -563,7 +541,6 @@ public class Field {
         double a2sr = CsinkSR / max(1e-10, Csink);
 
         // carbon to growth
-        double CFG = Csink;
         // increase in plant dry Mass (g DM/day) not including labile carbon pool
         double IDM = Csink / cDm;
 
@@ -605,7 +582,7 @@ public class Field {
         double RR = mRR + gRR;
 
         // labile pool
-        double ClabR = (CFR - CFG - RR) / cDm;
+        double ClabR = (CFR - Csink - RR) / cDm;
 
         precipitation -= irrigation;
         irrigation = abs(evaporation + countWuptrL - precipitation);
@@ -624,13 +601,19 @@ public class Field {
         YR.add(mGRl);// 5
         YR.add(ClabR);// 6
 
-        YR.addAll(rlrL);
-        YR.addAll(nrtrL);
-        YR.addAll(dThetaDt);
+        YR.addAll(rlrL); // rootLength
+        YR.addAll(nrtrL); // rootTips
+        YR.addAll(dThetaDt); // soil...
         YR.addAll(ncontrL);
         YR.addAll(nuptrL);
 
         YR.add(_irrigation);
+
+        String logE = "";
+        for (int i = 0; i < YR.size(); i++) {
+            logE = logE + YR.get(i) + '\n';
+        }
+//        Log.e("LogE", logE);
 
         return YR;
     }
