@@ -86,8 +86,15 @@ public class Field {
             return "00:00:00";
         } else {
             double duration = _treeData.get(32) / customizedParameter.dripRate;
-            while (duration < 0.011) {
+            while (duration < 0.003) {
                 duration *= 2;
+            }
+            if (new Random().nextInt() % 2 == 0) {
+                duration *= 1.2;
+            } else if (new Random().nextInt() % 5 == 0) {
+                duration *= 1.5;
+            } else if (new Random().nextInt() % 6 == 1) {
+                duration *= 1.6;
             }
             int hour = (int) (duration * 24.0) % 2;
             int minute = (int) (duration * 24.0 * 60.0 - hour * 60.0);
@@ -609,10 +616,10 @@ public class Field {
 
         YR.add(_irrigation);
 
-        String logE = "";
-        for (int i = 0; i < YR.size(); i++) {
-            logE = logE + YR.get(i) + '\n';
-        }
+//        String logE = "";
+//        for (int i = 0; i < YR.size(); i++) {
+//            logE = logE + YR.get(i) + '\n';
+//        }
 //        Log.e("LogE", logE);
 
         return YR;
