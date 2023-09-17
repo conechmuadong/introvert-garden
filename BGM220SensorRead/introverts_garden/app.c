@@ -173,7 +173,7 @@ void sl_bt_on_event (sl_bt_msg_t *evt)
                break;
            }
 
-           // Toggle LED.
+           //Change indicator LED and pump control GPIO Pin accordingly attribute receive  
            if (data_recv == 0x00) {
              GPIO_PinOutClear(gpioPortB, 2);
              sl_led_turn_off(SL_SIMPLE_LED_INSTANCE(0));
