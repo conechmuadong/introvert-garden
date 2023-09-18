@@ -52,21 +52,20 @@ public class AddNewPhaseFragment extends BaseFragment {
         doneBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Integer num = field.customizedParameter.getFieldCapacity().size() + 1;
                 if (binding.humidEditText.getText().toString().equals("") ||
                         binding.startDatEditText.getText().toString().equals("") ||
-                        binding.endDatEditText.getText().toString().equals(" ")) {
-                    Toast.makeText(getContext(), "Không được để trống!", Toast.LENGTH_SHORT).show();
+                        binding.endDatEditText.getText().toString().equals("")) {
+                    Toast.makeText(getContext(), "Không được để trống", Toast.LENGTH_SHORT).show();
                 } else {
-                    FirebaseAPI.addPhase(binding.humidEditText.getText().toString(),
-                            binding.startDatEditText.getText().toString(),
-                            binding.endDatEditText.getText().toString(), "users", field.getName(), num);
-                    Phase x = new Phase("phase" + (num),
+                    Integer num = field.customizedParameter.getFieldCapacity().size() + 1;
+                    Phase x = new Phase("phase" + num,
                             Float.parseFloat(binding.humidEditText.getText().toString()),
                             binding.startDatEditText.getText().toString(),
                             binding.endDatEditText.getText().toString());
                     field.customizedParameter.getFieldCapacity().add(x);
-
+                    FirebaseAPI.addPhase(binding.humidEditText.getText().toString(),
+                            binding.startDatEditText.getText().toString(),
+                            binding.endDatEditText.getText().toString(), "user", field.getName(), num);
                     NavHostFragment.findNavController(AddNewPhaseFragment.this)
                             .navigateUp();
                 }
