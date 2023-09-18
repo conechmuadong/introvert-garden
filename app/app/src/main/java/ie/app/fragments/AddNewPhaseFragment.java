@@ -66,7 +66,6 @@ public class AddNewPhaseFragment extends BaseFragment {
                     FirebaseAPI.addPhase(binding.humidEditText.getText().toString(),
                             binding.startDatEditText.getText().toString(),
                             binding.endDatEditText.getText().toString(), "user", field.getName(), num);
-
                     NavHostFragment.findNavController(AddNewPhaseFragment.this)
                             .navigateUp();
                 }

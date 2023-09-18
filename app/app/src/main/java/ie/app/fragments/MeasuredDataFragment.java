@@ -70,7 +70,7 @@ public class MeasuredDataFragment extends BaseFragment {
     private void getFieldByName(String name) {
         field.name = name;
         GetTask task = new GetTask(getContext());
-        task.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, "/user", "/" + name);
+        task.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, "/users", "/" + name);
         new AsyncTask<Void, Void, MeasuredData>() {
             @Override
             protected MeasuredData doInBackground(Void... voids) {
@@ -109,15 +109,10 @@ public class MeasuredDataFragment extends BaseFragment {
             radiationView.setText(radiationText);
             radiationView.setLineSpacing(10f, 1f);
 
-            String soilHumidity30Text = "Độ ẩm đất ở\nđộ sâu 30cm\n" + field.measuredData.soil_humidity_30;
-            TextView soilHumidity30View = binding.soilHumidity30View;
+            String soilHumidity30Text = "Độ ẩm đất\n" + field.measuredData.soil_humidity;
+            TextView soilHumidity30View = binding.soilHumidity;
             soilHumidity30View.setText(soilHumidity30Text);
             soilHumidity30View.setLineSpacing(10f, 1f);
-
-            String soilHumidity60Text = "Độ ẩm đất ở\nđộ sâu 60cm\n" + field.measuredData.soil_humidity_60;
-            TextView soilHumidity60View = binding.soilHumidity60View;
-            soilHumidity60View.setText(soilHumidity60Text);
-            soilHumidity60View.setLineSpacing(10f, 1f);
 
             String temperatureText = "Nhiệt độ\n" + field.measuredData.temperature;
             TextView temperatureView = binding.temperatureView;
@@ -139,7 +134,7 @@ public class MeasuredDataFragment extends BaseFragment {
         protected void onPreExecute() {
             super.onPreExecute();
             this.dialog = new ProgressDialog(context, 1);
-            this.dialog.setMessage("Retrieving Data");
+            this.dialog.setMessage("Đang lấy dữ liệu");
             this.dialog.show();
         }
 

@@ -1,18 +1,21 @@
 package ie.app.models;
 
+import android.annotation.SuppressLint;
+
 import java.sql.Time;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import ie.app.api.FirebaseAPI;
+import ie.app.fragments.BaseFragment;
 
-public class IrrigationInformation {
+public class IrrigationInformation extends BaseFragment {
     private String startTime, endTime, duration;
-    private String _startDate, _startTime;
-
+    private String _startDate, _startTime, _endDate, _endTime;
+    boolean checked;
     private Date dateTime;
-    public float amount = 100;
+    @SuppressLint("SimpleDateFormat")
     private static SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
     public boolean autoIrrigation;
 
@@ -74,23 +77,39 @@ public class IrrigationInformation {
 
     public void setAutoIrrigation(boolean autoIrrigation, String field) {
         this.autoIrrigation = autoIrrigation;
-        FirebaseAPI.changeAutoIrrigation("user", field, autoIrrigation);
+        FirebaseAPI.changeAutoIrrigation("users", field, autoIrrigation);
     }
 
     public void setNewStartDate(String newStartDate, String field) {
         this._startDate = newStartDate;
         this.startTime = newStartDate + " " + _startTime;
-        FirebaseAPI.changeIrrigationTime("user", field, startTime);
+        FirebaseAPI.changeIrrigationTime("users", field, startTime);
     }
 
     public void setNewStartTime(String newStartTime, String field) {
         this._startTime = newStartTime;
         this.startTime = _startDate + " " + newStartTime;
-        FirebaseAPI.changeIrrigationTime("user", field, startTime);
+        FirebaseAPI.changeIrrigationTime("users", field, startTime);
     }
 
-    public void setNewAmount(float amount) {
-        this.amount = amount;
+    public void setNewEndDate(String newEndDate, String field) {
+        this._endDate = newEndDate;
+        this.endTime = newEndDate + " " + _endTime;
+        FirebaseAPI.changeEndTime("users", field, endTime);
+    }
+
+    public void setNewEndTime(String newEndTime, String field) {
+        this._endTime = newEndTime;
+        this.endTime = _endDate + " " + newEndTime;
+        FirebaseAPI.changeEndTime("users", field, endTime);
+    }
+
+    public boolean isChecked() {
+        return checked;
+    }
+
+    public void setChecked(boolean checked) {
+        this.checked = checked;
     }
 }
 

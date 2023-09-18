@@ -15,6 +15,7 @@ import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.navigation.fragment.NavHostFragment;
@@ -43,7 +44,7 @@ public class CustomizedFragment extends BaseFragment implements AdapterView.OnIt
     private FragmentCustomizedBinding binding;
     private OnFieldSelectedListener listener;
 
-    private List<Phase> phases = field.customizedParameter.fieldCapacity;
+    private ArrayList<Phase> phases = field.customizedParameter.fieldCapacity;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -85,7 +86,9 @@ public class CustomizedFragment extends BaseFragment implements AdapterView.OnIt
                 field.customizedParameter.scaleRain = Float.parseFloat(binding.scaleRainEditText.getText().toString());
                 field.customizedParameter.fertilizationLevel = Float.parseFloat(binding.ferLevelEditText.getText().toString());
                 field.customizedParameter.fieldCapacity = phases;
-                FirebaseAPI.changeCustomizedParameter("user", field.name, field.customizedParameter);
+                FirebaseAPI.changeCustomizedParameter("users", field.name, field.customizedParameter);
+                updateUI();
+                Toast.makeText(getContext(), "Các thay đổi đã được cập nhật", Toast.LENGTH_SHORT).show();
             }
         });
 
@@ -107,7 +110,7 @@ public class CustomizedFragment extends BaseFragment implements AdapterView.OnIt
     private void getFieldByName(String name) {
         field.name = name;
         CustomizedFragment.GetTask task = new CustomizedFragment.GetTask(getContext());
-        task.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, "/user", "/" + name);
+        task.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, "/users", "/" + name);
         new AsyncTask<Void, Void, CustomizedParameter>() {
             @Override
             protected CustomizedParameter doInBackground(Void... voids) {
@@ -180,7 +183,6 @@ public class CustomizedFragment extends BaseFragment implements AdapterView.OnIt
             }
         }
         TextView humidityView = binding.humidityValue;
-        humidityView.setText(humidityText);
         humidityView.setLineSpacing(10f, 1f);
     }
 
@@ -204,7 +206,7 @@ public class CustomizedFragment extends BaseFragment implements AdapterView.OnIt
         protected void onPreExecute() {
             super.onPreExecute();
             this.dialog = new ProgressDialog(context, 1);
-            this.dialog.setMessage("Retrieving Data");
+            this.dialog.setMessage("Đang lấy dữ liệu");
             this.dialog.show();
         }
 
