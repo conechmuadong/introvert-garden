@@ -1,8 +1,10 @@
 
-# About Introverts' Garden
+# Introverts' Garden
+
+## Introduction 
 Introvert' Garden is a smart agriculture systems project developed by The Introverts, a group of 5 students from VNU - UET who participated in the IoT Challenge contest organized by FPT Software.
   
-# About us - The Introverts
+## Author - The Introverts
 We are a group of 5 students from VNU University of Engineering and Technology. We share the same passion for IoT and hope that our products can help the development of high-tech agriculture in Vietnam.
 
 We are:
